@@ -1,0 +1,39 @@
+name: flutter_portfolio
+description: A Flutter Developer Portfolio Landing Page
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  flutter_bloc: ^9.1.1
+  equatable: ^2.0.7
+  url_launcher: ^6.3.1
+  http: ^1.4.0
+  google_fonts: ^6.2.1
+  font_awesome_flutter: ^10.8.0
+  intl: ^0.20.2
+  shared_preferences: ^2.5.3
+  flutter_svg: ^2.1.0
+  flutter_animate: ^4.5.2
+  timelines_plus: ^1.0.6
+  scrollable_positioned_list: ^0.3.8
+  html: ^0.15.6
+  carousel_slider: ^5.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+#  assets:
+#    - assets/images/
+#    - assets/icons/
