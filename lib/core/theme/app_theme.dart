@@ -9,13 +9,13 @@ class AppTheme {
   static const success = Color(0xFF4CAF50);
   static const warning = Color(0xFFFFC107);
   static const error = Color(0xFFF44336);
-  
+
   // Light theme colors
   static const lightBackground = Color(0xFFF5F5F7);
   static const lightCardBackground = Colors.white;
   static const lightTextPrimary = Color(0xFF333333);
   static const lightTextSecondary = Color(0xFF6E6E73);
-  
+
   // Dark theme colors
   static const darkBackground = Color(0xFF121212);
   static const darkCardBackground = Color(0xFF1E1E1E);
@@ -61,7 +61,7 @@ class AppTheme {
     iconTheme: IconThemeData(
       color: lightTextPrimary,
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: lightCardBackground,
       elevation: 2,
       shape: RoundedRectangleBorder(
@@ -72,7 +72,8 @@ class AppTheme {
       style: ElevatedButton.styleFrom(
         backgroundColor: primary,
         foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: spacing24, vertical: spacing16),
+        padding: const EdgeInsets.symmetric(
+            horizontal: spacing24, vertical: spacing16),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius8),
         ),
@@ -81,7 +82,8 @@ class AppTheme {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: primary,
-        padding: const EdgeInsets.symmetric(horizontal: spacing24, vertical: spacing16),
+        padding: const EdgeInsets.symmetric(
+            horizontal: spacing24, vertical: spacing16),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius8),
         ),
@@ -132,7 +134,7 @@ class AppTheme {
     iconTheme: IconThemeData(
       color: darkTextPrimary,
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: darkCardBackground,
       elevation: 2,
       shape: RoundedRectangleBorder(
@@ -143,7 +145,8 @@ class AppTheme {
       style: ElevatedButton.styleFrom(
         backgroundColor: primary,
         foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: spacing24, vertical: spacing16),
+        padding: const EdgeInsets.symmetric(
+            horizontal: spacing24, vertical: spacing16),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius8),
         ),
@@ -152,7 +155,8 @@ class AppTheme {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: primary,
-        padding: const EdgeInsets.symmetric(horizontal: spacing24, vertical: spacing16),
+        padding: const EdgeInsets.symmetric(
+            horizontal: spacing24, vertical: spacing16),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius8),
         ),
@@ -182,21 +186,69 @@ class AppTheme {
   static TextTheme _getTextTheme(Color primary, Color secondary) {
     return GoogleFonts.interTextTheme(
       TextTheme(
-        displayLarge: TextStyle(color: primary, fontSize: 57, fontWeight: FontWeight.bold, height: 1.2),
-        displayMedium: TextStyle(color: primary, fontSize: 45, fontWeight: FontWeight.bold, height: 1.2),
-        displaySmall: TextStyle(color: primary, fontSize: 36, fontWeight: FontWeight.bold, height: 1.2),
-        headlineLarge: TextStyle(color: primary, fontSize: 32, fontWeight: FontWeight.bold, height: 1.2),
-        headlineMedium: TextStyle(color: primary, fontSize: 28, fontWeight: FontWeight.bold, height: 1.2),
-        headlineSmall: TextStyle(color: primary, fontSize: 24, fontWeight: FontWeight.w600, height: 1.2),
-        titleLarge: TextStyle(color: primary, fontSize: 22, fontWeight: FontWeight.w600, height: 1.3),
-        titleMedium: TextStyle(color: primary, fontSize: 16, fontWeight: FontWeight.w600, height: 1.3),
-        titleSmall: TextStyle(color: primary, fontSize: 14, fontWeight: FontWeight.w600, height: 1.3),
+        displayLarge: TextStyle(
+            color: primary,
+            fontSize: 57,
+            fontWeight: FontWeight.bold,
+            height: 1.2),
+        displayMedium: TextStyle(
+            color: primary,
+            fontSize: 45,
+            fontWeight: FontWeight.bold,
+            height: 1.2),
+        displaySmall: TextStyle(
+            color: primary,
+            fontSize: 36,
+            fontWeight: FontWeight.bold,
+            height: 1.2),
+        headlineLarge: TextStyle(
+            color: primary,
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+            height: 1.2),
+        headlineMedium: TextStyle(
+            color: primary,
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            height: 1.2),
+        headlineSmall: TextStyle(
+            color: primary,
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            height: 1.2),
+        titleLarge: TextStyle(
+            color: primary,
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+            height: 1.3),
+        titleMedium: TextStyle(
+            color: primary,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            height: 1.3),
+        titleSmall: TextStyle(
+            color: primary,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            height: 1.3),
         bodyLarge: TextStyle(color: primary, fontSize: 16, height: 1.5),
         bodyMedium: TextStyle(color: primary, fontSize: 14, height: 1.5),
         bodySmall: TextStyle(color: secondary, fontSize: 12, height: 1.5),
-        labelLarge: TextStyle(color: primary, fontSize: 14, fontWeight: FontWeight.w500, height: 1.5),
-        labelMedium: TextStyle(color: primary, fontSize: 12, fontWeight: FontWeight.w500, height: 1.5),
-        labelSmall: TextStyle(color: secondary, fontSize: 11, fontWeight: FontWeight.w500, height: 1.5),
+        labelLarge: TextStyle(
+            color: primary,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            height: 1.5),
+        labelMedium: TextStyle(
+            color: primary,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            height: 1.5),
+        labelSmall: TextStyle(
+            color: secondary,
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+            height: 1.5),
       ),
     );
   }

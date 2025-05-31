@@ -22,14 +22,14 @@ class SidebarNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDesktop = MediaQuery.of(context).size.width >= 1024;
-    
+
     if (isDesktop) {
       return _DesktopSidebar(
         currentSection: currentSection,
         onSectionSelected: onSectionSelected,
       );
     }
-    
+
     return _MobileSidebar(
       isOpen: isOpen,
       currentSection: currentSection,
@@ -51,7 +51,7 @@ class _DesktopSidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       width: 250,
       padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing32),
@@ -97,7 +97,8 @@ class _DesktopSidebar extends StatelessWidget {
           const SizedBox(height: AppTheme.spacing32),
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacing16),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: AppTheme.spacing16),
               child: Column(
                 children: NavigationSection.values.map((section) {
                   return _NavigationItem(
@@ -115,10 +116,13 @@ class _DesktopSidebar extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _SocialIcon(icon: FontAwesomeIcons.github, url: 'https://github.com'),
-                _SocialIcon(icon: FontAwesomeIcons.linkedin, url: 'https://linkedin.com'),
-                _SocialIcon(icon: FontAwesomeIcons.twitter, url: 'https://twitter.com'),
-                _SocialIcon(icon: FontAwesomeIcons.dribbble, url: 'https://dribbble.com'),
+                _SocialIcon(
+                    icon: FontAwesomeIcons.github, url: 'https://github.com'),
+                _SocialIcon(
+                    icon: FontAwesomeIcons.linkedin,
+                    url: 'https://linkedin.com'),
+                _SocialIcon(
+                    icon: FontAwesomeIcons.twitter, url: 'https://twitter.com'),
               ],
             ),
           ),
@@ -145,7 +149,7 @@ class _MobileSidebar extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final screenSize = MediaQuery.of(context).size;
-    
+
     return Stack(
       children: [
         // Hamburger menu button
@@ -160,7 +164,7 @@ class _MobileSidebar extends StatelessWidget {
             onPressed: onToggle,
           ),
         ),
-        
+
         // Sidebar drawer
         if (isOpen)
           Animate(
@@ -209,7 +213,8 @@ class _MobileSidebar extends StatelessWidget {
                   const SizedBox(height: AppTheme.spacing24),
                   Expanded(
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacing16),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: AppTheme.spacing16),
                       child: Column(
                         children: NavigationSection.values.map((section) {
                           return _NavigationItem(
@@ -226,14 +231,23 @@ class _MobileSidebar extends StatelessWidget {
                   ),
                   const SizedBox(height: AppTheme.spacing16),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacing24),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AppTheme.spacing24),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        _SocialIcon(icon: FontAwesomeIcons.github, url: 'https://github.com'),
-                        _SocialIcon(icon: FontAwesomeIcons.linkedin, url: 'https://linkedin.com'),
-                        _SocialIcon(icon: FontAwesomeIcons.twitter, url: 'https://twitter.com'),
-                        _SocialIcon(icon: FontAwesomeIcons.dribbble, url: 'https://dribbble.com'),
+                        _SocialIcon(
+                            icon: FontAwesomeIcons.github,
+                            url: 'https://github.com'),
+                        _SocialIcon(
+                            icon: FontAwesomeIcons.linkedin,
+                            url: 'https://linkedin.com'),
+                        _SocialIcon(
+                            icon: FontAwesomeIcons.twitter,
+                            url: 'https://twitter.com'),
+                        _SocialIcon(
+                            icon: FontAwesomeIcons.dribbble,
+                            url: 'https://dribbble.com'),
                       ],
                     ),
                   ),
@@ -260,7 +274,7 @@ class _NavigationItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
@@ -285,7 +299,9 @@ class _NavigationItem extends StatelessWidget {
             Text(
               _getSectionName(section),
               style: theme.textTheme.titleMedium?.copyWith(
-                color: isSelected ? Colors.white : theme.textTheme.titleMedium?.color,
+                color: isSelected
+                    ? Colors.white
+                    : theme.textTheme.titleMedium?.color,
               ),
             ),
           ],
@@ -293,7 +309,7 @@ class _NavigationItem extends StatelessWidget {
       ),
     );
   }
-  
+
   IconData _getIconForSection(NavigationSection section) {
     switch (section) {
       case NavigationSection.hero:
@@ -316,7 +332,7 @@ class _NavigationItem extends StatelessWidget {
         return Icons.description;
     }
   }
-  
+
   String _getSectionName(NavigationSection section) {
     switch (section) {
       case NavigationSection.hero:
@@ -353,7 +369,7 @@ class _SocialIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return IconButton(
       icon: FaIcon(
         icon,

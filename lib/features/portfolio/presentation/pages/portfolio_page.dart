@@ -5,16 +5,16 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../../../../core/navigation/scroll_controller.dart';
 import '../../../../core/theme/theme_cubit.dart';
 import '../bloc/portfolio_bloc.dart';
-import '../widgets/sidebar_navigation.dart';
-import '../widgets/hero_section.dart';
 import '../widgets/about_section.dart';
-import '../widgets/experience_section.dart';
-import '../widgets/portfolio_section.dart';
-import '../widgets/services_section.dart';
-import '../widgets/tech_stack_section.dart';
 import '../widgets/blog_section.dart';
 import '../widgets/contact_section.dart';
+import '../widgets/experience_section.dart';
+import '../widgets/hero_section.dart';
+import '../widgets/portfolio_section.dart';
 import '../widgets/resume_section.dart';
+import '../widgets/services_section.dart';
+import '../widgets/sidebar_navigation.dart';
+import '../widgets/tech_stack_section.dart';
 
 class PortfolioPage extends StatelessWidget {
   const PortfolioPage({super.key});
@@ -43,7 +43,7 @@ class _PortfolioView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scrollCubit = context.read<ScrollCubit>();
-    
+
     return Scaffold(
       body: BlocBuilder<ScrollCubit, ScrollState>(
         builder: (context, scrollState) {
@@ -56,12 +56,12 @@ class _PortfolioView extends StatelessWidget {
                 itemPositionsListener: scrollCubit.itemPositionsListener,
                 itemBuilder: (context, index) {
                   return _buildSection(
-                    NavigationSection.values[index], 
+                    NavigationSection.values[index],
                     context,
                   );
                 },
               ),
-              
+
               // Navigation sidebar
               SafeArea(
                 child: SidebarNavigation(
@@ -71,7 +71,7 @@ class _PortfolioView extends StatelessWidget {
                   onSectionSelected: scrollCubit.scrollToSection,
                 ),
               ),
-              
+
               // Theme toggle button
               Positioned(
                 top: 16,
@@ -84,6 +84,7 @@ class _PortfolioView extends StatelessWidget {
                         icon: Icon(
                           isDark ? Icons.light_mode : Icons.dark_mode,
                           color: Theme.of(context).colorScheme.primary,
+                          size: 24,
                         ),
                         onPressed: () {
                           context.read<ThemeCubit>().toggleTheme();
@@ -99,7 +100,7 @@ class _PortfolioView extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildSection(NavigationSection section, BuildContext context) {
     switch (section) {
       case NavigationSection.hero:
