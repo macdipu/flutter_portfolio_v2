@@ -15,41 +15,42 @@ class ExperienceSection extends StatefulWidget {
   State<ExperienceSection> createState() => _ExperienceSectionState();
 }
 
-class _ExperienceSectionState extends State<ExperienceSection> with SingleTickerProviderStateMixin {
+class _ExperienceSectionState extends State<ExperienceSection>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
   }
-  
+
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final isDesktop = screenSize.width >= 1024;
     final theme = Theme.of(context);
-    
+
     return BlocBuilder<PortfolioBloc, PortfolioState>(
       builder: (context, state) {
         if (state.isLoading && state.profile == null) {
           return const Center(child: CircularProgressIndicator());
         }
-        
+
         final profile = state.profile;
         if (profile == null) {
           return const Center(child: Text('No profile data available'));
         }
-        
+
         return Container(
           padding: EdgeInsets.only(
-            left: isDesktop ? 300 : AppTheme.spacing24,
+            left: AppTheme.spacing24,
             right: AppTheme.spacing24,
             top: AppTheme.spacing64,
             bottom: AppTheme.spacing64,
@@ -62,7 +63,7 @@ class _ExperienceSectionState extends State<ExperienceSection> with SingleTicker
                 subtitle: 'My Journey',
               ),
               const SizedBox(height: AppTheme.spacing32),
-              
+
               // Tab bar for switching between experience and education
               Container(
                 decoration: BoxDecoration(
@@ -82,7 +83,7 @@ class _ExperienceSectionState extends State<ExperienceSection> with SingleTicker
                 ),
               ),
               const SizedBox(height: AppTheme.spacing32),
-              
+
               // Tab content
               SizedBox(
                 height: 480, // Adjust height based on content
@@ -91,7 +92,7 @@ class _ExperienceSectionState extends State<ExperienceSection> with SingleTicker
                   children: [
                     // Work experience timeline
                     _TimelineView(items: profile.experiences),
-                    
+
                     // Education timeline
                     _TimelineView(items: profile.educations),
                   ],
@@ -107,7 +108,7 @@ class _ExperienceSectionState extends State<ExperienceSection> with SingleTicker
 
 class _TimelineView extends StatelessWidget {
   final List<dynamic> items;
-  
+
   const _TimelineView({
     required this.items,
   });
@@ -115,7 +116,7 @@ class _TimelineView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return FixedTimeline.tileBuilder(
       theme: TimelineThemeData(
         nodePosition: 0,
@@ -135,7 +136,8 @@ class _TimelineView extends StatelessWidget {
         contentsBuilder: (_, index) {
           final item = items[index];
           return Padding(
-            padding: const EdgeInsets.only(left: AppTheme.spacing24, bottom: AppTheme.spacing32),
+            padding: const EdgeInsets.only(
+                left: AppTheme.spacing24, bottom: AppTheme.spacing32),
             child: _TimelineCard(
               title: item is ExperienceModel ? item.company : item.institution,
               subtitle: item is ExperienceModel ? item.position : item.degree,
@@ -173,7 +175,7 @@ class _TimelineCard extends StatelessWidget {
   final String description;
   final String logoUrl;
   final int index;
-  
+
   const _TimelineCard({
     required this.title,
     required this.subtitle,
@@ -186,7 +188,7 @@ class _TimelineCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Card(
       elevation: 2,
       margin: EdgeInsets.zero,
@@ -209,7 +211,8 @@ class _TimelineCard extends StatelessWidget {
                   ),
                   child: logoUrl.isNotEmpty
                       ? ClipRRect(
-                          borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
+                          borderRadius:
+                              BorderRadius.circular(AppTheme.borderRadius8),
                           child: Image.network(
                             logoUrl,
                             fit: BoxFit.cover,
@@ -273,6 +276,9 @@ class _TimelineCard extends StatelessWidget {
           ],
         ),
       ),
-    ).animate().fade(duration: 600.ms, delay: Duration(milliseconds: 200 * index)).slideY(begin: 0.1, end: 0);
+    )
+        .animate()
+        .fade(duration: 600.ms, delay: Duration(milliseconds: 200 * index))
+        .slideY(begin: 0.1, end: 0);
   }
 }

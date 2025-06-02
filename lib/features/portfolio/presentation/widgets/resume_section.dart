@@ -14,21 +14,21 @@ class ResumeSection extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
     final isDesktop = screenSize.width >= 1024;
     final theme = Theme.of(context);
-    
+
     return BlocBuilder<PortfolioBloc, PortfolioState>(
       builder: (context, state) {
         if (state.isLoading && state.profile == null) {
           return const Center(child: CircularProgressIndicator());
         }
-        
+
         final profile = state.profile;
         if (profile == null) {
           return const Center(child: Text('No profile data available'));
         }
-        
+
         return Container(
           padding: EdgeInsets.only(
-            left: isDesktop ? 300 : AppTheme.spacing24,
+            left: AppTheme.spacing24,
             right: AppTheme.spacing24,
             top: AppTheme.spacing64,
             bottom: MediaQuery.of(context).padding.bottom + AppTheme.spacing64,
@@ -41,7 +41,7 @@ class ResumeSection extends StatelessWidget {
                 subtitle: 'Download My CV',
               ),
               const SizedBox(height: AppTheme.spacing48),
-              
+
               // Resume download section
               Card(
                 elevation: 3,
@@ -92,7 +92,8 @@ class ResumeSection extends StatelessWidget {
                     ],
                   ),
                 ),
-              ).animate().fade(duration: 600.ms).scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1)),
+              ).animate().fade(duration: 600.ms).scale(
+                  begin: const Offset(0.9, 0.9), end: const Offset(1, 1)),
             ],
           ),
         );

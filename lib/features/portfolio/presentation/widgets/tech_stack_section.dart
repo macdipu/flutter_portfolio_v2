@@ -13,7 +13,8 @@ class TechStackSection extends StatefulWidget {
   State<TechStackSection> createState() => _TechStackSectionState();
 }
 
-class _TechStackSectionState extends State<TechStackSection> with SingleTickerProviderStateMixin {
+class _TechStackSectionState extends State<TechStackSection>
+    with SingleTickerProviderStateMixin {
   String _selectedCategory = 'All';
   late TabController _tabController;
   final List<String> _categories = [
@@ -24,14 +25,14 @@ class _TechStackSectionState extends State<TechStackSection> with SingleTickerPr
     'Dev Tools & Productivity',
     'Other Technologies',
   ];
-  
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: _categories.length, vsync: this);
     _tabController.addListener(_handleTabChange);
   }
-  
+
   void _handleTabChange() {
     if (_tabController.indexIsChanging) {
       setState(() {
@@ -39,7 +40,7 @@ class _TechStackSectionState extends State<TechStackSection> with SingleTickerPr
       });
     }
   }
-  
+
   @override
   void dispose() {
     _tabController.removeListener(_handleTabChange);
@@ -52,26 +53,28 @@ class _TechStackSectionState extends State<TechStackSection> with SingleTickerPr
     final screenSize = MediaQuery.of(context).size;
     final isDesktop = screenSize.width >= 1024;
     final theme = Theme.of(context);
-    
+
     return BlocBuilder<PortfolioBloc, PortfolioState>(
       builder: (context, state) {
         if (state.isLoading && state.profile == null) {
           return const Center(child: CircularProgressIndicator());
         }
-        
+
         final profile = state.profile;
         if (profile == null) {
           return const Center(child: Text('No profile data available'));
         }
-        
+
         // Filter tech stacks based on selected category
         final filteredTechStacks = _selectedCategory == 'All'
             ? profile.techStacks
-            : profile.techStacks.where((tech) => tech.category == _selectedCategory).toList();
-        
+            : profile.techStacks
+                .where((tech) => tech.category == _selectedCategory)
+                .toList();
+
         return Container(
           padding: EdgeInsets.only(
-            left: isDesktop ? 300 : AppTheme.spacing24,
+            left: AppTheme.spacing24,
             right: AppTheme.spacing24,
             top: AppTheme.spacing64,
             bottom: AppTheme.spacing64,
@@ -84,7 +87,7 @@ class _TechStackSectionState extends State<TechStackSection> with SingleTickerPr
                 subtitle: 'My Technical Skills',
               ),
               const SizedBox(height: AppTheme.spacing32),
-              
+
               // Category tabs
               TabBar(
                 controller: _tabController,
@@ -92,16 +95,18 @@ class _TechStackSectionState extends State<TechStackSection> with SingleTickerPr
                 labelColor: theme.colorScheme.primary,
                 unselectedLabelColor: theme.textTheme.bodyMedium?.color,
                 indicatorColor: theme.colorScheme.primary,
-                tabs: _categories.map((category) => Tab(text: category)).toList(),
+                tabs:
+                    _categories.map((category) => Tab(text: category)).toList(),
               ),
               const SizedBox(height: AppTheme.spacing32),
-              
+
               // Tech stack grid
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: isDesktop ? 4 : (screenSize.width > 600 ? 3 : 2),
+                  crossAxisCount:
+                      isDesktop ? 4 : (screenSize.width > 600 ? 3 : 2),
                   crossAxisSpacing: AppTheme.spacing16,
                   mainAxisSpacing: AppTheme.spacing16,
                   childAspectRatio: 1.0,
@@ -130,7 +135,7 @@ class _TechStackCard extends StatelessWidget {
   final String iconUrl;
   final double proficiency;
   final int index;
-  
+
   const _TechStackCard({
     required this.name,
     required this.iconUrl,
@@ -141,7 +146,7 @@ class _TechStackCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(
@@ -190,7 +195,8 @@ class _TechStackCard extends StatelessWidget {
             LinearProgressIndicator(
               value: proficiency,
               backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
-              valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
+              valueColor:
+                  AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
               borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
             ),
             const SizedBox(height: AppTheme.spacing4),
@@ -202,6 +208,9 @@ class _TechStackCard extends StatelessWidget {
           ],
         ),
       ),
-    ).animate().fade(duration: 600.ms, delay: Duration(milliseconds: 100 * index)).scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1));
+    )
+        .animate()
+        .fade(duration: 600.ms, delay: Duration(milliseconds: 100 * index))
+        .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1));
   }
 }

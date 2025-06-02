@@ -1,8 +1,8 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../data/models/profile_model.dart';
@@ -19,27 +19,27 @@ class PortfolioSection extends StatefulWidget {
 class _PortfolioSectionState extends State<PortfolioSection> {
   final CarouselController _carouselController = CarouselController();
   int _currentIndex = 0;
-  
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final isDesktop = screenSize.width >= 1024;
     final theme = Theme.of(context);
-    
+
     return BlocBuilder<PortfolioBloc, PortfolioState>(
       builder: (context, state) {
         if (state.isLoading && state.profile == null) {
           return const Center(child: CircularProgressIndicator());
         }
-        
+
         final profile = state.profile;
         if (profile == null) {
           return const Center(child: Text('No profile data available'));
         }
-        
+
         return Container(
           padding: EdgeInsets.only(
-            left: isDesktop ? 300 : AppTheme.spacing24,
+            left: AppTheme.spacing24,
             right: AppTheme.spacing24,
             top: AppTheme.spacing64,
             bottom: AppTheme.spacing64,
@@ -52,7 +52,7 @@ class _PortfolioSectionState extends State<PortfolioSection> {
                 subtitle: 'My Recent Work',
               ),
               const SizedBox(height: AppTheme.spacing48),
-              
+
               // Projects in vertical scroll
               SizedBox(
                 height: 600, // Adjust based on your content
@@ -77,7 +77,7 @@ class _PortfolioSectionState extends State<PortfolioSection> {
 class _ProjectCard extends StatelessWidget {
   final ProjectModel project;
   final int index;
-  
+
   const _ProjectCard({
     required this.project,
     required this.index,
@@ -88,7 +88,7 @@ class _ProjectCard extends StatelessWidget {
     final theme = Theme.of(context);
     final screenSize = MediaQuery.of(context).size;
     final isDesktop = screenSize.width >= 1024;
-    
+
     return Card(
       elevation: 4,
       margin: const EdgeInsets.only(bottom: AppTheme.spacing32),
@@ -101,9 +101,12 @@ class _ProjectCard extends StatelessWidget {
             ? _buildDesktopLayout(context, theme)
             : _buildMobileLayout(context, theme),
       ),
-    ).animate().fade(duration: 600.ms, delay: Duration(milliseconds: 200 * index)).slideY(begin: 0.1, end: 0);
+    )
+        .animate()
+        .fade(duration: 600.ms, delay: Duration(milliseconds: 200 * index))
+        .slideY(begin: 0.1, end: 0);
   }
-  
+
   Widget _buildDesktopLayout(BuildContext context, ThemeData theme) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,7 +116,7 @@ class _ProjectCard extends StatelessWidget {
           child: _buildScreenshotCarousel(context, theme),
         ),
         const SizedBox(width: AppTheme.spacing24),
-        
+
         // Project details
         Expanded(
           child: _buildProjectDetails(theme),
@@ -121,7 +124,7 @@ class _ProjectCard extends StatelessWidget {
       ],
     );
   }
-  
+
   Widget _buildMobileLayout(BuildContext context, ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,22 +142,22 @@ class _ProjectCard extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppTheme.spacing16),
-        
+
         // Screenshots
         _buildScreenshotCarousel(context, theme),
         const SizedBox(height: AppTheme.spacing24),
-        
+
         // Description
         Text(
           project.description,
           style: theme.textTheme.bodyLarge,
         ),
         const SizedBox(height: AppTheme.spacing16),
-        
+
         // Technologies
         _buildTechList(theme),
         const SizedBox(height: AppTheme.spacing24),
-        
+
         // Challenges
         if (project.challenge.isNotEmpty) ...[
           Text(
@@ -168,13 +171,13 @@ class _ProjectCard extends StatelessWidget {
           ),
           const SizedBox(height: AppTheme.spacing16),
         ],
-        
+
         // Links
         _buildLinks(theme),
       ],
     );
   }
-  
+
   Widget _buildScreenshotCarousel(BuildContext context, ThemeData theme) {
     if (project.screenshots.isEmpty) {
       return Container(
@@ -192,7 +195,7 @@ class _ProjectCard extends StatelessWidget {
         ),
       );
     }
-    
+
     return Container(
       height: 250,
       decoration: BoxDecoration(
@@ -254,7 +257,7 @@ class _ProjectCard extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildProjectDetails(ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -272,18 +275,18 @@ class _ProjectCard extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppTheme.spacing16),
-        
+
         // Description
         Text(
           project.description,
           style: theme.textTheme.bodyLarge,
         ),
         const SizedBox(height: AppTheme.spacing16),
-        
+
         // Technologies
         _buildTechList(theme),
         const SizedBox(height: AppTheme.spacing24),
-        
+
         // Challenges
         if (project.challenge.isNotEmpty) ...[
           Text(
@@ -297,13 +300,13 @@ class _ProjectCard extends StatelessWidget {
           ),
           const SizedBox(height: AppTheme.spacing16),
         ],
-        
+
         // Links
         _buildLinks(theme),
       ],
     );
   }
-  
+
   Widget _buildTechList(ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -329,7 +332,7 @@ class _ProjectCard extends StatelessWidget {
       ],
     );
   }
-  
+
   Widget _buildLinks(ThemeData theme) {
     return Row(
       children: [

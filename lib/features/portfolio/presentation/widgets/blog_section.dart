@@ -21,7 +21,7 @@ class BlogSection extends StatelessWidget {
       builder: (context, state) {
         return Container(
           padding: EdgeInsets.only(
-            left: isDesktop ? 300 : AppTheme.spacing24,
+            left: AppTheme.spacing24,
             right: AppTheme.spacing24,
             top: AppTheme.spacing64,
             bottom: AppTheme.spacing64,

@@ -64,7 +64,7 @@ class ResponsiveAboutSection extends StatelessWidget {
 
   Widget _buildDesktopAbout(BuildContext context, dynamic profile) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           flex: 2,

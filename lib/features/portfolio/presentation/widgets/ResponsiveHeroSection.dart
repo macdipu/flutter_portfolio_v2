@@ -130,9 +130,7 @@ class ResponsiveHeroSection extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 64),
-        Expanded(
-          child: _buildHeroImage(profile.avatarUrl, 400.0),
-        ),
+        _buildHeroImage(profile.avatarUrl, 400.0),
       ],
     );
   }

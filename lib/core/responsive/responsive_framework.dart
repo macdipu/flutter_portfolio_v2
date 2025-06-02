@@ -102,25 +102,14 @@ class ResponsiveHelper {
     );
   }
 
-  static double getSidebarWidth(BuildContext context) {
-    return getResponsiveValue(
-      context: context,
-      mobile: 0.0,
-      tablet: 250.0,
-      desktop: 280.0,
-    );
-  }
-
   static EdgeInsets getContentPadding(BuildContext context) {
-    final sidebarWidth = isDesktop(context) ? getSidebarWidth(context) : 0.0;
     return EdgeInsets.only(
-      left: sidebarWidth +
-          getResponsiveValue(
-            context: context,
-            mobile: 16.0,
-            tablet: 24.0,
-            desktop: 32.0,
-          ),
+      left: getResponsiveValue(
+        context: context,
+        mobile: 16.0,
+        tablet: 24.0,
+        desktop: 32.0,
+      ),
       right: getResponsiveValue(
         context: context,
         mobile: 16.0,
