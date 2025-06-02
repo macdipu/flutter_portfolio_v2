@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../core/navigation/scroll_controller.dart';
+import '../../../../core/responsive/responsive_framework.dart';
 import '../../../../core/theme/app_theme.dart';
 
 class SidebarNavigation extends StatelessWidget {
@@ -21,20 +22,27 @@ class SidebarNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDesktop = MediaQuery.of(context).size.width >= 1024;
-
-    if (isDesktop) {
-      return _DesktopSidebar(
-        currentSection: currentSection,
-        onSectionSelected: onSectionSelected,
-      );
-    }
-
-    return _MobileSidebar(
-      isOpen: isOpen,
-      currentSection: currentSection,
-      onToggle: onToggle,
-      onSectionSelected: onSectionSelected,
+    return ResponsiveBuilder(
+      builder: (context, deviceType, constraints) {
+        if (deviceType == DeviceType.desktop) {
+          return _DesktopSidebar(
+            currentSection: currentSection,
+            onSectionSelected: onSectionSelected,
+          );
+        } else {
+          // Tablet: 0.5 width, Mobile: 0.75 width
+          final width = deviceType == DeviceType.tablet
+              ? constraints.maxWidth * 0.5
+              : constraints.maxWidth * 0.75;
+          return _MobileSidebar(
+            isOpen: isOpen,
+            currentSection: currentSection,
+            onToggle: onToggle,
+            onSectionSelected: onSectionSelected,
+            width: width,
+          );
+        }
+      },
     );
   }
 }
@@ -137,12 +145,14 @@ class _MobileSidebar extends StatelessWidget {
   final NavigationSection currentSection;
   final VoidCallback onToggle;
   final Function(NavigationSection) onSectionSelected;
+  final double width;
 
   const _MobileSidebar({
     required this.isOpen,
     required this.currentSection,
     required this.onToggle,
     required this.onSectionSelected,
+    required this.width,
   });
 
   @override
