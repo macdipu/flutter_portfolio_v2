@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_portfolio/core/responsive/responsive_framework.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/theme/app_theme.dart';
@@ -33,6 +34,16 @@ class MyApp extends StatelessWidget {
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: state.themeMode,
+            builder: (context, child) {
+              return ResponsiveBuilder(
+                builder: (context, deviceType, constraints) {
+                  return MediaQuery(
+                    data: MediaQuery.of(context),
+                    child: child!,
+                  );
+                },
+              );
+            },
             home: const PortfolioPage(),
           );
         },
