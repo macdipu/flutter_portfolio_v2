@@ -14,7 +14,7 @@ class SectionHeader extends StatelessWidget {
     this.subtitle,
     this.titleColor,
     this.subtitleColor,
-    this.textAlign = TextAlign.center,
+    this.textAlign = TextAlign.start,
   });
 
   @override
@@ -22,8 +22,8 @@ class SectionHeader extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Column(
-      crossAxisAlignment: textAlign == TextAlign.center
-          ? CrossAxisAlignment.center
+      crossAxisAlignment: textAlign == TextAlign.start
+          ? CrossAxisAlignment.start
           : CrossAxisAlignment.start,
       children: [
         if (subtitle != null)

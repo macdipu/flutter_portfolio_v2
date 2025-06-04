@@ -6,10 +6,11 @@ class ResponsiveText extends StatelessWidget {
   final TextStyle? style;
   final TextAlign? textAlign;
   final int? maxLines;
-  final TextOverflow? overflow;
   final double? mobileFontSize;
   final double? tabletFontSize;
   final double? desktopFontSize;
+  final bool enableInteractiveSelection;
+  final void Function()? onTap;
 
   const ResponsiveText(
     this.text, {
@@ -17,10 +18,11 @@ class ResponsiveText extends StatelessWidget {
     this.style,
     this.textAlign,
     this.maxLines,
-    this.overflow,
     this.mobileFontSize,
     this.tabletFontSize,
     this.desktopFontSize,
+    this.enableInteractiveSelection = true,
+    this.onTap,
   });
 
   @override
@@ -32,13 +34,16 @@ class ResponsiveText extends StatelessWidget {
       desktop: desktopFontSize ?? style?.fontSize ?? 18.0,
     );
 
-    return Text(
+    final textStyle = style?.copyWith(fontSize: responsiveFontSize) ??
+        TextStyle(fontSize: responsiveFontSize);
+
+    return SelectableText(
       text,
-      style: style?.copyWith(fontSize: responsiveFontSize) ??
-          TextStyle(fontSize: responsiveFontSize),
+      style: textStyle,
       textAlign: textAlign,
       maxLines: maxLines,
-      overflow: overflow,
+      enableInteractiveSelection: enableInteractiveSelection,
+      onTap: onTap,
     );
   }
 }
