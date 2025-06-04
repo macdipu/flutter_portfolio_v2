@@ -31,6 +31,7 @@ class ResponsiveAboutSection extends StatelessWidget {
 
         return SectionWrapper(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SectionHeader(
                 title: 'About Me',

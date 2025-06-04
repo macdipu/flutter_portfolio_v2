@@ -138,159 +138,222 @@ class ResponsiveHeroSection extends StatelessWidget {
   Widget _buildTabletHero(BuildContext context, dynamic profile) {
     final theme = Theme.of(context);
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        _buildHeroImage(profile.avatarUrl, 280.0),
-        const SizedBox(height: 48),
-        ResponsiveText(
-          'Hello, I\'m',
-          style: theme.textTheme.headlineMedium?.copyWith(
-            color: theme.colorScheme.primary,
-          ),
-          textAlign: TextAlign.center,
-          tabletFontSize: 20.0,
-        ).animate().fade(duration: 500.ms).slide(begin: const Offset(0, -0.5)),
-        const SizedBox(height: 16),
-        ResponsiveText(
-          profile.name,
-          style: theme.textTheme.displayMedium,
-          textAlign: TextAlign.center,
-          tabletFontSize: 42.0,
-        )
-            .animate()
-            .fade(duration: 500.ms, delay: 200.ms)
-            .slide(begin: const Offset(0, -0.5)),
-        const SizedBox(height: 20),
-        ResponsiveText(
-          profile.title,
-          style: theme.textTheme.headlineSmall,
-          textAlign: TextAlign.center,
-          tabletFontSize: 24.0,
-        )
-            .animate()
-            .fade(duration: 500.ms, delay: 400.ms)
-            .slide(begin: const Offset(0, -0.5)),
-        const SizedBox(height: 24),
-        ResponsiveText(
-          profile.introduction,
-          style: theme.textTheme.bodyLarge,
-          textAlign: TextAlign.center,
-          tabletFontSize: 16.0,
-        )
-            .animate()
-            .fade(duration: 500.ms, delay: 600.ms)
-            .slide(begin: const Offset(0, -0.5)),
-        const SizedBox(height: 40),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ResponsiveButton(
-              text: 'View My Work',
-              onPressed: () {
-                context
-                    .read<ScrollCubit>()
-                    .scrollToSection(NavigationSection.portfolio);
-              },
-            )
-                .animate()
-                .fade(duration: 500.ms, delay: 800.ms)
-                .scale(begin: const Offset(0.9, 0.9)),
-            const SizedBox(width: 20),
-            ResponsiveButton(
-              text: 'Contact Me',
-              isOutlined: true,
-              onPressed: () {
-                context
-                    .read<ScrollCubit>()
-                    .scrollToSection(NavigationSection.contact);
-              },
-            )
-                .animate()
-                .fade(duration: 500.ms, delay: 1000.ms)
-                .scale(begin: const Offset(0.9, 0.9)),
-          ],
+    return SingleChildScrollView(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: MediaQuery.of(context).size.height -
+              (MediaQuery.of(context).padding.top +
+                  MediaQuery.of(context).padding.bottom),
         ),
-      ],
+        child: IntrinsicHeight(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Flexible(child: SizedBox(height: 20)),
+
+              _buildHeroImage(profile.avatarUrl, 240.0),
+              const SizedBox(height: 32),
+
+              ResponsiveText(
+                'Hello, I\'m',
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  color: theme.colorScheme.primary,
+                ),
+                textAlign: TextAlign.center,
+                tabletFontSize: 20.0,
+              )
+                  .animate()
+                  .fade(duration: 500.ms)
+                  .slide(begin: const Offset(0, -0.5)),
+
+              const SizedBox(height: 12), // Reduced from 16
+
+              ResponsiveText(
+                profile.name,
+                style: theme.textTheme.displayMedium,
+                textAlign: TextAlign.center,
+                tabletFontSize: 38.0, // Reduced from 42
+              )
+                  .animate()
+                  .fade(duration: 500.ms, delay: 200.ms)
+                  .slide(begin: const Offset(0, -0.5)),
+
+              const SizedBox(height: 16), // Reduced from 20
+
+              ResponsiveText(
+                profile.title,
+                style: theme.textTheme.headlineSmall,
+                textAlign: TextAlign.center,
+                tabletFontSize: 22.0, // Reduced from 24
+              )
+                  .animate()
+                  .fade(duration: 500.ms, delay: 400.ms)
+                  .slide(begin: const Offset(0, -0.5)),
+
+              const SizedBox(height: 20), // Reduced from 24
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                child: ResponsiveText(
+                  profile.introduction,
+                  style: theme.textTheme.bodyLarge,
+                  textAlign: TextAlign.center,
+                  tabletFontSize: 16.0,
+                )
+                    .animate()
+                    .fade(duration: 500.ms, delay: 600.ms)
+                    .slide(begin: const Offset(0, -0.5)),
+              ),
+
+              const SizedBox(height: 32), // Reduced from 40
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ResponsiveButton(
+                    text: 'View My Work',
+                    onPressed: () {
+                      context
+                          .read<ScrollCubit>()
+                          .scrollToSection(NavigationSection.portfolio);
+                    },
+                  )
+                      .animate()
+                      .fade(duration: 500.ms, delay: 800.ms)
+                      .scale(begin: const Offset(0.9, 0.9)),
+                  const SizedBox(width: 20),
+                  ResponsiveButton(
+                    text: 'Contact Me',
+                    isOutlined: true,
+                    onPressed: () {
+                      context
+                          .read<ScrollCubit>()
+                          .scrollToSection(NavigationSection.contact);
+                    },
+                  )
+                      .animate()
+                      .fade(duration: 500.ms, delay: 1000.ms)
+                      .scale(begin: const Offset(0.9, 0.9)),
+                ],
+              ),
+
+              // Flexible spacing at the bottom
+              const Flexible(child: SizedBox(height: 20)),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
   Widget _buildMobileHero(BuildContext context, dynamic profile) {
     final theme = Theme.of(context);
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        _buildHeroImage(profile.avatarUrl, 200.0),
-        const SizedBox(height: 32),
-        ResponsiveText(
-          'Hello, I\'m',
-          style: theme.textTheme.headlineMedium?.copyWith(
-            color: theme.colorScheme.primary,
-          ),
-          textAlign: TextAlign.center,
-          mobileFontSize: 18.0,
-        ).animate().fade(duration: 500.ms).slide(begin: const Offset(0, -0.5)),
-        const SizedBox(height: 12),
-        ResponsiveText(
-          profile.name,
-          style: theme.textTheme.displaySmall,
-          textAlign: TextAlign.center,
-          mobileFontSize: 32.0,
-        )
-            .animate()
-            .fade(duration: 500.ms, delay: 200.ms)
-            .slide(begin: const Offset(0, -0.5)),
-        const SizedBox(height: 16),
-        ResponsiveText(
-          profile.title,
-          style: theme.textTheme.titleLarge,
-          textAlign: TextAlign.center,
-          mobileFontSize: 20.0,
-        )
-            .animate()
-            .fade(duration: 500.ms, delay: 400.ms)
-            .slide(begin: const Offset(0, -0.5)),
-        const SizedBox(height: 20),
-        ResponsiveText(
-          profile.introduction,
-          style: theme.textTheme.bodyLarge,
-          textAlign: TextAlign.center,
-          mobileFontSize: 14.0,
-        )
-            .animate()
-            .fade(duration: 500.ms, delay: 600.ms)
-            .slide(begin: const Offset(0, -0.5)),
-        const SizedBox(height: 32),
-        Column(
-          children: [
-            ResponsiveButton(
-              text: 'View My Work',
-              onPressed: () {
-                context
-                    .read<ScrollCubit>()
-                    .scrollToSection(NavigationSection.portfolio);
-              },
-            )
-                .animate()
-                .fade(duration: 500.ms, delay: 800.ms)
-                .scale(begin: const Offset(0.9, 0.9)),
-            const SizedBox(height: 16),
-            ResponsiveButton(
-              text: 'Contact Me',
-              isOutlined: true,
-              onPressed: () {
-                context
-                    .read<ScrollCubit>()
-                    .scrollToSection(NavigationSection.contact);
-              },
-            )
-                .animate()
-                .fade(duration: 500.ms, delay: 1000.ms)
-                .scale(begin: const Offset(0.9, 0.9)),
-          ],
+    return SingleChildScrollView(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: MediaQuery.of(context).size.height -
+              (MediaQuery.of(context).padding.top +
+                  MediaQuery.of(context).padding.bottom),
         ),
-      ],
+        child: IntrinsicHeight(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Flexible spacing at the top
+              const Flexible(child: SizedBox(height: 20)),
+
+              _buildHeroImage(profile.avatarUrl, 180.0), // Reduced from 200
+              const SizedBox(height: 24), // Reduced from 32
+
+              ResponsiveText(
+                'Hello, I\'m',
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  color: theme.colorScheme.primary,
+                ),
+                textAlign: TextAlign.center,
+                mobileFontSize: 18.0,
+              )
+                  .animate()
+                  .fade(duration: 500.ms)
+                  .slide(begin: const Offset(0, -0.5)),
+
+              const SizedBox(height: 10), // Reduced from 12
+
+              ResponsiveText(
+                profile.name,
+                style: theme.textTheme.displaySmall,
+                textAlign: TextAlign.center,
+                mobileFontSize: 28.0, // Reduced from 32
+              )
+                  .animate()
+                  .fade(duration: 500.ms, delay: 200.ms)
+                  .slide(begin: const Offset(0, -0.5)),
+
+              const SizedBox(height: 12), // Reduced from 16
+
+              ResponsiveText(
+                profile.title,
+                style: theme.textTheme.titleLarge,
+                textAlign: TextAlign.center,
+                mobileFontSize: 18.0, // Reduced from 20
+              )
+                  .animate()
+                  .fade(duration: 500.ms, delay: 400.ms)
+                  .slide(begin: const Offset(0, -0.5)),
+
+              const SizedBox(height: 16), // Reduced from 20
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: ResponsiveText(
+                  profile.introduction,
+                  style: theme.textTheme.bodyLarge,
+                  textAlign: TextAlign.center,
+                  mobileFontSize: 14.0,
+                )
+                    .animate()
+                    .fade(duration: 500.ms, delay: 600.ms)
+                    .slide(begin: const Offset(0, -0.5)),
+              ),
+
+              const SizedBox(height: 24), // Reduced from 32
+
+              Column(
+                children: [
+                  ResponsiveButton(
+                    text: 'View My Work',
+                    onPressed: () {
+                      context
+                          .read<ScrollCubit>()
+                          .scrollToSection(NavigationSection.portfolio);
+                    },
+                  )
+                      .animate()
+                      .fade(duration: 500.ms, delay: 800.ms)
+                      .scale(begin: const Offset(0.9, 0.9)),
+                  const SizedBox(height: 16),
+                  ResponsiveButton(
+                    text: 'Contact Me',
+                    isOutlined: true,
+                    onPressed: () {
+                      context
+                          .read<ScrollCubit>()
+                          .scrollToSection(NavigationSection.contact);
+                    },
+                  )
+                      .animate()
+                      .fade(duration: 500.ms, delay: 1000.ms)
+                      .scale(begin: const Offset(0.9, 0.9)),
+                ],
+              ),
+
+              // Flexible spacing at the bottom
+              const Flexible(child: SizedBox(height: 20)),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
