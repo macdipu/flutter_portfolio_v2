@@ -25,6 +25,7 @@ class AppTheme {
   // Spacing
   static const double spacing4 = 4.0;
   static const double spacing8 = 8.0;
+  static const double spacing12 = 12.0;
   static const double spacing16 = 16.0;
   static const double spacing24 = 24.0;
   static const double spacing32 = 32.0;
@@ -32,6 +33,7 @@ class AppTheme {
   static const double spacing64 = 64.0;
 
   // Border radius
+  static const double borderRadius4 = 4.0;
   static const double borderRadius8 = 8.0;
   static const double borderRadius16 = 16.0;
   static const double borderRadius24 = 24.0;
