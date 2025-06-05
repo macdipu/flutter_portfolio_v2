@@ -3,7 +3,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/responsive/responsive_framework.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common/section_wrapper.dart';
 import '../../data/models/profile_model.dart';
 import '../bloc/portfolio_bloc.dart';
@@ -42,7 +41,7 @@ class ServicesSection extends StatelessWidget {
 
   Widget _buildLayout(BuildContext context, ProfileModel profile) {
     final contentWidth = ResponsiveHelper.getContentWidth(context);
-    final theme = Theme.of(context);
+    int crossAxisCount = ResponsiveHelper.getGridColumns(context);
 
     return Container(
       width: contentWidth,
@@ -50,26 +49,26 @@ class ServicesSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: AppTheme.spacing48),
-          SizedBox(
-            height: 320,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              itemCount: profile.services.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  width: contentWidth * 0.9,
-                  margin: const EdgeInsets.only(right: AppTheme.spacing24),
-                  child: _ServiceCard(
-                    title: profile.services[index].title,
-                    description: profile.services[index].description,
-                    iconUrl: profile.services[index].iconUrl,
-                    index: index,
-                  ),
-                );
-              },
+          const SizedBox(height: 48),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: profile.services.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              crossAxisSpacing: 24,
+              mainAxisSpacing: 24,
+              childAspectRatio: 4 / 3,
             ),
+            itemBuilder: (context, index) {
+              final service = profile.services[index];
+              return _ServiceCard(
+                title: service.title,
+                description: service.description,
+                iconUrl: service.iconUrl,
+                index: index,
+              );
+            },
           ),
         ],
       ),
@@ -95,23 +94,23 @@ class _ServiceCard extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Card(
-      elevation: 3,
+      elevation: 2,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.borderRadius16),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacing24),
+        padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 64,
-              height: 64,
+              width: 48,
+              height: 48,
               decoration: BoxDecoration(
                 color: theme.colorScheme.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(AppTheme.borderRadius16),
+                borderRadius: BorderRadius.circular(12),
               ),
-              padding: const EdgeInsets.all(AppTheme.spacing8),
+              padding: const EdgeInsets.all(6),
               child: iconUrl.isNotEmpty
                   ? Image.network(
                       iconUrl,
@@ -120,29 +119,29 @@ class _ServiceCard extends StatelessWidget {
                         return Icon(
                           Icons.code,
                           color: theme.colorScheme.primary,
-                          size: 32,
+                          size: 24,
                         );
                       },
                     )
                   : Icon(
                       Icons.code,
                       color: theme.colorScheme.primary,
-                      size: 32,
+                      size: 24,
                     ),
             ),
-            const SizedBox(height: AppTheme.spacing16),
+            const SizedBox(height: 12),
             Text(
               title,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w600,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: AppTheme.spacing8),
+            const SizedBox(height: 6),
             Expanded(
               child: Text(
                 description,
-                style: theme.textTheme.bodyMedium,
+                style: theme.textTheme.bodySmall,
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 4,
@@ -154,6 +153,6 @@ class _ServiceCard extends StatelessWidget {
     )
         .animate()
         .fade(duration: 600.ms, delay: Duration(milliseconds: 200 * index))
-        .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1));
+        .scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1));
   }
 }
