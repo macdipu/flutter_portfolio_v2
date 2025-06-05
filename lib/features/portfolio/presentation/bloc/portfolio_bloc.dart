@@ -34,7 +34,7 @@ class PortfolioBloc extends Bloc<PortfolioEvent, PortfolioState> {
     } catch (e) {
       emit(state.copyWith(
         isLoading: false,
-        error: 'Failed to load profile data: ${e.toString()}',
+        error: 'Failed to load portfolio data: ${e.toString()}',
       ));
     }
   }
@@ -47,6 +47,7 @@ class PortfolioBloc extends Bloc<PortfolioEvent, PortfolioState> {
       emit(state.copyWith(
         isLoading: false,
         blogPosts: blogPosts,
+        visibleBlogPostCount: 6, // Default to 6 posts
       ));
     } catch (e) {
       emit(state.copyWith(
@@ -61,7 +62,7 @@ class PortfolioBloc extends Bloc<PortfolioEvent, PortfolioState> {
     emit(state.copyWith(
       isContactFormSubmitting: true,
       isContactFormSubmitted: false,
-      contactFormError: null,
+      contactFormStatus: null,
     ));
     await Future.delayed(const Duration(seconds: 1));
     emit(state.copyWith(
@@ -72,15 +73,16 @@ class PortfolioBloc extends Bloc<PortfolioEvent, PortfolioState> {
 
   void _onUpdateTechStackCategory(
       UpdateTechStackCategory event, Emitter<PortfolioState> emit) {
-    if (state.profile == null) return;
-    final filteredTechStacks = event.category == 'All'
-        ? state.profile!.techStacks
-        : state.profile!.techStacks
-            .where((tech) => tech.category == event.category)
-            .toList();
-    emit(state.copyWith(
-      selectedCategory: event.category,
-      filteredTechStacks: filteredTechStacks,
-    ));
+    if (state.profile == null) {
+      final filteredTechStacks = event.category == 'All'
+          ? state.profile!.techStacks
+          : state.profile!.techStacks
+              .where((tech) => tech.category == event.category)
+              .toList();
+      emit(state.copyWith(
+        selectedCategory: event.category,
+        filteredTechStacks: filteredTechStacks,
+      ));
+    }
   }
 }
