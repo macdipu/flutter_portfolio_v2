@@ -2,58 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/responsive/responsive_framework.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/common/section_wrapper.dart';
+import '../../data/models/profile_model.dart';
 import '../bloc/portfolio_bloc.dart';
-import 'section_header.dart';
 
-class TechStackSection extends StatefulWidget {
+class TechStackSection extends StatelessWidget {
   const TechStackSection({super.key});
 
   @override
-  State<TechStackSection> createState() => _TechStackSectionState();
-}
-
-class _TechStackSectionState extends State<TechStackSection>
-    with SingleTickerProviderStateMixin {
-  String _selectedCategory = 'All';
-  late TabController _tabController;
-  final List<String> _categories = [
-    'All',
-    'Frameworks',
-    'Programming Languages',
-    'UI & Design',
-    'Dev Tools & Productivity',
-    'Other Technologies',
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: _categories.length, vsync: this);
-    _tabController.addListener(_handleTabChange);
-  }
-
-  void _handleTabChange() {
-    if (_tabController.indexIsChanging) {
-      setState(() {
-        _selectedCategory = _categories[_tabController.index];
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _tabController.removeListener(_handleTabChange);
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final isDesktop = screenSize.width >= 1024;
-    final theme = Theme.of(context);
-
     return BlocBuilder<PortfolioBloc, PortfolioState>(
       builder: (context, state) {
         if (state.isLoading && state.profile == null) {
@@ -65,67 +24,128 @@ class _TechStackSectionState extends State<TechStackSection>
           return const Center(child: Text('No profile data available'));
         }
 
-        // Filter tech stacks based on selected category
-        final filteredTechStacks = _selectedCategory == 'All'
-            ? profile.techStacks
-            : profile.techStacks
-                .where((tech) => tech.category == _selectedCategory)
-                .toList();
-
-        return Container(
-          padding: EdgeInsets.only(
-            left: AppTheme.spacing24,
-            right: AppTheme.spacing24,
-            top: AppTheme.spacing64,
-            bottom: AppTheme.spacing64,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SectionHeader(
-                title: 'Tech Stack',
-                subtitle: 'My Technical Skills',
-              ),
-              const SizedBox(height: AppTheme.spacing32),
-
-              // Category tabs
-              TabBar(
-                controller: _tabController,
-                isScrollable: true,
-                labelColor: theme.colorScheme.primary,
-                unselectedLabelColor: theme.textTheme.bodyMedium?.color,
-                indicatorColor: theme.colorScheme.primary,
-                tabs:
-                    _categories.map((category) => Tab(text: category)).toList(),
-              ),
-              const SizedBox(height: AppTheme.spacing32),
-
-              // Tech stack grid
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount:
-                      isDesktop ? 4 : (screenSize.width > 600 ? 3 : 2),
-                  crossAxisSpacing: AppTheme.spacing16,
-                  mainAxisSpacing: AppTheme.spacing16,
-                  childAspectRatio: 1.0,
-                ),
-                itemCount: filteredTechStacks.length,
-                itemBuilder: (context, index) {
-                  final tech = filteredTechStacks[index];
-                  return _TechStackCard(
-                    name: tech.name,
-                    iconUrl: tech.iconUrl,
-                    proficiency: tech.proficiency,
-                    index: index,
-                  );
-                },
-              ),
-            ],
-          ),
+        return SectionWrapper(
+          sectionId: 'techStack',
+          title: 'Tech Stack',
+          subtitle: 'My Technical Skills',
+          addTopPadding: true,
+          addBottomPadding: true,
+          mobileChild: _buildLayout(
+              context, state.filteredTechStacks, state.selectedCategory),
+          tabletChild: _buildLayout(
+              context, state.filteredTechStacks, state.selectedCategory),
+          smallLaptopChild: _buildLayout(
+              context, state.filteredTechStacks, state.selectedCategory),
+          desktopChild: _buildLayout(
+              context, state.filteredTechStacks, state.selectedCategory),
+          largeDesktopChild: _buildLayout(
+              context, state.filteredTechStacks, state.selectedCategory),
         );
       },
+    );
+  }
+
+  Widget _buildLayout(BuildContext context,
+      List<TechStackModel> filteredTechStacks, selectedCategory) {
+    final theme = Theme.of(context);
+    final contentWidth = ResponsiveHelper.getContentWidth(context);
+    final categories = [
+      'All',
+      'Frameworks',
+      'Programming Languages',
+      'UI & Design',
+      'Dev Tools & Productivity',
+      'Other Technologies',
+    ];
+    // Override getGridColumns for denser grid
+    final crossAxisCount = ResponsiveHelper.getResponsiveValue<int>(
+      context: context,
+      mobile: 2,
+      tablet: 3,
+      smallLaptop: 4,
+      desktop: 6,
+      largeDesktop: 6,
+    );
+
+    return Container(
+      width: contentWidth,
+      padding: ResponsiveHelper.getResponsivePadding(context),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: AppTheme.spacing32),
+          // Category chips
+          SizedBox(
+            height: 40,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              itemCount: categories.length,
+              itemBuilder: (context, index) {
+                final category = categories[index];
+                return Padding(
+                  padding: const EdgeInsets.only(right: AppTheme.spacing8),
+                  child: ChoiceChip(
+                    label: Text(category),
+                    selected: selectedCategory == category,
+                    onSelected: (selected) {
+                      if (selected) {
+                        context.read<PortfolioBloc>().add(
+                              UpdateTechStackCategory(category),
+                            );
+                      }
+                    },
+                    selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                    backgroundColor: theme.colorScheme.surface,
+                    labelStyle: theme.textTheme.bodyMedium?.copyWith(
+                      color: selectedCategory == category
+                          ? theme.colorScheme.primary
+                          : theme.textTheme.bodyMedium?.color,
+                      fontWeight: selectedCategory == category
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(AppTheme.borderRadius8),
+                      side: BorderSide(
+                        color: selectedCategory == category
+                            ? theme.colorScheme.primary
+                            : Colors.transparent,
+                      ),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppTheme.spacing16,
+                      vertical: AppTheme.spacing8,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: AppTheme.spacing32),
+          // Tech stack grid
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              crossAxisSpacing: AppTheme.spacing8,
+              mainAxisSpacing: AppTheme.spacing8,
+              childAspectRatio: 1.0,
+            ),
+            itemCount: filteredTechStacks.length,
+            itemBuilder: (context, index) {
+              final tech = filteredTechStacks[index];
+              return _TechStackCard(
+                name: tech.name,
+                iconUrl: tech.iconUrl,
+                index: index,
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }
@@ -133,13 +153,11 @@ class _TechStackSectionState extends State<TechStackSection>
 class _TechStackCard extends StatelessWidget {
   final String name;
   final String iconUrl;
-  final double proficiency;
   final int index;
 
   const _TechStackCard({
     required this.name,
     required this.iconUrl,
-    required this.proficiency,
     required this.index,
   });
 
@@ -150,21 +168,21 @@ class _TechStackCard extends StatelessWidget {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.borderRadius16),
+        borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacing16),
+        padding: const EdgeInsets.all(AppTheme.spacing8),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 48,
-              height: 48,
+              width: 32,
+              height: 32,
               decoration: BoxDecoration(
                 color: theme.colorScheme.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
+                borderRadius: BorderRadius.circular(AppTheme.borderRadius4),
               ),
-              padding: const EdgeInsets.all(AppTheme.spacing8),
+              padding: const EdgeInsets.all(AppTheme.spacing4),
               child: iconUrl.isNotEmpty
                   ? Image.network(
                       iconUrl,
@@ -173,37 +191,24 @@ class _TechStackCard extends StatelessWidget {
                         return Icon(
                           Icons.code,
                           color: theme.colorScheme.primary,
-                          size: 24,
+                          size: 16,
                         );
                       },
                     )
                   : Icon(
                       Icons.code,
                       color: theme.colorScheme.primary,
-                      size: 24,
+                      size: 16,
                     ),
-            ),
-            const SizedBox(height: AppTheme.spacing8),
-            Text(
-              name,
-              style: theme.textTheme.titleSmall,
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: AppTheme.spacing8),
-            // Proficiency indicator
-            LinearProgressIndicator(
-              value: proficiency,
-              backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
-              valueColor:
-                  AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
-              borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
             ),
             const SizedBox(height: AppTheme.spacing4),
             Text(
-              '${(proficiency * 100).toInt()}%',
-              style: theme.textTheme.bodySmall,
+              name,
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
               textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
