@@ -15,39 +15,23 @@ class AboutSection extends StatelessWidget {
       addBottomPadding: true,
       mobileChild: _buildLayout(
         context,
-        maxWidth: double.infinity,
-        crossAxisCount: 1, // Override getGridColumns (1 for mobile)
       ),
       tabletChild: _buildLayout(
         context,
-        maxWidth: 720.0,
-        crossAxisCount: 1, // Override getGridColumns (2 for tablet)
       ),
-      smallLaptopChild: _buildLayout(
-        context,
-        maxWidth: 860.0,
-        crossAxisCount: 2, // Matches getGridColumns (2 for smallLaptop)
-      ),
+      smallLaptopChild: _buildLayout(context),
       desktopChild: _buildLayout(
         context,
-        maxWidth: 1024.0,
-        crossAxisCount: 2, // Override getGridColumns (3 for desktop)
       ),
       largeDesktopChild: _buildLayout(
         context,
-        maxWidth: 1200.0,
-        crossAxisCount: 2, // Override getGridColumns (4 for largeDesktop)
       ),
     );
   }
 
-  Widget _buildLayout(
-    BuildContext context, {
-    required double maxWidth,
-    required int crossAxisCount,
-  }) {
+  Widget _buildLayout(BuildContext context) {
     return Container(
-      width: maxWidth,
+      width: ResponsiveHelper.getContentWidth(context),
       padding: ResponsiveHelper.getResponsivePadding(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,7 +62,7 @@ class AboutSection extends StatelessWidget {
 
               return GridView.count(
                 shrinkWrap: true,
-                crossAxisCount: crossAxisCount,
+                crossAxisCount: ResponsiveHelper.getGridColumns(context),
                 crossAxisSpacing: spacing,
                 mainAxisSpacing: spacing,
                 physics: const NeverScrollableScrollPhysics(),
