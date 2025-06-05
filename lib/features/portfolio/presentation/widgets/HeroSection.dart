@@ -19,7 +19,7 @@ class HeroSection extends StatelessWidget {
         if (state.isLoading && state.profile == null) {
           return const SectionWrapper(
             fullHeight: true,
-            child: Center(child: CircularProgressIndicator()),
+            mobileChild: Center(child: CircularProgressIndicator()),
           );
         }
 
@@ -27,98 +27,68 @@ class HeroSection extends StatelessWidget {
         if (profile == null) {
           return const SectionWrapper(
             fullHeight: true,
-            child: Center(child: Text('No profile data available')),
+            mobileChild: Center(child: Text('No profile data available')),
           );
         }
 
+        // Define responsive values for all breakpoints
+        final imageSize = ResponsiveHelper.getResponsiveValue<double>(
+          context: context,
+          mobile: 180.0,
+          tablet: 240.0,
+          smallLaptop: 300.0,
+          desktop: 400.0,
+          largeDesktop: 480.0,
+        );
+
+        final greetingSize = ResponsiveHelper.getFontSize(
+          context,
+          mobile: 18.0,
+          tablet: 20.0,
+          smallLaptop: 22.0,
+          desktop: 24.0,
+          largeDesktop: 26.0,
+        );
+
+        final nameSize = ResponsiveHelper.getFontSize(
+          context,
+          mobile: 28.0,
+          tablet: 38.0,
+          smallLaptop: 46.0,
+          desktop: 56.0,
+          largeDesktop: 64.0,
+        );
+
+        final titleSize = ResponsiveHelper.getFontSize(
+          context,
+          mobile: 18.0,
+          tablet: 22.0,
+          smallLaptop: 24.0,
+          desktop: 28.0,
+          largeDesktop: 30.0,
+        );
+
+        final introSize = ResponsiveHelper.getFontSize(
+          context,
+          mobile: 14.0,
+          tablet: 16.0,
+          smallLaptop: 17.0,
+          desktop: 18.0,
+          largeDesktop: 20.0,
+        );
+
         return SectionWrapper(
           fullHeight: true,
-          centerContent: true,
-          child: ResponsiveBuilder(
-            builder: (context, deviceType, constraints) {
-              // Define responsive values for all breakpoints
-              final imageSize = ResponsiveHelper.getResponsiveValue<double>(
-                context: context,
-                mobile: 180.0,
-                tablet: 240.0,
-                smallLaptop: 300.0,
-                desktop: 400.0,
-                largeDesktop: 480.0,
-              );
-
-              final greetingSize = ResponsiveHelper.getFontSize(
-                context,
-                mobile: 18.0,
-                tablet: 20.0,
-                smallLaptop: 22.0,
-                desktop: 24.0,
-                largeDesktop: 26.0,
-              );
-
-              final nameSize = ResponsiveHelper.getFontSize(
-                context,
-                mobile: 28.0,
-                tablet: 38.0,
-                smallLaptop: 46.0,
-                desktop: 56.0,
-                largeDesktop: 64.0,
-              );
-
-              final titleSize = ResponsiveHelper.getFontSize(
-                context,
-                mobile: 18.0,
-                tablet: 22.0,
-                smallLaptop: 24.0,
-                desktop: 28.0,
-                largeDesktop: 30.0,
-              );
-
-              final introSize = ResponsiveHelper.getFontSize(
-                context,
-                mobile: 14.0,
-                tablet: 16.0,
-                smallLaptop: 17.0,
-                desktop: 18.0,
-                largeDesktop: 20.0,
-              );
-
-              final horizontalPadding =
-                  ResponsiveHelper.getResponsiveValue<double>(
-                context: context,
-                mobile: 24.0,
-                tablet: 32.0,
-                smallLaptop: 48.0,
-                desktop: 64.0,
-                largeDesktop: 80.0,
-              );
-
-              // Use vertical layout for mobile and tablet, horizontal for others
-              final isVertical = deviceType == DeviceType.mobile ||
-                  deviceType == DeviceType.tablet;
-
-              return isVertical
-                  ? _buildVerticalLayout(
-                      context,
-                      profile,
-                      imageSize,
-                      greetingSize,
-                      nameSize,
-                      titleSize,
-                      introSize,
-                      horizontalPadding,
-                    )
-                  : _buildHorizontalLayout(
-                      context,
-                      profile,
-                      imageSize,
-                      greetingSize,
-                      nameSize,
-                      titleSize,
-                      introSize,
-                      horizontalPadding,
-                    );
-            },
-          ),
+          mobileChild: _buildVerticalLayout(context, profile, imageSize,
+              greetingSize, nameSize, titleSize, introSize),
+          tabletChild: _buildVerticalLayout(context, profile, imageSize,
+              greetingSize, nameSize, titleSize, introSize),
+          smallLaptopChild: _buildHorizontalLayout(context, profile, imageSize,
+              greetingSize, nameSize, titleSize, introSize),
+          desktopChild: _buildHorizontalLayout(context, profile, imageSize,
+              greetingSize, nameSize, titleSize, introSize),
+          largeDesktopChild: _buildHorizontalLayout(context, profile, imageSize,
+              greetingSize, nameSize, titleSize, introSize),
         );
       },
     );
@@ -132,7 +102,6 @@ class HeroSection extends StatelessWidget {
     double nameSize,
     double titleSize,
     double introSize,
-    double horizontalPadding,
   ) {
     final theme = Theme.of(context);
 
@@ -194,22 +163,19 @@ class HeroSection extends StatelessWidget {
                   .fade(duration: 500.ms, delay: 400.ms)
                   .slide(begin: const Offset(0, -0.5)),
               const SizedBox(height: 16),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                child: ResponsiveText(
-                  profile.introduction,
-                  style: theme.textTheme.bodyLarge,
-                  textAlign: TextAlign.center,
-                  mobileFontSize: introSize,
-                  tabletFontSize: introSize,
-                  smallLaptopFontSize: introSize,
-                  desktopFontSize: introSize,
-                  largeDesktopFontSize: introSize,
-                )
-                    .animate()
-                    .fade(duration: 500.ms, delay: 600.ms)
-                    .slide(begin: const Offset(0, -0.5)),
-              ),
+              ResponsiveText(
+                profile.introduction,
+                style: theme.textTheme.bodyLarge,
+                textAlign: TextAlign.center,
+                mobileFontSize: introSize,
+                tabletFontSize: introSize,
+                smallLaptopFontSize: introSize,
+                desktopFontSize: introSize,
+                largeDesktopFontSize: introSize,
+              )
+                  .animate()
+                  .fade(duration: 500.ms, delay: 600.ms)
+                  .slide(begin: const Offset(0, -0.5)),
               const SizedBox(height: 24),
               _buildButtons(context, isVertical: true),
               const Flexible(child: SizedBox(height: 20)),
@@ -228,7 +194,6 @@ class HeroSection extends StatelessWidget {
     double nameSize,
     double titleSize,
     double introSize,
-    double horizontalPadding,
   ) {
     final theme = Theme.of(context);
 
@@ -236,64 +201,60 @@ class HeroSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ResponsiveText(
-                  'Hello, I\'m',
-                  style: theme.textTheme.headlineMedium?.copyWith(
-                    color: theme.colorScheme.primary,
-                  ),
-                  smallLaptopFontSize: greetingSize,
-                  desktopFontSize: greetingSize,
-                  largeDesktopFontSize: greetingSize,
-                )
-                    .animate()
-                    .fade(duration: 500.ms)
-                    .slide(begin: const Offset(0, -0.5)),
-                const SizedBox(height: 16),
-                ResponsiveText(
-                  profile.name,
-                  style: theme.textTheme.displayLarge,
-                  smallLaptopFontSize: nameSize,
-                  desktopFontSize: nameSize,
-                  largeDesktopFontSize: nameSize,
-                )
-                    .animate()
-                    .fade(duration: 500.ms, delay: 200.ms)
-                    .slide(begin: const Offset(0, -0.5)),
-                const SizedBox(height: 24),
-                ResponsiveText(
-                  profile.title,
-                  style: theme.textTheme.headlineSmall,
-                  smallLaptopFontSize: titleSize,
-                  desktopFontSize: titleSize,
-                  largeDesktopFontSize: titleSize,
-                )
-                    .animate()
-                    .fade(duration: 500.ms, delay: 400.ms)
-                    .slide(begin: const Offset(0, -0.5)),
-                const SizedBox(height: 32),
-                ResponsiveText(
-                  profile.introduction,
-                  style: theme.textTheme.bodyLarge,
-                  smallLaptopFontSize: introSize,
-                  desktopFontSize: introSize,
-                  largeDesktopFontSize: introSize,
-                )
-                    .animate()
-                    .fade(duration: 500.ms, delay: 600.ms)
-                    .slide(begin: const Offset(0, -0.5)),
-                const SizedBox(height: 48),
-                _buildButtons(context),
-              ],
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ResponsiveText(
+                'Hello, I\'m',
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  color: theme.colorScheme.primary,
+                ),
+                smallLaptopFontSize: greetingSize,
+                desktopFontSize: greetingSize,
+                largeDesktopFontSize: greetingSize,
+              )
+                  .animate()
+                  .fade(duration: 500.ms)
+                  .slide(begin: const Offset(0, -0.5)),
+              const SizedBox(height: 16),
+              ResponsiveText(
+                profile.name,
+                style: theme.textTheme.displayLarge,
+                smallLaptopFontSize: nameSize,
+                desktopFontSize: nameSize,
+                largeDesktopFontSize: nameSize,
+              )
+                  .animate()
+                  .fade(duration: 500.ms, delay: 200.ms)
+                  .slide(begin: const Offset(0, -0.5)),
+              const SizedBox(height: 24),
+              ResponsiveText(
+                profile.title,
+                style: theme.textTheme.headlineSmall,
+                smallLaptopFontSize: titleSize,
+                desktopFontSize: titleSize,
+                largeDesktopFontSize: titleSize,
+              )
+                  .animate()
+                  .fade(duration: 500.ms, delay: 400.ms)
+                  .slide(begin: const Offset(0, -0.5)),
+              const SizedBox(height: 32),
+              ResponsiveText(
+                profile.introduction,
+                style: theme.textTheme.bodyLarge,
+                smallLaptopFontSize: introSize,
+                desktopFontSize: introSize,
+                largeDesktopFontSize: introSize,
+              )
+                  .animate()
+                  .fade(duration: 500.ms, delay: 600.ms)
+                  .slide(begin: const Offset(0, -0.5)),
+              const SizedBox(height: 48),
+              _buildButtons(context),
+            ],
           ),
         ),
-        SizedBox(width: horizontalPadding),
         _buildHeroImage(profile.avatarUrl, imageSize),
       ],
     );
