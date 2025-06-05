@@ -73,16 +73,15 @@ class PortfolioBloc extends Bloc<PortfolioEvent, PortfolioState> {
 
   void _onUpdateTechStackCategory(
       UpdateTechStackCategory event, Emitter<PortfolioState> emit) {
-    if (state.profile == null) {
-      final filteredTechStacks = event.category == 'All'
-          ? state.profile!.techStacks
-          : state.profile!.techStacks
-              .where((tech) => tech.category == event.category)
-              .toList();
-      emit(state.copyWith(
-        selectedCategory: event.category,
-        filteredTechStacks: filteredTechStacks,
-      ));
-    }
+    if (state.profile == null) return;
+    final filteredTechStacks = event.category == 'All'
+        ? state.profile!.techStacks
+        : state.profile!.techStacks
+            .where((tech) => tech.category == event.category)
+            .toList();
+    emit(state.copyWith(
+      selectedCategory: event.category,
+      filteredTechStacks: filteredTechStacks,
+    ));
   }
 }

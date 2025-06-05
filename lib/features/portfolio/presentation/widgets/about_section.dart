@@ -13,23 +13,30 @@ class AboutSection extends StatelessWidget {
       subtitle: 'A brief introduction to my skills and experience',
       addTopPadding: true,
       addBottomPadding: true,
-      mobileChild: _buildLayout(
-        context,
-      ),
-      tabletChild: _buildLayout(
-        context,
-      ),
+      mobileChild: _buildLayout(context),
+      tabletChild: _buildLayout(context),
       smallLaptopChild: _buildLayout(context),
-      desktopChild: _buildLayout(
-        context,
-      ),
-      largeDesktopChild: _buildLayout(
-        context,
-      ),
+      desktopChild: _buildLayout(context),
+      largeDesktopChild: _buildLayout(context),
     );
   }
 
   Widget _buildLayout(BuildContext context) {
+    final spacing = context.responsive(
+      mobile: 12.0,
+      tablet: 16.0,
+      smallLaptop: 20.0,
+      desktop: 24.0,
+      largeDesktop: 32.0,
+    );
+
+    final cards = const [
+      _AboutCard(title: 'Frontend', experience: '3+ yrs'),
+      _AboutCard(title: 'Backend', experience: '2+ yrs'),
+      _AboutCard(title: 'UI/UX', experience: '1.5+ yrs'),
+      _AboutCard(title: 'Tools', experience: '4+ yrs'),
+    ];
+
     return Container(
       width: ResponsiveHelper.getContentWidth(context),
       padding: ResponsiveHelper.getResponsivePadding(context),
@@ -50,32 +57,10 @@ class AboutSection extends StatelessWidget {
                 ),
           ),
           const SizedBox(height: 24),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final spacing = context.responsive(
-                mobile: 16.0,
-                tablet: 24.0,
-                smallLaptop: 32.0,
-                desktop: 40.0,
-                largeDesktop: 48.0,
-              );
-
-              return GridView.count(
-                shrinkWrap: true,
-                crossAxisCount: ResponsiveHelper.getGridColumns(context),
-                crossAxisSpacing: spacing,
-                mainAxisSpacing: spacing,
-                physics: const NeverScrollableScrollPhysics(),
-                children: const [
-                  _AboutCard(
-                      title: 'Frontend', description: 'Flutter, HTML, CSS'),
-                  _AboutCard(
-                      title: 'Backend', description: 'Firebase, Supabase'),
-                  _AboutCard(title: 'UI/UX', description: 'Figma, Adobe XD'),
-                  _AboutCard(title: 'Tools', description: 'Git, GitHub, CLI'),
-                ],
-              );
-            },
+          Wrap(
+            spacing: spacing,
+            runSpacing: spacing,
+            children: cards,
           ),
         ],
       ),
@@ -85,42 +70,67 @@ class AboutSection extends StatelessWidget {
 
 class _AboutCard extends StatelessWidget {
   final String title;
-  final String description;
+  final String experience;
 
-  const _AboutCard({required this.title, required this.description});
+  const _AboutCard({
+    required this.title,
+    required this.experience,
+  });
 
   @override
   Widget build(BuildContext context) {
     final padding = context.responsive(
-      mobile: 16.0,
-      tablet: 20.0,
-      smallLaptop: 24.0,
-      desktop: 28.0,
-      largeDesktop: 32.0,
+      mobile: 12.0,
+      tablet: 16.0,
+      smallLaptop: 18.0,
+      desktop: 20.0,
+      largeDesktop: 24.0,
     );
 
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: EdgeInsets.all(padding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              description,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[700],
-                  ),
-            ),
-          ],
+    final cardWidth = context.responsive(
+      mobile: 140.0,
+      tablet: 160.0,
+      smallLaptop: 180.0,
+      desktop: 200.0,
+      largeDesktop: 220.0,
+    );
+
+    return SizedBox(
+      width: cardWidth,
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(padding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  experience,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
