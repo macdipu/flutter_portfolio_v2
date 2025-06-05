@@ -3,40 +3,17 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:timelines_plus/timelines_plus.dart';
 
+import '../../../../core/responsive/responsive_framework.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/common/section_wrapper.dart';
 import '../../data/models/profile_model.dart';
 import '../bloc/portfolio_bloc.dart';
-import 'section_header.dart';
 
-class ExperienceSection extends StatefulWidget {
+class ExperienceSection extends StatelessWidget {
   const ExperienceSection({super.key});
 
   @override
-  State<ExperienceSection> createState() => _ExperienceSectionState();
-}
-
-class _ExperienceSectionState extends State<ExperienceSection>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final isDesktop = screenSize.width >= 1024;
-    final theme = Theme.of(context);
-
     return BlocBuilder<PortfolioBloc, PortfolioState>(
       builder: (context, state) {
         if (state.isLoading && state.profile == null) {
@@ -48,122 +25,144 @@ class _ExperienceSectionState extends State<ExperienceSection>
           return const Center(child: Text('No profile data available'));
         }
 
-        return Container(
-          padding: EdgeInsets.only(
-            left: AppTheme.spacing24,
-            right: AppTheme.spacing24,
-            top: AppTheme.spacing64,
-            bottom: AppTheme.spacing64,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SectionHeader(
-                title: 'Experience',
-                subtitle: 'My Journey',
-              ),
-              const SizedBox(height: AppTheme.spacing32),
-
-              // Tab bar for switching between experience and education
-              Container(
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
-                ),
-                child: TabBar(
-                  controller: _tabController,
-                  indicatorColor: theme.colorScheme.primary,
-                  labelColor: theme.colorScheme.primary,
-                  unselectedLabelColor: theme.textTheme.bodyMedium?.color,
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  tabs: const [
-                    Tab(text: 'Work Experience'),
-                    Tab(text: 'Education'),
-                  ],
-                ),
-              ),
-              const SizedBox(height: AppTheme.spacing32),
-
-              // Tab content
-              SizedBox(
-                height: 480, // Adjust height based on content
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    // Work experience timeline
-                    _TimelineView(items: profile.experiences),
-
-                    // Education timeline
-                    _TimelineView(items: profile.educations),
-                  ],
-                ),
-              ),
-            ],
-          ),
+        return SectionWrapper(
+          sectionId: 'experience',
+          title: 'Experience',
+          subtitle: 'My Journey',
+          addTopPadding: true,
+          addBottomPadding: true,
+          mobileChild: _buildLayout(context, profile, isVertical: true),
+          tabletChild: _buildLayout(context, profile, isVertical: true),
+          smallLaptopChild: _buildLayout(context, profile, isVertical: false),
+          desktopChild: _buildLayout(context, profile, isVertical: false),
+          largeDesktopChild: _buildLayout(context, profile, isVertical: false),
         );
       },
     );
   }
-}
 
-class _TimelineView extends StatelessWidget {
-  final List<dynamic> items;
+  Widget _buildLayout(BuildContext context, ProfileModel profile,
+      {required bool isVertical}) {
+    final theme = Theme.of(context);
+    final contentWidth = ResponsiveHelper.getContentWidth(context);
 
-  const _TimelineView({
-    required this.items,
-  });
+    return Container(
+      width: contentWidth,
+      padding: ResponsiveHelper.getResponsivePadding(context),
+      child: isVertical
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildTimelineSection(
+                  context,
+                  title: 'Work Experience',
+                  items: profile.experiences,
+                  isWork: true,
+                ),
+                const SizedBox(height: AppTheme.spacing32),
+                _buildTimelineSection(
+                  context,
+                  title: 'Education',
+                  items: profile.educations,
+                  isWork: false,
+                ),
+              ],
+            )
+          : Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: _buildTimelineSection(
+                    context,
+                    title: 'Work Experience',
+                    items: profile.experiences,
+                    isWork: true,
+                  ),
+                ),
+                const SizedBox(width: AppTheme.spacing32),
+                Expanded(
+                  child: _buildTimelineSection(
+                    context,
+                    title: 'Education',
+                    items: profile.educations,
+                    isWork: false,
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildTimelineSection(BuildContext context,
+      {required String title,
+      required List<dynamic> items,
+      required bool isWork}) {
     final theme = Theme.of(context);
 
-    return FixedTimeline.tileBuilder(
-      theme: TimelineThemeData(
-        nodePosition: 0,
-        color: theme.colorScheme.primary,
-        indicatorTheme: IndicatorThemeData(
-          size: 20,
-          color: theme.colorScheme.primary,
-        ),
-        connectorTheme: ConnectorThemeData(
-          thickness: 2.5,
-          color: theme.colorScheme.primary.withOpacity(0.5),
-        ),
-      ),
-      builder: TimelineTileBuilder.connected(
-        connectionDirection: ConnectionDirection.before,
-        itemCount: items.length,
-        contentsBuilder: (_, index) {
-          final item = items[index];
-          return Padding(
-            padding: const EdgeInsets.only(
-                left: AppTheme.spacing24, bottom: AppTheme.spacing32),
-            child: _TimelineCard(
-              title: item is ExperienceModel ? item.company : item.institution,
-              subtitle: item is ExperienceModel ? item.position : item.degree,
-              period: item.period,
-              description: item.description,
-              logoUrl: item.logoUrl,
-              index: index,
-            ),
-          );
-        },
-        indicatorBuilder: (_, index) {
-          return DotIndicator(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: theme.textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
             color: theme.colorScheme.primary,
-            child: Icon(
-              items[index] is ExperienceModel ? Icons.work : Icons.school,
-              color: Colors.white,
-              size: 12,
+          ),
+        ),
+        const SizedBox(height: AppTheme.spacing16),
+        FixedTimeline.tileBuilder(
+          theme: TimelineThemeData(
+            nodePosition: 0,
+            color: theme.colorScheme.primary,
+            indicatorTheme: IndicatorThemeData(
+              size: 20,
+              color: theme.colorScheme.primary,
             ),
-          );
-        },
-        connectorBuilder: (_, index, __) {
-          return SolidLineConnector(
-            color: theme.colorScheme.primary.withOpacity(0.5),
-          );
-        },
-      ),
+            connectorTheme: ConnectorThemeData(
+              thickness: 2.5,
+              color: theme.colorScheme.primary.withOpacity(0.5),
+            ),
+          ),
+          builder: TimelineTileBuilder.connected(
+            connectionDirection: ConnectionDirection.before,
+            itemCount: items.length,
+            contentsBuilder: (_, index) {
+              final item = items[index];
+              return Padding(
+                padding: const EdgeInsets.only(
+                  left: AppTheme.spacing24,
+                  bottom: AppTheme.spacing32,
+                ),
+                child: _TimelineCard(
+                  title:
+                      item is ExperienceModel ? item.company : item.institution,
+                  subtitle:
+                      item is ExperienceModel ? item.position : item.degree,
+                  period: item.period,
+                  description: item.description,
+                  logoUrl: item.logoUrl,
+                  index: index,
+                ),
+              );
+            },
+            indicatorBuilder: (_, index) {
+              return DotIndicator(
+                color: theme.colorScheme.primary,
+                child: Icon(
+                  isWork ? Icons.work : Icons.school,
+                  color: Colors.white,
+                  size: 12,
+                ),
+              );
+            },
+            connectorBuilder: (_, index, __) {
+              return SolidLineConnector(
+                color: theme.colorScheme.primary.withOpacity(0.5),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
