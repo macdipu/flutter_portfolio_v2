@@ -7,9 +7,10 @@ class PortfolioState extends Equatable {
   final String? error;
   final bool isContactFormSubmitting;
   final bool isContactFormSubmitted;
-  final String? contactFormError;
+  final String? contactFormStatus;
   final String selectedCategory;
   final List<TechStackModel> filteredTechStacks;
+  final int visibleBlogPostCount;
 
   const PortfolioState({
     this.isLoading = false,
@@ -18,9 +19,10 @@ class PortfolioState extends Equatable {
     this.error,
     this.isContactFormSubmitting = false,
     this.isContactFormSubmitted = false,
-    this.contactFormError,
+    this.contactFormStatus,
     this.selectedCategory = 'All',
     this.filteredTechStacks = const [],
+    this.visibleBlogPostCount = 6,
   });
 
   PortfolioState copyWith({
@@ -30,20 +32,24 @@ class PortfolioState extends Equatable {
     String? error,
     bool? isContactFormSubmitting,
     bool? isContactFormSubmitted,
-    String? contactFormError,
+    String? contactFormStatus,
     String? selectedCategory,
     List<TechStackModel>? filteredTechStacks,
+    int? visibleBlogPostCount,
   }) {
     return PortfolioState(
       isLoading: isLoading ?? this.isLoading,
       profile: profile ?? this.profile,
       blogPosts: blogPosts ?? this.blogPosts,
       error: error ?? this.error,
-      isContactFormSubmitting: isContactFormSubmitting ?? this.isContactFormSubmitting,
-      isContactFormSubmitted: isContactFormSubmitted ?? this.isContactFormSubmitted,
-      contactFormError: contactFormError ?? this.contactFormError,
+      isContactFormSubmitting:
+          isContactFormSubmitting ?? this.isContactFormSubmitting,
+      isContactFormSubmitted:
+          isContactFormSubmitted ?? this.isContactFormSubmitted,
+      contactFormStatus: contactFormStatus ?? this.contactFormStatus,
       selectedCategory: selectedCategory ?? this.selectedCategory,
       filteredTechStacks: filteredTechStacks ?? this.filteredTechStacks,
+      visibleBlogPostCount: visibleBlogPostCount ?? this.visibleBlogPostCount,
     );
   }
 
@@ -55,8 +61,9 @@ class PortfolioState extends Equatable {
         error,
         isContactFormSubmitting,
         isContactFormSubmitted,
-        contactFormError,
+        contactFormStatus,
         selectedCategory,
         filteredTechStacks,
+        visibleBlogPostCount,
       ];
 }

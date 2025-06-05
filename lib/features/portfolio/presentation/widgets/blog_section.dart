@@ -1,79 +1,104 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/responsive/responsive_framework.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/common/section_wrapper.dart';
+import '../../data/models/blog_post_model.dart';
 import '../bloc/portfolio_bloc.dart';
-import 'section_header.dart';
 
 class BlogSection extends StatelessWidget {
   const BlogSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final isDesktop = screenSize.width >= 1024;
-    final theme = Theme.of(context);
-    
     return BlocBuilder<PortfolioBloc, PortfolioState>(
       builder: (context, state) {
-        return Container(
-          padding: EdgeInsets.only(
-            left: AppTheme.spacing24,
-            right: AppTheme.spacing24,
-            top: AppTheme.spacing64,
-            bottom: AppTheme.spacing64,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SectionHeader(
-                title: 'Blog',
-                subtitle: 'My Latest Posts',
-              ),
-              const SizedBox(height: AppTheme.spacing32),
-              
-              if (state.isLoading && state.blogPosts.isEmpty)
-                const Center(child: CircularProgressIndicator())
-              else if (state.blogPosts.isEmpty)
-                _buildEmptyState(theme)
-              else
-                // Blog posts vertical list
-                SizedBox(
-                  height: 600, // Adjust based on content
-                  child: ListView.builder(
-                    itemCount: state.blogPosts.length,
-                    itemBuilder: (context, index) {
-                      return _BlogPostCard(
-                        post: state.blogPosts[index],
-                        index: index,
-                      );
-                    },
-                  ),
-                ),
-            ],
-          ),
+        return SectionWrapper(
+          sectionId: 'blog',
+          title: 'Blog',
+          subtitle: 'My Latest Posts',
+          addTopPadding: true,
+          addBottomPadding: true,
+          mobileChild: _buildLayout(context, state),
+          tabletChild: _buildLayout(context, state),
+          smallLaptopChild: _buildLayout(context, state),
+          desktopChild: _buildLayout(context, state),
+          largeDesktopChild: _buildLayout(context, state),
         );
       },
     );
   }
-  
-  Widget _buildEmptyState(ThemeData theme) {
+
+  Widget _buildLayout(BuildContext context, PortfolioState state) {
+    final contentWidth = ResponsiveHelper.getContentWidth(context);
+    final maxPosts =
+        state.visibleBlogPostCount.clamp(0, state.blogPosts.length);
+
+    return Container(
+      width: contentWidth,
+      padding: ResponsiveHelper.getResponsivePadding(context),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: AppTheme.spacing32),
+          if (state.isLoading && state.blogPosts.isEmpty)
+            const Center(child: CircularProgressIndicator())
+          else if (state.blogPosts.isEmpty)
+            _buildEmptyState(context)
+          else ...[
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: maxPosts,
+              itemBuilder: (context, index) {
+                return _BlogPostCard(
+                  post: state.blogPosts[index],
+                  index: index,
+                );
+              },
+            ),
+            const SizedBox(height: AppTheme.spacing24),
+            Center(
+              child: ElevatedButton(
+                onPressed: () async {
+                  final url = Uri.parse('https://medium.com/@c.dipu0');
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url);
+                  }
+                },
+                child: const Text(
+                  'Show More on Medium',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context) {
+    var theme = Theme.of(context);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
+          const Icon(
             Icons.article_outlined,
             size: 64,
-            color: theme.colorScheme.primary.withOpacity(0.5),
+            color: AppTheme.primary,
           ),
           const SizedBox(height: AppTheme.spacing16),
           Text(
             'No blog posts available',
-            style: theme.textTheme.titleLarge,
+            style: theme.textTheme.labelLarge,
           ),
           const SizedBox(height: AppTheme.spacing8),
           Text(
@@ -87,9 +112,9 @@ class BlogSection extends StatelessWidget {
 }
 
 class _BlogPostCard extends StatelessWidget {
-  final dynamic post;
+  final BlogPostModel post;
   final int index;
-  
+
   const _BlogPostCard({
     required this.post,
     required this.index,
@@ -97,11 +122,9 @@ class _BlogPostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final screenSize = MediaQuery.of(context).size;
-    final isDesktop = screenSize.width >= 1024;
-    
-    // Format date
+    final isSmallScreen = MediaQuery.of(context).size.width < 600;
+
+// Format date
     String formattedDate = '';
     try {
       final date = DateTime.tryParse(post.publishDate);
@@ -113,13 +136,9 @@ class _BlogPostCard extends StatelessWidget {
     } catch (_) {
       formattedDate = post.publishDate;
     }
-    
+
     return Card(
-      elevation: 3,
       margin: const EdgeInsets.only(bottom: AppTheme.spacing24),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.borderRadius16),
-      ),
       child: InkWell(
         onTap: () async {
           if (post.link.isNotEmpty) {
@@ -132,51 +151,35 @@ class _BlogPostCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppTheme.borderRadius16),
         child: Padding(
           padding: const EdgeInsets.all(AppTheme.spacing16),
-          child: isDesktop
-              ? _buildDesktopLayout(context, theme, formattedDate)
-              : _buildMobileLayout(context, theme, formattedDate),
+          child: Flex(
+            direction: isSmallScreen ? Axis.vertical : Axis.horizontal,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+// Blog post image
+              _buildBlogImage(isSmallScreen),
+              SizedBox(
+                width: isSmallScreen ? 0 : AppTheme.spacing16,
+                height: isSmallScreen ? AppTheme.spacing16 : 0,
+              ),
+// Blog post content
+              Expanded(child: _buildBlogContent(context, formattedDate)),
+            ],
+          ),
         ),
       ),
-    ).animate().fade(duration: 600.ms, delay: Duration(milliseconds: 200 * index)).slideY(begin: 0.1, end: 0);
+    )
+        .animate()
+        .fade(duration: 600.ms, delay: Duration(milliseconds: 200 * index))
+        .slideY(begin: 0.1, end: 0);
   }
-  
-  Widget _buildDesktopLayout(BuildContext context, ThemeData theme, String formattedDate) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Blog post image
-        _buildBlogImage(theme),
-        const SizedBox(width: AppTheme.spacing16),
-        
-        // Blog post content
-        Expanded(
-          child: _buildBlogContent(theme, formattedDate),
-        ),
-      ],
-    );
-  }
-  
-  Widget _buildMobileLayout(BuildContext context, ThemeData theme, String formattedDate) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Blog post image
-        _buildBlogImage(theme),
-        const SizedBox(height: AppTheme.spacing16),
-        
-        // Blog post content
-        _buildBlogContent(theme, formattedDate),
-      ],
-    );
-  }
-  
-  Widget _buildBlogImage(ThemeData theme) {
+
+  Widget _buildBlogImage(bool isSmallScreen) {
     return Container(
-      width: 200,
+      width: isSmallScreen ? double.infinity : 200,
       height: 120,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
-        color: theme.colorScheme.primary.withOpacity(0.1),
+        color: AppTheme.primary.withOpacity(0.1),
       ),
       clipBehavior: Clip.antiAlias,
       child: post.imageUrl.isNotEmpty
@@ -184,100 +187,105 @@ class _BlogPostCard extends StatelessWidget {
               post.imageUrl,
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
-                return Center(
+                return const Center(
                   child: Icon(
                     Icons.article,
                     size: 40,
-                    color: theme.colorScheme.primary,
+                    color: AppTheme.primary,
                   ),
                 );
               },
             )
-          : Center(
+          : const Center(
               child: Icon(
                 Icons.article,
                 size: 40,
-                color: theme.colorScheme.primary,
+                color: AppTheme.primary,
               ),
             ),
     );
   }
-  
-  Widget _buildBlogContent(ThemeData theme, String formattedDate) {
+
+  Widget _buildBlogContent(BuildContext context, String formattedDate) {
+    final textTheme = context.textStyles;
+    final textColors = context.textColors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Date and author
+// Date and author
         Row(
           children: [
             Icon(
               Icons.calendar_today,
               size: 14,
-              color: theme.textTheme.bodySmall?.color,
+              color: textColors.secondary,
             ),
             const SizedBox(width: AppTheme.spacing4),
             Text(
               formattedDate,
-              style: theme.textTheme.bodySmall,
+              style: textTheme.bodySmall?.copyWith(
+                color: textColors.secondary,
+              ),
             ),
             const SizedBox(width: AppTheme.spacing16),
             Icon(
               Icons.person,
               size: 14,
-              color: theme.textTheme.bodySmall?.color,
+              color: textColors.secondary,
             ),
             const SizedBox(width: AppTheme.spacing4),
             Text(
               post.author,
-              style: theme.textTheme.bodySmall,
+              style: textTheme.bodySmall?.copyWith(
+                color: textColors.secondary,
+              ),
             ),
           ],
         ),
         const SizedBox(height: AppTheme.spacing8),
-        
-        // Title
+// Title
         Text(
           post.title,
-          style: theme.textTheme.titleLarge,
+          style: textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: textColors.primary,
+          ),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: AppTheme.spacing8),
-        
-        // Excerpt
+// Excerpt
         Text(
           post.excerpt,
-          style: theme.textTheme.bodyMedium,
+          style: textTheme.bodyMedium?.copyWith(
+            color: textColors.secondary,
+          ),
           maxLines: 3,
           overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: AppTheme.spacing16),
-        
-        // Read more link
-        Row(
-          children: [
-            TextButton.icon(
-              onPressed: () async {
-                if (post.link.isNotEmpty) {
-                  final url = Uri.parse(post.link);
-                  if (await canLaunchUrl(url)) {
-                    await launchUrl(url);
-                  }
-                }
-              },
-              icon: Icon(
-                Icons.arrow_forward,
-                color: theme.colorScheme.primary,
-              ),
-              label: Text(
-                'Read More',
-                style: TextStyle(
-                  color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+// Read more link
+        TextButton.icon(
+          onPressed: () async {
+            if (post.link.isNotEmpty) {
+              final url = Uri.parse(post.link);
+              if (await canLaunchUrl(url)) {
+                await launchUrl(url);
+              }
+            }
+          },
+          icon: const Icon(
+            Icons.arrow_forward,
+            color: AppTheme.primary,
+          ),
+          label: const Text(
+            'Read More',
+            style: TextStyle(
+              color: AppTheme.primary,
+              fontWeight: FontWeight.bold,
             ),
-          ],
+          ),
         ),
       ],
     );
