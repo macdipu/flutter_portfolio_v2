@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_portfolio/features/portfolio/data/models/profile_model.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/responsive/responsive_framework.dart';
+import '../../../../core/widgets/common/section_wrapper.dart';
 import '../bloc/portfolio_bloc.dart';
-import 'section_header.dart';
 
 class ContactSection extends StatefulWidget {
   const ContactSection({super.key});
@@ -20,7 +21,7 @@ class _ContactSectionState extends State<ContactSection> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _messageController = TextEditingController();
-  
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -31,125 +32,101 @@ class _ContactSectionState extends State<ContactSection> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final isDesktop = screenSize.width >= 1024;
-    final theme = Theme.of(context);
-    
     return BlocBuilder<PortfolioBloc, PortfolioState>(
       builder: (context, state) {
-        if (state.isLoading && state.profile == null) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        
-        final profile = state.profile;
-        if (profile == null) {
-          return const Center(child: Text('No profile data available'));
-        }
-        
-        final contactInfo = profile.contactInfo;
-        
-        return Container(
-          padding: EdgeInsets.only(
-            left: AppTheme.spacing24,
-            right: AppTheme.spacing24,
-            top: AppTheme.spacing64,
-            bottom: AppTheme.spacing64,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SectionHeader(
-                title: 'Contact',
-                subtitle: 'Get In Touch',
-              ),
-              const SizedBox(height: AppTheme.spacing48),
-              
-              // Contact form and info
-              isDesktop
-                  ? _buildDesktopLayout(context, state, contactInfo)
-                  : _buildMobileLayout(context, state, contactInfo),
-            ],
-          ),
+        return SectionWrapper(
+          sectionId: 'contact',
+          title: 'Contact',
+          subtitle: 'Get In Touch',
+          addTopPadding: true,
+          addBottomPadding: true,
+          mobileChild: _buildLayout(context, state),
+          tabletChild: _buildLayout(context, state),
+          smallLaptopChild: _buildLayout(context, state),
+          desktopChild: _buildLayout(context, state),
+          largeDesktopChild: _buildLayout(context, state),
         );
       },
     );
   }
-  
-  Widget _buildDesktopLayout(BuildContext context, PortfolioState state, dynamic contactInfo) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Contact form
-        Expanded(
-          child: _buildContactForm(context, state),
-        ),
-        const SizedBox(width: AppTheme.spacing48),
-        
-        // Contact info
-        Expanded(
-          child: _buildContactInfo(context, contactInfo),
-        ),
-      ],
-    );
-  }
-  
-  Widget _buildMobileLayout(BuildContext context, PortfolioState state, dynamic contactInfo) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Contact info
-        _buildContactInfo(context, contactInfo),
-        const SizedBox(height: AppTheme.spacing32),
-        
-        // Contact form
-        _buildContactForm(context, state),
-      ],
-    );
-  }
-  
-  Widget _buildContactForm(BuildContext context, PortfolioState state) {
-    final theme = Theme.of(context);
-    
-    // Show success message if form submitted
-    if (state.isContactFormSubmitted) {
-      return _buildSuccessMessage(theme);
+
+  Widget _buildLayout(BuildContext context, PortfolioState state) {
+    final contentWidth = ResponsiveHelper.getContentWidth(context);
+    final isDesktop = MediaQuery.of(context).size.width >= 1024;
+    final profile = state.profile;
+
+    if (state.isLoading && profile == null) {
+      return const Center(child: CircularProgressIndicator());
     }
-    
+    if (profile == null) {
+      return Center(
+        child: Text(
+          'No profile data available',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+      );
+    }
+
+    final contactInfo = profile.contactInfo;
+
+    return Container(
+      width: contentWidth,
+      padding: ResponsiveHelper.getResponsivePadding(context),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 48),
+          isDesktop
+              ? Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(child: _buildContactForm(context, state)),
+                    const SizedBox(width: 48),
+                    Expanded(child: _buildContactInfo(context, contactInfo)),
+                  ],
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildContactInfo(context, contactInfo),
+                    const SizedBox(height: 32),
+                    _buildContactForm(context, state),
+                  ],
+                ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContactForm(BuildContext context, PortfolioState state) {
+    if (state.isContactFormSubmitted) return _buildSuccessMessage();
+
     return Card(
       elevation: 3,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.borderRadius16),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacing24),
+        padding: const EdgeInsets.all(24),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Send a Message',
-                style: theme.textTheme.headlineSmall,
-              ),
-              const SizedBox(height: AppTheme.spacing24),
-              
-              // Name field
+              Text('Send a Message',
+                  style: Theme.of(context).textTheme.headlineSmall),
+              const SizedBox(height: 24),
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(
                   labelText: 'Name',
                   prefixIcon: Icon(Icons.person),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your name';
-                  }
-                  return null;
-                },
+                validator: (value) => (value == null || value.isEmpty)
+                    ? 'Please enter your name'
+                    : null,
               ),
-              const SizedBox(height: AppTheme.spacing16),
-              
-              // Email field
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(
@@ -157,36 +134,29 @@ class _ContactSectionState extends State<ContactSection> {
                   prefixIcon: Icon(Icons.email),
                 ),
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  if (value == null || value.isEmpty)
                     return 'Please enter your email';
-                  }
-                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                      .hasMatch(value)) {
                     return 'Please enter a valid email';
                   }
                   return null;
                 },
               ),
-              const SizedBox(height: AppTheme.spacing16),
-              
-              // Message field
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _messageController,
+                maxLines: 5,
                 decoration: const InputDecoration(
                   labelText: 'Message',
                   alignLabelWithHint: true,
                   prefixIcon: Icon(Icons.message),
                 ),
-                maxLines: 5,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a message';
-                  }
-                  return null;
-                },
+                validator: (value) => (value == null || value.isEmpty)
+                    ? 'Please enter a message'
+                    : null,
               ),
-              const SizedBox(height: AppTheme.spacing24),
-              
-              // Submit button
+              const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
@@ -204,18 +174,20 @@ class _ContactSectionState extends State<ContactSection> {
                           }
                         },
                   icon: state.isContactFormSubmitting
-                      ? Container(
+                      ? const SizedBox(
                           width: 24,
                           height: 24,
-                          padding: const EdgeInsets.all(2.0),
-                          child: const CircularProgressIndicator(
+                          child: CircularProgressIndicator(
                             color: Colors.white,
                             strokeWidth: 3,
                           ),
                         )
                       : const Icon(Icons.send),
                   label: Text(
-                    state.isContactFormSubmitting ? 'Sending...' : 'Send Message',
+                    state.isContactFormSubmitting
+                        ? 'Sending...'
+                        : 'Send Message',
+                    style: Theme.of(context).textTheme.labelLarge,
                   ),
                 ),
               ),
@@ -225,35 +197,30 @@ class _ContactSectionState extends State<ContactSection> {
       ),
     ).animate().fade(duration: 600.ms).slideX(begin: -0.2, end: 0);
   }
-  
-  Widget _buildSuccessMessage(ThemeData theme) {
+
+  Widget _buildSuccessMessage() {
     return Card(
       elevation: 3,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.borderRadius16),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacing24),
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.check_circle,
-              color: Colors.green,
-              size: 64,
-            ),
-            const SizedBox(height: AppTheme.spacing16),
-            Text(
-              'Message Sent!',
-              style: theme.textTheme.headlineSmall,
-            ),
-            const SizedBox(height: AppTheme.spacing8),
+            Icon(Icons.check_circle,
+                color: Theme.of(context).colorScheme.secondary, size: 64),
+            const SizedBox(height: 16),
+            Text('Message Sent!',
+                style: Theme.of(context).textTheme.headlineSmall),
+            const SizedBox(height: 8),
             Text(
               'Thank you for reaching out. I\'ll get back to you as soon as possible.',
-              style: theme.textTheme.bodyLarge,
+              style: Theme.of(context).textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: AppTheme.spacing24),
+            const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {
                 _nameController.clear();
@@ -261,87 +228,59 @@ class _ContactSectionState extends State<ContactSection> {
                 _messageController.clear();
                 context.read<PortfolioBloc>().add(LoadPortfolioData());
               },
-              child: const Text('Send Another Message'),
+              child: Text('Send Another Message',
+                  style: Theme.of(context).textTheme.labelMedium),
             ),
           ],
         ),
       ),
-    ).animate().fade(duration: 600.ms).scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1));
+    )
+        .animate()
+        .fade(duration: 600.ms)
+        .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1));
   }
-  
-  Widget _buildContactInfo(BuildContext context, dynamic contactInfo) {
-    final theme = Theme.of(context);
-    
+
+  Widget _buildContactInfo(BuildContext context, ContactInfoModel contactInfo) {
     return Card(
       elevation: 3,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.borderRadius16),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacing24),
+        padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Contact Information',
-              style: theme.textTheme.headlineSmall,
-            ),
-            const SizedBox(height: AppTheme.spacing24),
-            
-            // Email
+            Text('Contact Information',
+                style: Theme.of(context).textTheme.headlineSmall),
+            const SizedBox(height: 24),
             _buildContactItem(
-              theme,
               icon: Icons.email,
               title: 'Email',
-              value: contactInfo.email,
+              value: contactInfo.email ?? '',
               onTap: () async {
-                final url = Uri.parse('mailto:${contactInfo.email}');
+                final url = Uri.parse('mailto:${contactInfo.email ?? ''}');
                 if (await canLaunchUrl(url)) {
                   await launchUrl(url);
                 }
               },
             ),
-            const SizedBox(height: AppTheme.spacing16),
-            
-            // Social links
-            Text(
-              'Social Media',
-              style: theme.textTheme.titleMedium,
-            ),
-            const SizedBox(height: AppTheme.spacing16),
-            
-            // Social icons
+            const SizedBox(height: 16),
+            Text('Medium', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildSocialIcon(
-                  FontAwesomeIcons.linkedin,
-                  contactInfo.linkedIn,
-                  theme.colorScheme.primary,
-                ),
-                _buildSocialIcon(
-                  FontAwesomeIcons.github,
-                  contactInfo.github,
-                  theme.colorScheme.primary,
-                ),
-                _buildSocialIcon(
-                  FontAwesomeIcons.twitter,
-                  contactInfo.twitter,
-                  theme.colorScheme.primary,
-                ),
-                _buildSocialIcon(
-                  FontAwesomeIcons.dribbble,
-                  contactInfo.dribbble,
-                  theme.colorScheme.primary,
-                ),
+                    FontAwesomeIcons.linkedin, contactInfo.linkedIn),
+                _buildSocialIcon(FontAwesomeIcons.github, contactInfo.github),
+                _buildSocialIcon(FontAwesomeIcons.twitter, contactInfo.twitter),
               ],
             ),
-            const SizedBox(height: AppTheme.spacing24),
-            
-            // Calendly link
+            const SizedBox(height: 24),
             if (contactInfo.calendlyLink.isNotEmpty) ...[
               const Divider(),
-              const SizedBox(height: AppTheme.spacing16),
+              const SizedBox(height: 16),
               OutlinedButton.icon(
                 onPressed: () async {
                   final url = Uri.parse(contactInfo.calendlyLink);
@@ -350,7 +289,8 @@ class _ContactSectionState extends State<ContactSection> {
                   }
                 },
                 icon: const Icon(Icons.calendar_today),
-                label: const Text('Schedule a Meeting'),
+                label: Text('Schedule a Meeting',
+                    style: Theme.of(context).textTheme.labelMedium),
               ),
             ],
           ],
@@ -358,9 +298,8 @@ class _ContactSectionState extends State<ContactSection> {
       ),
     ).animate().fade(duration: 600.ms).slideX(begin: 0.2, end: 0);
   }
-  
-  Widget _buildContactItem(
-    ThemeData theme, {
+
+  Widget _buildContactItem({
     required IconData icon,
     required String title,
     required String value,
@@ -368,32 +307,23 @@ class _ContactSectionState extends State<ContactSection> {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
+      borderRadius: BorderRadius.circular(8),
       child: Container(
-        padding: const EdgeInsets.all(AppTheme.spacing16),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: theme.colorScheme.primary.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
+          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
           children: [
-            Icon(
-              icon,
-              color: theme.colorScheme.primary,
-            ),
-            const SizedBox(width: AppTheme.spacing16),
+            Icon(icon, color: Theme.of(context).colorScheme.primary),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: theme.textTheme.titleSmall,
-                  ),
-                  Text(
-                    value,
-                    style: theme.textTheme.bodyMedium,
-                  ),
+                  Text(title, style: Theme.of(context).textTheme.titleSmall),
+                  Text(value, style: Theme.of(context).textTheme.bodyMedium),
                 ],
               ),
             ),
@@ -402,13 +332,11 @@ class _ContactSectionState extends State<ContactSection> {
       ),
     );
   }
-  
-  Widget _buildSocialIcon(IconData icon, String url, Color color) {
+
+  Widget _buildSocialIcon(IconData icon, String url) {
     return IconButton(
-      icon: FaIcon(
-        icon,
-        color: color,
-      ),
+      icon: FaIcon(icon, color: Theme.of(context).colorScheme.primary),
+      iconSize: 30,
       onPressed: () async {
         if (url.isNotEmpty) {
           final uri = Uri.parse(url);
@@ -417,7 +345,6 @@ class _ContactSectionState extends State<ContactSection> {
           }
         }
       },
-      iconSize: 30,
     );
   }
 }

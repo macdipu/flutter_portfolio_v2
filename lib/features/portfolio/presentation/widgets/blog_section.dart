@@ -90,10 +90,10 @@ class BlogSection extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
+          Icon(
             Icons.article_outlined,
             size: 64,
-            color: AppTheme.primary,
+            color: theme.colorScheme.primary,
           ),
           const SizedBox(height: AppTheme.spacing16),
           Text(
