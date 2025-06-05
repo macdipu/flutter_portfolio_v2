@@ -33,25 +33,90 @@ class HeroSection extends StatelessWidget {
 
         return SectionWrapper(
           fullHeight: true,
+          centerContent: true,
           child: ResponsiveBuilder(
             builder: (context, deviceType, constraints) {
-              switch (deviceType) {
-                case DeviceType.mobile:
-                  return _buildVerticalLayout(
-                      context, profile, 180.0, 18, 28, 18, 14);
-                case DeviceType.tablet:
-                  return _buildVerticalLayout(
-                      context, profile, 240.0, 20, 38, 22, 16);
-                case DeviceType.smallLaptop:
-                  return _buildHorizontalLayout(
-                      context, profile, 300.0, 22, 46, 24, 17);
-                case DeviceType.desktop:
-                  return _buildHorizontalLayout(
-                      context, profile, 400.0, 24, 56, 28, 18);
-                case DeviceType.largeDesktop:
-                  return _buildHorizontalLayout(
-                      context, profile, 480.0, 26, 64, 30, 20);
-              }
+              // Define responsive values for all breakpoints
+              final imageSize = ResponsiveHelper.getResponsiveValue<double>(
+                context: context,
+                mobile: 180.0,
+                tablet: 240.0,
+                smallLaptop: 300.0,
+                desktop: 400.0,
+                largeDesktop: 480.0,
+              );
+
+              final greetingSize = ResponsiveHelper.getFontSize(
+                context,
+                mobile: 18.0,
+                tablet: 20.0,
+                smallLaptop: 22.0,
+                desktop: 24.0,
+                largeDesktop: 26.0,
+              );
+
+              final nameSize = ResponsiveHelper.getFontSize(
+                context,
+                mobile: 28.0,
+                tablet: 38.0,
+                smallLaptop: 46.0,
+                desktop: 56.0,
+                largeDesktop: 64.0,
+              );
+
+              final titleSize = ResponsiveHelper.getFontSize(
+                context,
+                mobile: 18.0,
+                tablet: 22.0,
+                smallLaptop: 24.0,
+                desktop: 28.0,
+                largeDesktop: 30.0,
+              );
+
+              final introSize = ResponsiveHelper.getFontSize(
+                context,
+                mobile: 14.0,
+                tablet: 16.0,
+                smallLaptop: 17.0,
+                desktop: 18.0,
+                largeDesktop: 20.0,
+              );
+
+              final horizontalPadding =
+                  ResponsiveHelper.getResponsiveValue<double>(
+                context: context,
+                mobile: 24.0,
+                tablet: 32.0,
+                smallLaptop: 48.0,
+                desktop: 64.0,
+                largeDesktop: 80.0,
+              );
+
+              // Use vertical layout for mobile and tablet, horizontal for others
+              final isVertical = deviceType == DeviceType.mobile ||
+                  deviceType == DeviceType.tablet;
+
+              return isVertical
+                  ? _buildVerticalLayout(
+                      context,
+                      profile,
+                      imageSize,
+                      greetingSize,
+                      nameSize,
+                      titleSize,
+                      introSize,
+                      horizontalPadding,
+                    )
+                  : _buildHorizontalLayout(
+                      context,
+                      profile,
+                      imageSize,
+                      greetingSize,
+                      nameSize,
+                      titleSize,
+                      introSize,
+                      horizontalPadding,
+                    );
             },
           ),
         );
@@ -67,6 +132,7 @@ class HeroSection extends StatelessWidget {
     double nameSize,
     double titleSize,
     double introSize,
+    double horizontalPadding,
   ) {
     final theme = Theme.of(context);
 
@@ -79,6 +145,7 @@ class HeroSection extends StatelessWidget {
         child: IntrinsicHeight(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Flexible(child: SizedBox(height: 20)),
               _buildHeroImage(profile.avatarUrl, imageSize),
@@ -91,6 +158,9 @@ class HeroSection extends StatelessWidget {
                 textAlign: TextAlign.center,
                 mobileFontSize: greetingSize,
                 tabletFontSize: greetingSize,
+                smallLaptopFontSize: greetingSize,
+                desktopFontSize: greetingSize,
+                largeDesktopFontSize: greetingSize,
               )
                   .animate()
                   .fade(duration: 500.ms)
@@ -102,6 +172,9 @@ class HeroSection extends StatelessWidget {
                 textAlign: TextAlign.center,
                 mobileFontSize: nameSize,
                 tabletFontSize: nameSize,
+                smallLaptopFontSize: nameSize,
+                desktopFontSize: nameSize,
+                largeDesktopFontSize: nameSize,
               )
                   .animate()
                   .fade(duration: 500.ms, delay: 200.ms)
@@ -113,19 +186,25 @@ class HeroSection extends StatelessWidget {
                 textAlign: TextAlign.center,
                 mobileFontSize: titleSize,
                 tabletFontSize: titleSize,
+                smallLaptopFontSize: titleSize,
+                desktopFontSize: titleSize,
+                largeDesktopFontSize: titleSize,
               )
                   .animate()
                   .fade(duration: 500.ms, delay: 400.ms)
                   .slide(begin: const Offset(0, -0.5)),
               const SizedBox(height: 16),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: ResponsiveText(
                   profile.introduction,
                   style: theme.textTheme.bodyLarge,
                   textAlign: TextAlign.center,
                   mobileFontSize: introSize,
                   tabletFontSize: introSize,
+                  smallLaptopFontSize: introSize,
+                  desktopFontSize: introSize,
+                  largeDesktopFontSize: introSize,
                 )
                     .animate()
                     .fade(duration: 500.ms, delay: 600.ms)
@@ -149,14 +228,16 @@ class HeroSection extends StatelessWidget {
     double nameSize,
     double titleSize,
     double introSize,
+    double horizontalPadding,
   ) {
     final theme = Theme.of(context);
 
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,7 +247,9 @@ class HeroSection extends StatelessWidget {
                   style: theme.textTheme.headlineMedium?.copyWith(
                     color: theme.colorScheme.primary,
                   ),
+                  smallLaptopFontSize: greetingSize,
                   desktopFontSize: greetingSize,
+                  largeDesktopFontSize: greetingSize,
                 )
                     .animate()
                     .fade(duration: 500.ms)
@@ -175,7 +258,9 @@ class HeroSection extends StatelessWidget {
                 ResponsiveText(
                   profile.name,
                   style: theme.textTheme.displayLarge,
+                  smallLaptopFontSize: nameSize,
                   desktopFontSize: nameSize,
+                  largeDesktopFontSize: nameSize,
                 )
                     .animate()
                     .fade(duration: 500.ms, delay: 200.ms)
@@ -184,7 +269,9 @@ class HeroSection extends StatelessWidget {
                 ResponsiveText(
                   profile.title,
                   style: theme.textTheme.headlineSmall,
+                  smallLaptopFontSize: titleSize,
                   desktopFontSize: titleSize,
+                  largeDesktopFontSize: titleSize,
                 )
                     .animate()
                     .fade(duration: 500.ms, delay: 400.ms)
@@ -193,7 +280,9 @@ class HeroSection extends StatelessWidget {
                 ResponsiveText(
                   profile.introduction,
                   style: theme.textTheme.bodyLarge,
+                  smallLaptopFontSize: introSize,
                   desktopFontSize: introSize,
+                  largeDesktopFontSize: introSize,
                 )
                     .animate()
                     .fade(duration: 500.ms, delay: 600.ms)
@@ -204,7 +293,7 @@ class HeroSection extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(width: 64),
+        SizedBox(width: horizontalPadding),
         _buildHeroImage(profile.avatarUrl, imageSize),
       ],
     );

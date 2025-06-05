@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_portfolio/core/responsive/responsive_framework.dart';
+import 'package:flutter_portfolio/core/widgets/common/section_header.dart';
 
 class SectionWrapper extends StatelessWidget {
-  final Widget child;
+  final Widget? child;
   final String? sectionId;
   final Color? backgroundColor;
   final Gradient? backgroundGradient;
@@ -15,10 +16,13 @@ class SectionWrapper extends StatelessWidget {
   final MainAxisAlignment mainAxisAlignment;
   final bool addTopPadding;
   final bool addBottomPadding;
+  final String? title;
+  final String? subtitle;
+  final TextAlign headerTextAlign;
 
   const SectionWrapper({
     super.key,
-    required this.child,
+    this.child,
     this.sectionId,
     this.backgroundColor,
     this.backgroundGradient,
@@ -31,6 +35,9 @@ class SectionWrapper extends StatelessWidget {
     this.mainAxisAlignment = MainAxisAlignment.center,
     this.addTopPadding = true,
     this.addBottomPadding = true,
+    this.title,
+    this.subtitle,
+    this.headerTextAlign = TextAlign.start, // Default to left-aligned header
   });
 
   @override
@@ -45,7 +52,19 @@ class SectionWrapper extends StatelessWidget {
     // Determine content max width for better readability on large screens
     final contentMaxWidth = maxWidth ?? _getContentMaxWidth(context);
 
-    Widget content = child;
+    // Build the header if title or subtitle is provided
+    Widget? header;
+    if (title != null || subtitle != null) {
+      header = SectionHeader(
+        title: title ?? '',
+        subtitle: subtitle,
+        textAlign: headerTextAlign,
+        crossAxisAlignment: CrossAxisAlignment.start, // Ensure left alignment
+      );
+    }
+
+    // Build the content (child or empty if null)
+    Widget content = child ?? const SizedBox.shrink();
 
     // Wrap content with constraints for better web layout
     if (centerContent) {
@@ -56,7 +75,18 @@ class SectionWrapper extends StatelessWidget {
             minHeight:
                 fullHeight ? screenHeight - effectivePadding.vertical : 0,
           ),
-          child: child,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start, // Align content left
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (header != null) ...[
+                header,
+                const SizedBox(
+                    height: 16.0), // Spacing between header and content
+              ],
+              content,
+            ],
+          ),
         ),
       );
     } else {
@@ -66,7 +96,18 @@ class SectionWrapper extends StatelessWidget {
           maxWidth: contentMaxWidth,
           minHeight: fullHeight ? screenHeight - effectivePadding.vertical : 0,
         ),
-        child: child,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start, // Align content left
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (header != null) ...[
+              header,
+              const SizedBox(
+                  height: 16.0), // Spacing between header and content
+            ],
+            content,
+          ],
+        ),
       );
     }
 
@@ -128,118 +169,6 @@ class SectionWrapper extends StatelessWidget {
       smallLaptop: 1024.0,
       desktop: 1200.0,
       largeDesktop: 1400.0,
-    );
-  }
-}
-
-// Specialized section wrappers for common web layouts
-class HeroSectionWrapper extends SectionWrapper {
-  const HeroSectionWrapper({
-    super.key,
-    required super.child,
-    super.sectionId,
-    super.backgroundColor,
-    super.backgroundGradient,
-    super.padding,
-    super.margin,
-  }) : super(
-          fullHeight: true,
-          centerContent: true,
-          mainAxisAlignment: MainAxisAlignment.center,
-        );
-}
-
-class ContentSectionWrapper extends SectionWrapper {
-  const ContentSectionWrapper({
-    super.key,
-    required super.child,
-    super.sectionId,
-    super.backgroundColor,
-    super.backgroundGradient,
-    super.padding,
-    super.margin,
-    super.maxWidth,
-  }) : super(
-          fullHeight: false,
-          centerContent: true,
-          crossAxisAlignment: CrossAxisAlignment.start,
-        );
-}
-
-class FullWidthSectionWrapper extends SectionWrapper {
-  const FullWidthSectionWrapper({
-    super.key,
-    required super.child,
-    super.sectionId,
-    super.backgroundColor,
-    super.backgroundGradient,
-    super.padding,
-    super.margin,
-  }) : super(
-          fullHeight: false,
-          centerContent: false,
-          maxWidth: double.infinity,
-        );
-}
-
-// Extension for easier section wrapper usage
-extension SectionWrapperExtension on Widget {
-  Widget wrapInSection({
-    String? sectionId,
-    Color? backgroundColor,
-    Gradient? backgroundGradient,
-    EdgeInsets? padding,
-    EdgeInsets? margin,
-    bool fullHeight = false,
-    bool centerContent = true,
-    double? maxWidth,
-  }) {
-    return SectionWrapper(
-      sectionId: sectionId,
-      backgroundColor: backgroundColor,
-      backgroundGradient: backgroundGradient,
-      padding: padding,
-      margin: margin,
-      fullHeight: fullHeight,
-      centerContent: centerContent,
-      maxWidth: maxWidth,
-      child: this,
-    );
-  }
-
-  Widget wrapInHeroSection({
-    String? sectionId,
-    Color? backgroundColor,
-    Gradient? backgroundGradient,
-    EdgeInsets? padding,
-    EdgeInsets? margin,
-  }) {
-    return HeroSectionWrapper(
-      sectionId: sectionId,
-      backgroundColor: backgroundColor,
-      backgroundGradient: backgroundGradient,
-      padding: padding,
-      margin: margin,
-      child: this,
-    );
-  }
-
-  Widget wrapInContentSection({
-    String? sectionId,
-    Color? backgroundColor,
-    Gradient? backgroundGradient,
-    EdgeInsets? padding,
-    EdgeInsets? margin,
-    double? maxWidth,
-  }) {
-    return ContentSectionWrapper(
-      sectionId: sectionId,
-      backgroundColor: backgroundColor,
-      backgroundGradient: backgroundGradient,
-      padding: padding,
-      margin: margin,
-      maxWidth: maxWidth,
-      child: this,
     );
   }
 }

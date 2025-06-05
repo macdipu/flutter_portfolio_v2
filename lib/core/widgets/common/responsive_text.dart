@@ -33,7 +33,7 @@ class ResponsiveText extends StatefulWidget {
   final double? tabletFontSize;
   final double? smallLaptopFontSize;
   final double? desktopFontSize;
-  final double? largeDesktoFontSize;
+  final double? largeDesktopFontSize;
 
   // Text behavior
   final bool enableInteractiveSelection;
@@ -75,7 +75,7 @@ class ResponsiveText extends StatefulWidget {
     this.tabletFontSize,
     this.smallLaptopFontSize,
     this.desktopFontSize,
-    this.largeDesktoFontSize,
+    this.largeDesktopFontSize,
     this.enableInteractiveSelection = false,
     this.enableCopyOnLongPress = false,
     this.enableHapticFeedback = true,
@@ -380,7 +380,7 @@ class _ResponsiveTextState extends State<ResponsiveText>
       tablet: widget.tabletFontSize ?? tablet,
       smallLaptop: widget.smallLaptopFontSize ?? smallLaptop,
       desktop: widget.desktopFontSize ?? desktop,
-      largeDesktop: widget.largeDesktoFontSize ?? largeDesktop,
+      largeDesktop: widget.largeDesktopFontSize ?? largeDesktop,
     );
   }
 
