@@ -2,19 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/responsive/responsive_framework.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/common/section_wrapper.dart';
+import '../../data/models/profile_model.dart';
 import '../bloc/portfolio_bloc.dart';
-import 'section_header.dart';
 
 class ServicesSection extends StatelessWidget {
   const ServicesSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final isDesktop = screenSize.width >= 1024;
-    final theme = Theme.of(context);
-
     return BlocBuilder<PortfolioBloc, PortfolioState>(
       builder: (context, state) {
         if (state.isLoading && state.profile == null) {
@@ -26,47 +24,55 @@ class ServicesSection extends StatelessWidget {
           return const Center(child: Text('No profile data available'));
         }
 
-        return Container(
-          padding: EdgeInsets.only(
-            left: AppTheme.spacing24,
-            right: AppTheme.spacing24,
-            top: AppTheme.spacing64,
-            bottom: AppTheme.spacing64,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SectionHeader(
-                title: 'Services',
-                subtitle: 'What I Offer',
-              ),
-              const SizedBox(height: AppTheme.spacing48),
+        return SectionWrapper(
+          sectionId: 'services',
+          title: 'Services',
+          subtitle: 'What I Offer',
+          addTopPadding: true,
+          addBottomPadding: true,
+          mobileChild: _buildLayout(context, profile),
+          tabletChild: _buildLayout(context, profile),
+          smallLaptopChild: _buildLayout(context, profile),
+          desktopChild: _buildLayout(context, profile),
+          largeDesktopChild: _buildLayout(context, profile),
+        );
+      },
+    );
+  }
 
-              // Services grid
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount:
-                      isDesktop ? 3 : (screenSize.width > 600 ? 2 : 1),
-                  crossAxisSpacing: AppTheme.spacing24,
-                  mainAxisSpacing: AppTheme.spacing24,
-                  childAspectRatio: 1.1,
-                ),
-                itemCount: profile.services.length,
-                itemBuilder: (context, index) {
-                  return _ServiceCard(
+  Widget _buildLayout(BuildContext context, ProfileModel profile) {
+    final contentWidth = ResponsiveHelper.getContentWidth(context);
+    final theme = Theme.of(context);
+
+    return Container(
+      width: contentWidth,
+      padding: ResponsiveHelper.getResponsivePadding(context),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: AppTheme.spacing48),
+          SizedBox(
+            height: 320,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              itemCount: profile.services.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  width: contentWidth * 0.9,
+                  margin: const EdgeInsets.only(right: AppTheme.spacing24),
+                  child: _ServiceCard(
                     title: profile.services[index].title,
                     description: profile.services[index].description,
                     iconUrl: profile.services[index].iconUrl,
                     index: index,
-                  );
-                },
-              ),
-            ],
+                  ),
+                );
+              },
+            ),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 }
