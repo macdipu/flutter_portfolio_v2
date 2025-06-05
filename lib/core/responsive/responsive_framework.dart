@@ -196,21 +196,32 @@ class ResponsiveHelper {
   }
 
   // Smart content width that prevents content from becoming too wide
+  // static double getContentWidth(BuildContext context) {
+  //   final screenWidth = MediaQuery.of(context).size.width;
+  //   const maxContentWidth = 1200.0; // Maximum content width
+  //
+  //   if (screenWidth > maxContentWidth + 128) {
+  //     // 64px padding on each side
+  //     return maxContentWidth;
+  //   }
+  //
+  //   return getResponsiveValue<double>(
+  //     context: context,
+  //     mobile: screenWidth - 32, // 16px padding on each side
+  //     tablet: screenWidth - 64, // 32px padding on each side
+  //     smallLaptop: screenWidth - 96, // 48px padding on each side
+  //     desktop: screenWidth - 128, // 64px padding on each side
+  //   );
+  // }
+
   static double getContentWidth(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    const maxContentWidth = 1200.0; // Maximum content width
-
-    if (screenWidth > maxContentWidth + 128) {
-      // 64px padding on each side
-      return maxContentWidth;
-    }
-
     return getResponsiveValue<double>(
       context: context,
-      mobile: screenWidth - 32, // 16px padding on each side
-      tablet: screenWidth - 64, // 32px padding on each side
-      smallLaptop: screenWidth - 96, // 48px padding on each side
-      desktop: screenWidth - 128, // 64px padding on each side
+      mobile: double.infinity,
+      tablet: 720.0,
+      smallLaptop: 860.0,
+      desktop: 1024.0,
+      largeDesktop: 1400.0,
     );
   }
 
