@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_portfolio/core/navigation/scroll_controller.dart';
 import 'package:flutter_portfolio/core/responsive/responsive_framework.dart';
 import 'package:flutter_portfolio/core/widgets/common/section_wrapper.dart';
 
@@ -10,7 +12,7 @@ class AboutSection extends StatelessWidget {
     return SectionWrapper(
       sectionId: 'about',
       title: 'About Me',
-      subtitle: 'A brief introduction to my skills and experience',
+      subtitle: 'A brief introduction',
       addTopPadding: true,
       addBottomPadding: true,
       mobileChild: _buildLayout(context),
@@ -29,13 +31,6 @@ class AboutSection extends StatelessWidget {
       desktop: 24.0,
       largeDesktop: 32.0,
     );
-
-    final cards = const [
-      _AboutCard(title: 'Frontend', experience: '3+ yrs'),
-      _AboutCard(title: 'Backend', experience: '2+ yrs'),
-      _AboutCard(title: 'UI/UX', experience: '1.5+ yrs'),
-      _AboutCard(title: 'Tools', experience: '4+ yrs'),
-    ];
 
     return Container(
       width: ResponsiveHelper.getContentWidth(context),
@@ -56,11 +51,56 @@ class AboutSection extends StatelessWidget {
                   ),
                 ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
+          Text(
+            'Key Accomplishments',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+          const SizedBox(height: 16),
           Wrap(
             spacing: spacing,
             runSpacing: spacing,
-            children: cards,
+            children: const [
+              _AccomplishmentTile(
+                icon: Icons.check_circle_outline,
+                text: '5+ Production Apps Released',
+              ),
+              _AccomplishmentTile(
+                icon: Icons.check_circle_outline,
+                text: '100+ UI Screens Designed',
+              ),
+              _AccomplishmentTile(
+                icon: Icons.check_circle_outline,
+                text: '3+ Years Flutter Experience',
+              ),
+              _AccomplishmentTile(
+                icon: Icons.check_circle_outline,
+                text: 'Open Source Contributor',
+              ),
+            ],
+          ),
+          const SizedBox(height: 32),
+          Text(
+            'Want to know more about my journey? You can download my CV by clicking the button below.',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton.icon(
+            onPressed: () {
+              context
+                  .read<ScrollCubit>()
+                  .scrollToSection(NavigationSection.resume);
+            },
+            icon: const Icon(Icons.download),
+            label: const Text('Download CV'),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
           ),
         ],
       ),
@@ -68,71 +108,29 @@ class AboutSection extends StatelessWidget {
   }
 }
 
-class _AboutCard extends StatelessWidget {
-  final String title;
-  final String experience;
+class _AccomplishmentTile extends StatelessWidget {
+  final IconData icon;
+  final String text;
 
-  const _AboutCard({
-    required this.title,
-    required this.experience,
+  const _AccomplishmentTile({
+    required this.icon,
+    required this.text,
   });
 
   @override
   Widget build(BuildContext context) {
-    final padding = context.responsive(
-      mobile: 12.0,
-      tablet: 16.0,
-      smallLaptop: 18.0,
-      desktop: 20.0,
-      largeDesktop: 24.0,
-    );
-
-    final cardWidth = context.responsive(
-      mobile: 140.0,
-      tablet: 160.0,
-      smallLaptop: 180.0,
-      desktop: 200.0,
-      largeDesktop: 220.0,
-    );
-
-    return SizedBox(
-      width: cardWidth,
-      child: Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(padding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, color: Theme.of(context).colorScheme.primary, size: 20),
+        const SizedBox(width: 8),
+        Text(
+          text,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w500,
               ),
-              const SizedBox(height: 8),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  experience,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.w500,
-                      ),
-                ),
-              ),
-            ],
-          ),
         ),
-      ),
+      ],
     );
   }
 }
