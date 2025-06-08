@@ -138,7 +138,7 @@ class _SidebarLayout extends StatelessWidget {
           radius: 50,
           backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
           child: Text(
-            'JD',
+            'MACD',
             style: theme.textTheme.headlineMedium?.copyWith(
               color: theme.colorScheme.primary,
               fontWeight: FontWeight.bold,
@@ -147,7 +147,7 @@ class _SidebarLayout extends StatelessWidget {
         ),
         const SizedBox(height: AppTheme.spacing16),
         Text(
-          'John Doe',
+          'Md. Asad Chowdhury Dipu',
           style: theme.textTheme.titleLarge,
           textAlign: TextAlign.center,
         ),
