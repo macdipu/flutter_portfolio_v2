@@ -10,11 +10,11 @@ class PortfolioRepository {
   
   Future<ProfileModel> getProfileData() async {
     return ProfileModel(
-      name: 'John Doe',
+      name: 'Md. Asad Chowdhury Dipu',
       title: 'Flutter Developer | Mobile & Web App Specialist',
       introduction: 'Passionate Flutter developer with expertise in creating beautiful, performant cross-platform applications. Specializing in elegant UI design and robust architecture.',
       about: 'My journey into Flutter development began three years ago when I was searching for a framework that would allow me to build beautiful apps for both iOS and Android with a single codebase. What started as curiosity quickly turned into passion as I discovered Flutter\'s powerful capabilities and elegant design patterns. Since then, I\'ve worked on numerous projects, from simple utility apps to complex enterprise solutions, always striving to create exceptional user experiences and maintainable codebases.',
-      avatarUrl: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+      avatarUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDko2K-54q8zwK4TMEPKz4GNAvFFYqr_TLOkXAYVl5oXUG9i0YUycZCpUF&s=10',
       experiences: _getExperiences(),
       educations: _getEducations(),
       projects: _getProjects(),
