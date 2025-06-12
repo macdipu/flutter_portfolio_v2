@@ -34,3 +34,8 @@ class UpdateTechStackCategory extends PortfolioEvent {
   @override
   List<Object> get props => [category];
 }
+
+class UpdateProjectCategory extends PortfolioEvent {
+  final String category;
+  const UpdateProjectCategory(this.category);
+}
