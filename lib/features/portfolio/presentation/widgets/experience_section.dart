@@ -206,76 +206,73 @@ class _GroupedTimelineCard extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(AppTheme.spacing16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
+        child: ExpansionTile(
+          tilePadding: EdgeInsets.zero,
+          expandedCrossAxisAlignment: CrossAxisAlignment.start,
+          leading: Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
+              child: Image.network(
+                logoUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(Icons.business, color: theme.colorScheme.primary);
+                },
+              ),
+            ),
+          ),
+          title: Text(
+            company,
+            style: theme.textTheme.titleMedium
+                ?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          childrenPadding: const EdgeInsets.only(
+            left: AppTheme.spacing24,
+            bottom: AppTheme.spacing16,
+            right: AppTheme.spacing8,
+          ),
+          children: roles.map((role) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: AppTheme.spacing16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    role.position,
+                    style: theme.textTheme.bodyLarge
+                        ?.copyWith(fontWeight: FontWeight.w600),
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
-                    child: Image.network(
-                      logoUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Icon(Icons.business,
-                            color: theme.colorScheme.primary);
-                      },
+                  const SizedBox(height: AppTheme.spacing4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppTheme.spacing12,
+                      vertical: AppTheme.spacing4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primary.withOpacity(0.1),
+                      borderRadius:
+                          BorderRadius.circular(AppTheme.borderRadius8),
+                    ),
+                    child: Text(
+                      role.period,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: AppTheme.spacing16),
-                Expanded(
-                  child: Text(
-                    company,
-                    style: theme.textTheme.titleMedium
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppTheme.spacing16),
-            ...roles.map((role) => Padding(
-                  padding: const EdgeInsets.only(bottom: AppTheme.spacing16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        role.position,
-                        style: theme.textTheme.bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.w600),
-                      ),
-                      const SizedBox(height: AppTheme.spacing4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppTheme.spacing12,
-                          vertical: AppTheme.spacing4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.primary.withOpacity(0.1),
-                          borderRadius:
-                              BorderRadius.circular(AppTheme.borderRadius8),
-                        ),
-                        child: Text(
-                          role.period,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.primary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: AppTheme.spacing8),
-                      Text(role.description, style: theme.textTheme.bodyMedium),
-                    ],
-                  ),
-                )),
-          ],
+                  const SizedBox(height: AppTheme.spacing8),
+                  Text(role.description, style: theme.textTheme.bodyMedium),
+                ],
+              ),
+            );
+          }).toList(),
         ),
       ),
     )
