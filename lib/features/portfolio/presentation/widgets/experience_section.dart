@@ -43,8 +43,8 @@ class ExperienceSection extends StatelessWidget {
 
   Widget _buildLayout(BuildContext context, ProfileModel profile,
       {required bool isVertical}) {
-    final theme = Theme.of(context);
     final contentWidth = ResponsiveHelper.getContentWidth(context);
+    final groupedExperiences = profile.experiences;
 
     return Container(
       width: contentWidth,
@@ -56,7 +56,7 @@ class ExperienceSection extends StatelessWidget {
                 _buildTimelineSection(
                   context,
                   title: 'Work Experience',
-                  items: profile.experiences,
+                  items: groupedExperiences,
                   isWork: true,
                 ),
                 const SizedBox(height: AppTheme.spacing32),
@@ -75,7 +75,7 @@ class ExperienceSection extends StatelessWidget {
                   child: _buildTimelineSection(
                     context,
                     title: 'Work Experience',
-                    items: profile.experiences,
+                    items: groupedExperiences,
                     isWork: true,
                   ),
                 ),
@@ -127,23 +127,37 @@ class ExperienceSection extends StatelessWidget {
             connectionDirection: ConnectionDirection.before,
             itemCount: items.length,
             contentsBuilder: (_, index) {
-              final item = items[index];
-              return Padding(
-                padding: const EdgeInsets.only(
-                  left: AppTheme.spacing24,
-                  bottom: AppTheme.spacing32,
-                ),
-                child: _TimelineCard(
-                  title:
-                      item is ExperienceModel ? item.company : item.institution,
-                  subtitle:
-                      item is ExperienceModel ? item.position : item.degree,
-                  period: item.period,
-                  description: item.description,
-                  logoUrl: item.logoUrl,
-                  index: index,
-                ),
-              );
+              if (isWork) {
+                final group = items[index] as ExperienceGroup;
+                return Padding(
+                  padding: const EdgeInsets.only(
+                    left: AppTheme.spacing24,
+                    bottom: AppTheme.spacing32,
+                  ),
+                  child: _GroupedTimelineCard(
+                    company: group.company,
+                    logoUrl: group.logoUrl,
+                    roles: group.roles,
+                    index: index,
+                  ),
+                );
+              } else {
+                final edu = items[index] as EducationModel;
+                return Padding(
+                  padding: const EdgeInsets.only(
+                    left: AppTheme.spacing24,
+                    bottom: AppTheme.spacing32,
+                  ),
+                  child: _TimelineCard(
+                    title: edu.institution,
+                    subtitle: edu.degree,
+                    period: edu.period,
+                    description: edu.description,
+                    logoUrl: edu.logoUrl,
+                    index: index,
+                  ),
+                );
+              }
             },
             indicatorBuilder: (_, index) {
               return DotIndicator(
@@ -164,6 +178,110 @@ class ExperienceSection extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+class _GroupedTimelineCard extends StatelessWidget {
+  final String company;
+  final String logoUrl;
+  final List<ExperienceModel> roles;
+  final int index;
+
+  const _GroupedTimelineCard({
+    required this.company,
+    required this.logoUrl,
+    required this.roles,
+    required this.index,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Card(
+      elevation: 2,
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppTheme.borderRadius16),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppTheme.spacing16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
+                    child: Image.network(
+                      logoUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Icon(Icons.business,
+                            color: theme.colorScheme.primary);
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(width: AppTheme.spacing16),
+                Expanded(
+                  child: Text(
+                    company,
+                    style: theme.textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppTheme.spacing16),
+            ...roles.map((role) => Padding(
+                  padding: const EdgeInsets.only(bottom: AppTheme.spacing16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        role.position,
+                        style: theme.textTheme.bodyLarge
+                            ?.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: AppTheme.spacing4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppTheme.spacing12,
+                          vertical: AppTheme.spacing4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary.withOpacity(0.1),
+                          borderRadius:
+                              BorderRadius.circular(AppTheme.borderRadius8),
+                        ),
+                        child: Text(
+                          role.period,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: AppTheme.spacing8),
+                      Text(role.description, style: theme.textTheme.bodyMedium),
+                    ],
+                  ),
+                )),
+          ],
+        ),
+      ),
+    )
+        .animate()
+        .fade(duration: 600.ms, delay: Duration(milliseconds: 200 * index))
+        .slideY(begin: 0.1, end: 0);
   }
 }
 
