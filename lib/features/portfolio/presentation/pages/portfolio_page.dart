@@ -49,26 +49,25 @@ class _PortfolioView extends StatelessWidget {
             deviceType == DeviceType.mobile || deviceType == DeviceType.tablet;
         final isSidebar = deviceType.index >= DeviceType.smallLaptop.index;
 
-        return Scaffold(
-          drawer: isDrawer ? _buildDrawer(context, scrollCubit) : null,
-          body: BlocBuilder<ScrollCubit, ScrollState>(
-            builder: (context, scrollState) {
-              return Stack(
-                children: [
-                  Row(
-                    children: [
-                      if (isSidebar)
-                        SafeArea(
-                            child: _buildSidebar(scrollState, scrollCubit)),
-                      Expanded(child: _buildScrollableContent(scrollCubit)),
-                    ],
-                  ),
-                  _buildThemeToggle(context),
-                  if (isDrawer) _buildDrawerToggleButton(context),
-                ],
-              );
-            },
-          ),
+        return BlocBuilder<ScrollCubit, ScrollState>(
+          builder: (context, scrollState) {
+            return Scaffold(
+                drawer: isDrawer ? _buildDrawer(context, scrollCubit) : null,
+                body: Stack(
+                  children: [
+                    Row(
+                      children: [
+                        if (isSidebar)
+                          SafeArea(
+                              child: _buildSidebar(scrollState, scrollCubit)),
+                        Expanded(child: _buildScrollableContent(scrollCubit)),
+                      ],
+                    ),
+                    _buildThemeToggle(context),
+                    if (isDrawer) _buildDrawerToggleButton(context),
+                  ],
+                ));
+          },
         );
       },
     );
@@ -78,10 +77,8 @@ class _PortfolioView extends StatelessWidget {
     return Drawer(
       child: SafeArea(
         child: SidebarNavigation(
-          isOpen: true,
           currentSection: scrollCubit.state.currentSection,
-          onToggle: () => Navigator.of(context).pop(),
-          onSectionSelected: (section) => scrollCubit.scrollToSection(section),
+          onSectionSelected: scrollCubit.scrollToSection,
         ),
       ),
     );
@@ -89,9 +86,7 @@ class _PortfolioView extends StatelessWidget {
 
   Widget _buildSidebar(ScrollState scrollState, ScrollCubit scrollCubit) {
     return SidebarNavigation(
-      isOpen: true,
       currentSection: scrollState.currentSection,
-      onToggle: () {},
       onSectionSelected: scrollCubit.scrollToSection,
     );
   }

@@ -286,7 +286,7 @@ class HeroSection extends StatelessWidget {
           .animate()
           .fade(duration: 500.ms, delay: 800.ms)
           .scale(begin: const Offset(0.9, 0.9)),
-      SizedBox(width: isVertical ? 0 : 24, height: isVertical ? 16 : 0),
+      SizedBox(width: 24),
       ResponsiveButton(
         text: 'Contact Me',
         variant: ButtonVariant.outlined,
@@ -301,6 +301,10 @@ class HeroSection extends StatelessWidget {
           .scale(begin: const Offset(0.9, 0.9)),
     ];
 
-    return isVertical ? Column(children: children) : Row(children: children);
+    return Row(
+      mainAxisAlignment:
+          isVertical ? MainAxisAlignment.center : MainAxisAlignment.start,
+      children: children,
+    );
   }
 }
