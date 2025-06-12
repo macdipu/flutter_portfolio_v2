@@ -13,7 +13,7 @@ class ProfileModel extends Equatable {
   final List<TechStackModel> techStacks;
   final ContactInfoModel contactInfo;
   final String resumeUrl;
-  
+
   const ProfileModel({
     required this.name,
     required this.title,
@@ -28,22 +28,22 @@ class ProfileModel extends Equatable {
     required this.contactInfo,
     required this.resumeUrl,
   });
-  
+
   @override
   List<Object> get props => [
-    name,
-    title,
-    introduction,
-    about,
-    avatarUrl,
-    experiences,
-    educations,
-    projects,
-    services,
-    techStacks,
-    contactInfo,
-    resumeUrl,
-  ];
+        name,
+        title,
+        introduction,
+        about,
+        avatarUrl,
+        experiences,
+        educations,
+        projects,
+        services,
+        techStacks,
+        contactInfo,
+        resumeUrl,
+      ];
 }
 
 class ExperienceModel extends Equatable {
@@ -52,7 +52,7 @@ class ExperienceModel extends Equatable {
   final String period;
   final String description;
   final String logoUrl;
-  
+
   const ExperienceModel({
     required this.company,
     required this.position,
@@ -60,7 +60,7 @@ class ExperienceModel extends Equatable {
     required this.description,
     required this.logoUrl,
   });
-  
+
   @override
   List<Object> get props => [company, position, period, description, logoUrl];
 }
@@ -71,7 +71,7 @@ class EducationModel extends Equatable {
   final String period;
   final String description;
   final String logoUrl;
-  
+
   const EducationModel({
     required this.institution,
     required this.degree,
@@ -79,12 +79,13 @@ class EducationModel extends Equatable {
     required this.description,
     required this.logoUrl,
   });
-  
+
   @override
   List<Object> get props => [institution, degree, period, description, logoUrl];
 }
 
 class ProjectModel extends Equatable {
+  final String category;
   final String title;
   final String role;
   final String description;
@@ -93,8 +94,9 @@ class ProjectModel extends Equatable {
   final String appUrl;
   final String sourceCodeUrl;
   final String challenge;
-  
+
   const ProjectModel({
+    required this.category,
     required this.title,
     required this.role,
     required this.description,
@@ -104,31 +106,32 @@ class ProjectModel extends Equatable {
     required this.sourceCodeUrl,
     required this.challenge,
   });
-  
+
   @override
   List<Object> get props => [
-    title, 
-    role, 
-    description, 
-    technologies, 
-    screenshots, 
-    appUrl, 
-    sourceCodeUrl, 
-    challenge
-  ];
+        category,
+        title,
+        role,
+        description,
+        technologies,
+        screenshots,
+        appUrl,
+        sourceCodeUrl,
+        challenge
+      ];
 }
 
 class ServiceModel extends Equatable {
   final String title;
   final String description;
   final String iconUrl;
-  
+
   const ServiceModel({
     required this.title,
     required this.description,
     required this.iconUrl,
   });
-  
+
   @override
   List<Object> get props => [title, description, iconUrl];
 }
@@ -137,17 +140,15 @@ class TechStackModel extends Equatable {
   final String name;
   final String category;
   final String iconUrl;
-  final double proficiency;
-  
+
   const TechStackModel({
     required this.name,
     required this.category,
     required this.iconUrl,
-    required this.proficiency,
   });
-  
+
   @override
-  List<Object> get props => [name, category, iconUrl, proficiency];
+  List<Object> get props => [name, category, iconUrl];
 }
 
 class ContactInfoModel extends Equatable {
@@ -155,18 +156,16 @@ class ContactInfoModel extends Equatable {
   final String linkedIn;
   final String github;
   final String twitter;
-  final String dribbble;
   final String calendlyLink;
-  
+
   const ContactInfoModel({
     required this.email,
     required this.linkedIn,
     required this.github,
     required this.twitter,
-    required this.dribbble,
     required this.calendlyLink,
   });
-  
+
   @override
-  List<Object> get props => [email, linkedIn, github, twitter, dribbble, calendlyLink];
+  List<Object> get props => [email, linkedIn, github, twitter, calendlyLink];
 }

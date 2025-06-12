@@ -18,6 +18,7 @@ class PortfolioBloc extends Bloc<PortfolioEvent, PortfolioState> {
     on<LoadBlogPosts>(_onLoadBlogPosts);
     on<SubmitContactForm>(_onSubmitContactForm);
     on<UpdateTechStackCategory>(_onUpdateTechStackCategory);
+    on<UpdateProjectCategory>(_onUpdateProjectCategory);
   }
 
   Future<void> _onLoadPortfolioData(
@@ -28,8 +29,10 @@ class PortfolioBloc extends Bloc<PortfolioEvent, PortfolioState> {
       emit(state.copyWith(
         isLoading: false,
         profile: profile,
-        selectedCategory: 'All',
+        selectedTechStacksCategory: 'All',
         filteredTechStacks: profile.techStacks,
+        selectedProjectCategory: 'All',
+        filteredProjects: profile.projects,
       ));
     } catch (e) {
       emit(state.copyWith(
@@ -80,8 +83,21 @@ class PortfolioBloc extends Bloc<PortfolioEvent, PortfolioState> {
             .where((tech) => tech.category == event.category)
             .toList();
     emit(state.copyWith(
-      selectedCategory: event.category,
+      selectedTechStacksCategory: event.category,
       filteredTechStacks: filteredTechStacks,
+    ));
+  }
+
+  void _onUpdateProjectCategory(
+      UpdateProjectCategory event, Emitter<PortfolioState> emit) {
+    final filtered = event.category == 'All'
+        ? state.profile!.projects
+        : state.profile!.projects
+            .where((p) => p.category == event.category)
+            .toList();
+    emit(state.copyWith(
+      selectedProjectCategory: event.category,
+      filteredProjects: filtered,
     ));
   }
 }

@@ -2,30 +2,26 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_portfolio/core/responsive/responsive_framework.dart';
+import 'package:flutter_portfolio/core/theme/app_theme.dart';
+import 'package:flutter_portfolio/core/widgets/common/section_wrapper.dart';
+import 'package:flutter_portfolio/features/portfolio/data/models/profile_model.dart';
+import 'package:flutter_portfolio/features/portfolio/presentation/bloc/portfolio_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../core/theme/app_theme.dart';
-import '../../data/models/profile_model.dart';
-import '../bloc/portfolio_bloc.dart';
-import 'section_header.dart';
-
-class PortfolioSection extends StatefulWidget {
+class PortfolioSection extends StatelessWidget {
   const PortfolioSection({super.key});
 
-  @override
-  State<PortfolioSection> createState() => _PortfolioSectionState();
-}
-
-class _PortfolioSectionState extends State<PortfolioSection> {
-  final CarouselController _carouselController = CarouselController();
-  int _currentIndex = 0;
+  final categories = const [
+    'All',
+    'Full System',
+    'Mobile',
+    'Backend',
+    'Others',
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final isDesktop = screenSize.width >= 1024;
-    final theme = Theme.of(context);
-
     return BlocBuilder<PortfolioBloc, PortfolioState>(
       builder: (context, state) {
         if (state.isLoading && state.profile == null) {
@@ -37,39 +33,104 @@ class _PortfolioSectionState extends State<PortfolioSection> {
           return const Center(child: Text('No profile data available'));
         }
 
-        return Container(
-          padding: EdgeInsets.only(
-            left: AppTheme.spacing24,
-            right: AppTheme.spacing24,
-            top: AppTheme.spacing64,
-            bottom: AppTheme.spacing64,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SectionHeader(
-                title: 'Portfolio',
-                subtitle: 'My Recent Work',
-              ),
-              const SizedBox(height: AppTheme.spacing48),
+        final filteredProjects = state.filteredProjects;
 
-              // Projects in vertical scroll
-              SizedBox(
-                height: 600, // Adjust based on your content
-                child: ListView.builder(
-                  itemCount: profile.projects.length,
-                  itemBuilder: (context, index) {
-                    return _ProjectCard(
-                      project: profile.projects[index],
-                      index: index,
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
+        return SectionWrapper(
+          sectionId: 'portfolio',
+          title: 'Portfolio',
+          subtitle: 'My Recent Work',
+          addTopPadding: true,
+          addBottomPadding: true,
+          mobileChild: _buildLayout(
+              context, filteredProjects, state.selectedProjectCategory!),
+          tabletChild: _buildLayout(
+              context, filteredProjects, state.selectedProjectCategory!),
+          smallLaptopChild: _buildLayout(
+              context, filteredProjects, state.selectedProjectCategory!),
+          desktopChild: _buildLayout(
+              context, filteredProjects, state.selectedProjectCategory!),
+          largeDesktopChild: _buildLayout(
+              context, filteredProjects, state.selectedProjectCategory!),
         );
       },
+    );
+  }
+
+  Widget _buildLayout(BuildContext context, List<ProjectModel> projects,
+      String selectedCategory) {
+    final theme = Theme.of(context);
+    final contentWidth = ResponsiveHelper.getContentWidth(context);
+
+    return Container(
+      width: contentWidth,
+      padding: ResponsiveHelper.getResponsivePadding(context),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: AppTheme.spacing32),
+          SizedBox(
+            height: 40,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              itemCount: categories.length,
+              itemBuilder: (context, index) {
+                final category = categories[index];
+                return Padding(
+                  padding: const EdgeInsets.only(right: AppTheme.spacing8),
+                  child: ChoiceChip(
+                    label: Text(category),
+                    selected: selectedCategory == category,
+                    onSelected: (selected) {
+                      if (selected) {
+                        context
+                            .read<PortfolioBloc>()
+                            .add(UpdateProjectCategory(category));
+                      }
+                    },
+                    selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                    backgroundColor: theme.colorScheme.surface,
+                    labelStyle: theme.textTheme.bodyMedium?.copyWith(
+                      color: selectedCategory == category
+                          ? theme.colorScheme.primary
+                          : theme.textTheme.bodyMedium?.color,
+                      fontWeight: selectedCategory == category
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(AppTheme.borderRadius8),
+                      side: BorderSide(
+                        color: selectedCategory == category
+                            ? theme.colorScheme.primary
+                            : Colors.transparent,
+                      ),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppTheme.spacing16,
+                      vertical: AppTheme.spacing8,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: AppTheme.spacing32),
+          // Project List
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: projects.length,
+            itemBuilder: (context, index) {
+              return _ProjectCard(
+                project: projects[index],
+                index: index,
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }
@@ -86,8 +147,7 @@ class _ProjectCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final screenSize = MediaQuery.of(context).size;
-    final isDesktop = screenSize.width >= 1024;
+    final isDesktop = ResponsiveHelper.isLargeDesktop(context);
 
     return Card(
       elevation: 4,

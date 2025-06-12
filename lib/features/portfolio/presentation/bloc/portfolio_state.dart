@@ -8,9 +8,11 @@ class PortfolioState extends Equatable {
   final bool isContactFormSubmitting;
   final bool isContactFormSubmitted;
   final String? contactFormStatus;
-  final String selectedCategory;
+  final String selectedTechStacksCategory;
   final List<TechStackModel> filteredTechStacks;
   final int visibleBlogPostCount;
+  final String? selectedProjectCategory;
+  final List<ProjectModel> filteredProjects;
 
   const PortfolioState({
     this.isLoading = false,
@@ -20,9 +22,11 @@ class PortfolioState extends Equatable {
     this.isContactFormSubmitting = false,
     this.isContactFormSubmitted = false,
     this.contactFormStatus,
-    this.selectedCategory = 'All',
+    this.selectedTechStacksCategory = 'All',
     this.filteredTechStacks = const [],
     this.visibleBlogPostCount = 6,
+    this.selectedProjectCategory,
+    this.filteredProjects = const [],
   });
 
   PortfolioState copyWith({
@@ -33,9 +37,11 @@ class PortfolioState extends Equatable {
     bool? isContactFormSubmitting,
     bool? isContactFormSubmitted,
     String? contactFormStatus,
-    String? selectedCategory,
+    String? selectedTechStacksCategory,
     List<TechStackModel>? filteredTechStacks,
     int? visibleBlogPostCount,
+    String? selectedProjectCategory,
+    List<ProjectModel>? filteredProjects,
   }) {
     return PortfolioState(
       isLoading: isLoading ?? this.isLoading,
@@ -47,9 +53,13 @@ class PortfolioState extends Equatable {
       isContactFormSubmitted:
           isContactFormSubmitted ?? this.isContactFormSubmitted,
       contactFormStatus: contactFormStatus ?? this.contactFormStatus,
-      selectedCategory: selectedCategory ?? this.selectedCategory,
+      selectedTechStacksCategory:
+          selectedTechStacksCategory ?? this.selectedTechStacksCategory,
       filteredTechStacks: filteredTechStacks ?? this.filteredTechStacks,
       visibleBlogPostCount: visibleBlogPostCount ?? this.visibleBlogPostCount,
+      selectedProjectCategory:
+          selectedProjectCategory ?? this.selectedProjectCategory,
+      filteredProjects: filteredProjects ?? this.filteredProjects,
     );
   }
 
@@ -62,8 +72,10 @@ class PortfolioState extends Equatable {
         isContactFormSubmitting,
         isContactFormSubmitted,
         contactFormStatus,
-        selectedCategory,
+        selectedTechStacksCategory,
         filteredTechStacks,
         visibleBlogPostCount,
+        selectedProjectCategory,
+        filteredProjects,
       ];
 }

@@ -30,16 +30,16 @@ class TechStackSection extends StatelessWidget {
           subtitle: 'My Technical Skills',
           addTopPadding: true,
           addBottomPadding: true,
-          mobileChild: _buildLayout(
-              context, state.filteredTechStacks, state.selectedCategory),
-          tabletChild: _buildLayout(
-              context, state.filteredTechStacks, state.selectedCategory),
-          smallLaptopChild: _buildLayout(
-              context, state.filteredTechStacks, state.selectedCategory),
-          desktopChild: _buildLayout(
-              context, state.filteredTechStacks, state.selectedCategory),
-          largeDesktopChild: _buildLayout(
-              context, state.filteredTechStacks, state.selectedCategory),
+          mobileChild: _buildLayout(context, state.filteredTechStacks,
+              state.selectedTechStacksCategory),
+          tabletChild: _buildLayout(context, state.filteredTechStacks,
+              state.selectedTechStacksCategory),
+          smallLaptopChild: _buildLayout(context, state.filteredTechStacks,
+              state.selectedTechStacksCategory),
+          desktopChild: _buildLayout(context, state.filteredTechStacks,
+              state.selectedTechStacksCategory),
+          largeDesktopChild: _buildLayout(context, state.filteredTechStacks,
+              state.selectedTechStacksCategory),
         );
       },
     );
