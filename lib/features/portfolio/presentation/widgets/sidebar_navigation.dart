@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../core/navigation/scroll_controller.dart';
@@ -7,16 +6,12 @@ import '../../../../core/responsive/responsive_framework.dart';
 import '../../../../core/theme/app_theme.dart';
 
 class SidebarNavigation extends StatelessWidget {
-  final bool isOpen;
   final NavigationSection currentSection;
-  final VoidCallback onToggle;
   final Function(NavigationSection) onSectionSelected;
 
   const SidebarNavigation({
     super.key,
-    required this.isOpen,
     required this.currentSection,
-    required this.onToggle,
     required this.onSectionSelected,
   });
 
@@ -24,31 +19,14 @@ class SidebarNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     return ResponsiveBuilder(
       builder: (context, deviceType, constraints) {
-        if (deviceType.index >= DeviceType.smallLaptop.index) {
-          return _SidebarLayout(
-            width: 250,
-            isDrawer: false,
-            isOpen: true,
-            currentSection: currentSection,
-            onToggle: onToggle,
-            onSectionSelected: onSectionSelected,
-          );
-        } else {
-          final double width = switch (deviceType) {
-            DeviceType.smallLaptop => constraints.maxWidth * 0.4,
-            DeviceType.tablet => constraints.maxWidth * 0.5,
-            _ => constraints.maxWidth * 0.75,
-          };
-
-          return _SidebarLayout(
-            width: width,
-            isDrawer: true,
-            isOpen: isOpen,
-            currentSection: currentSection,
-            onToggle: onToggle,
-            onSectionSelected: onSectionSelected,
-          );
-        }
+        // final double width = switch (deviceType) {
+        //   DeviceType.smallLaptop => constraints.maxWidth * 0.4,
+        // };
+        return _SidebarLayout(
+          width: 250,
+          currentSection: currentSection,
+          onSectionSelected: onSectionSelected,
+        );
       },
     );
   }
@@ -56,80 +34,34 @@ class SidebarNavigation extends StatelessWidget {
 
 class _SidebarLayout extends StatelessWidget {
   final double width;
-  final bool isDrawer;
-  final bool isOpen;
   final NavigationSection currentSection;
-  final VoidCallback onToggle;
   final Function(NavigationSection) onSectionSelected;
 
   const _SidebarLayout({
     required this.width,
-    required this.isDrawer,
-    required this.isOpen,
     required this.currentSection,
-    required this.onToggle,
     required this.onSectionSelected,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
-    if (!isDrawer) {
-      return Container(
-        width: width,
-        decoration: BoxDecoration(
-          color: theme.cardColor,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-            ),
-          ],
-        ),
-        child: _buildSidebarContent(context, isDrawer),
-      );
-    }
-
-    return Stack(
-      children: [
-        Positioned(
-          top: 16,
-          left: 16,
-          child: IconButton(
-            icon: Icon(
-              isOpen ? Icons.close : Icons.menu,
-              color: theme.colorScheme.primary,
-            ),
-            onPressed: onToggle,
+    return Container(
+      width: width,
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
           ),
-        ),
-        if (isOpen)
-          Animate(
-            effects: const [
-              SlideEffect(
-                begin: Offset(-1, 0),
-                end: Offset(0, 0),
-                duration: Duration(milliseconds: 300),
-                curve: Curves.easeOutCubic,
-              ),
-            ],
-            child: Container(
-              width: width,
-              height: MediaQuery.of(context).size.height,
-              color: theme.cardColor,
-              padding: EdgeInsets.only(
-                top: MediaQuery.of(context).padding.top + AppTheme.spacing48,
-                bottom: AppTheme.spacing32,
-              ),
-              child: _buildSidebarContent(context, isDrawer),
-            ),
-          ),
-      ],
+        ],
+      ),
+      child: _buildSidebarContent(context),
     );
   }
 
-  Widget _buildSidebarContent(BuildContext context, bool isDrawer) {
+  Widget _buildSidebarContent(BuildContext context) {
     final theme = Theme.of(context);
 
     return Column(
@@ -169,7 +101,6 @@ class _SidebarLayout extends StatelessWidget {
                   isSelected: section == currentSection,
                   onTap: () {
                     onSectionSelected(section);
-                    if (isDrawer) onToggle();
                   },
                 );
               }).toList(),
@@ -188,10 +119,6 @@ class _SidebarLayout extends StatelessWidget {
                   icon: FontAwesomeIcons.linkedin, url: 'https://linkedin.com'),
               _SocialIcon(
                   icon: FontAwesomeIcons.twitter, url: 'https://twitter.com'),
-              if (isDrawer)
-                _SocialIcon(
-                    icon: FontAwesomeIcons.dribbble,
-                    url: 'https://dribbble.com'),
             ],
           ),
         ),
