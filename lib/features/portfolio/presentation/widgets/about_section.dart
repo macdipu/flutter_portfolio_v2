@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_portfolio/core/navigation/scroll_controller.dart';
 import 'package:flutter_portfolio/core/responsive/responsive_framework.dart';
 import 'package:flutter_portfolio/core/widgets/common/section_wrapper.dart';
+import 'package:flutter_portfolio/features/portfolio/presentation/bloc/portfolio_bloc.dart';
 
 class AboutSection extends StatelessWidget {
   const AboutSection({super.key});
@@ -32,78 +33,79 @@ class AboutSection extends StatelessWidget {
       largeDesktop: 32.0,
     );
 
-    return Container(
-      width: ResponsiveHelper.getContentWidth(context),
-      padding: ResponsiveHelper.getResponsivePadding(context),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'I’m a software engineer with a passion for building beautiful and functional user interfaces. I specialize in Flutter and enjoy working on responsive design, performance optimization, and scalable architecture.',
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: ResponsiveHelper.getFontSize(
-                    context,
-                    mobile: 14,
-                    tablet: 16,
-                    smallLaptop: 16,
-                    desktop: 18,
-                    largeDesktop: 20,
+    return BlocBuilder<PortfolioBloc, PortfolioState>(
+      builder: (context, state) {
+        final profile = state.profile;
+        if (profile == null) {
+          return const Center(child: Text('No profile data available'));
+        }
+        return Container(
+          width: ResponsiveHelper.getContentWidth(context),
+          padding: ResponsiveHelper.getResponsivePadding(context),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                profile.about,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontSize: ResponsiveHelper.getFontSize(
+                        context,
+                        mobile: 14,
+                        tablet: 16,
+                        smallLaptop: 16,
+                        desktop: 18,
+                        largeDesktop: 20,
+                      ),
+                    ),
+              ),
+              const SizedBox(height: 32),
+              Text(
+                'Key Accomplishments',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+              const SizedBox(height: 16),
+              state.profile?.keyAccomplishments != null
+                  ? Wrap(
+                      spacing: spacing,
+                      runSpacing: spacing,
+                      children: profile.keyAccomplishments
+                          .map(
+                            (accomplishment) => _AccomplishmentTile(
+                              icon: Icons.check_circle_outline,
+                              text: accomplishment,
+                            ),
+                          )
+                          .toList(),
+                    )
+                  : const SizedBox.shrink(),
+              const SizedBox(height: 32),
+              Text(
+                'Want to know more about my journey? You can download my CV by clicking the button below.',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () {
+                  context
+                      .read<ScrollCubit>()
+                      .scrollToSection(NavigationSection.resume);
+                },
+                icon: const Icon(Icons.download),
+                label: const Text('Download CV'),
+                style: ElevatedButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-          ),
-          const SizedBox(height: 32),
-          Text(
-            'Key Accomplishments',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-          ),
-          const SizedBox(height: 16),
-          Wrap(
-            spacing: spacing,
-            runSpacing: spacing,
-            children: const [
-              _AccomplishmentTile(
-                icon: Icons.check_circle_outline,
-                text: '5+ Production Apps Released',
-              ),
-              _AccomplishmentTile(
-                icon: Icons.check_circle_outline,
-                text: '100+ UI Screens Designed',
-              ),
-              _AccomplishmentTile(
-                icon: Icons.check_circle_outline,
-                text: '3+ Years Flutter Experience',
-              ),
-              _AccomplishmentTile(
-                icon: Icons.check_circle_outline,
-                text: 'Open Source Contributor',
               ),
             ],
           ),
-          const SizedBox(height: 32),
-          Text(
-            'Want to know more about my journey? You can download my CV by clicking the button below.',
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton.icon(
-            onPressed: () {
-              context
-                  .read<ScrollCubit>()
-                  .scrollToSection(NavigationSection.resume);
-            },
-            icon: const Icon(Icons.download),
-            label: const Text('Download CV'),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

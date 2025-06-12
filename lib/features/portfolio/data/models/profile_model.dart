@@ -6,7 +6,8 @@ class ProfileModel extends Equatable {
   final String introduction;
   final String about;
   final String avatarUrl;
-  final List<ExperienceModel> experiences;
+  final List<String> keyAccomplishments;
+  final List<ExperienceGroup> experiences;
   final List<EducationModel> educations;
   final List<ProjectModel> projects;
   final List<ServiceModel> services;
@@ -20,6 +21,7 @@ class ProfileModel extends Equatable {
     required this.introduction,
     required this.about,
     required this.avatarUrl,
+    required this.keyAccomplishments,
     required this.experiences,
     required this.educations,
     required this.projects,
@@ -36,6 +38,7 @@ class ProfileModel extends Equatable {
         introduction,
         about,
         avatarUrl,
+        keyAccomplishments,
         experiences,
         educations,
         projects,
@@ -47,22 +50,30 @@ class ProfileModel extends Equatable {
 }
 
 class ExperienceModel extends Equatable {
-  final String company;
   final String position;
   final String period;
   final String description;
-  final String logoUrl;
 
   const ExperienceModel({
-    required this.company,
     required this.position,
     required this.period,
     required this.description,
-    required this.logoUrl,
   });
 
   @override
-  List<Object> get props => [company, position, period, description, logoUrl];
+  List<Object> get props => [position, period, description];
+}
+
+class ExperienceGroup {
+  final String company;
+  final String logoUrl;
+  final List<ExperienceModel> roles;
+
+  ExperienceGroup({
+    required this.company,
+    required this.logoUrl,
+    required this.roles,
+  });
 }
 
 class EducationModel extends Equatable {

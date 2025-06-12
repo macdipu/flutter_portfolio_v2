@@ -18,7 +18,8 @@ class PortfolioRepository {
           'My journey into Flutter development began three years ago when I was searching for a framework that would allow me to build beautiful apps for both iOS and Android with a single codebase. What started as curiosity quickly turned into passion as I discovered Flutter\'s powerful capabilities and elegant design patterns. Since then, I\'ve worked on numerous projects, from simple utility apps to complex enterprise solutions, always striving to create exceptional user experiences and maintainable codebases.',
       avatarUrl:
           'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDko2K-54q8zwK4TMEPKz4GNAvFFYqr_TLOkXAYVl5oXUG9i0YUycZCpUF&s=10',
-      experiences: _getExperiences(),
+      keyAccomplishments: _getKeyAccomplishments(),
+      experiences: _getExperienceGroups(),
       educations: _getEducations(),
       projects: _getProjects(),
       services: _getServices(),
@@ -32,34 +33,90 @@ class PortfolioRepository {
     return await _mediumService.fetchBlogPosts();
   }
 
-  List<ExperienceModel> _getExperiences() {
+  List<ExperienceGroup> _getExperienceGroups() {
     return [
-      const ExperienceModel(
-        company: 'Tech Innovations',
-        position: 'Senior Flutter Developer',
-        period: 'Jan 2022 - Present',
-        description:
-            'Leading Flutter development team in creating cutting-edge mobile applications. Implementing MVVM architecture and BLoC pattern for state management. Mentoring junior developers and establishing best practices.',
+      ExperienceGroup(
+        company: 'Polygon Technology',
         logoUrl:
             'https://images.pexels.com/photos/4348404/pexels-photo-4348404.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+        roles: const [
+          ExperienceModel(
+            position: 'Software Engineer II',
+            period: 'Sep 2024 - Present',
+            description:
+                'Promoted to Software Engineer II. Contributing to cutting-edge blockchain and technology solutions in a collaborative engineering environment.',
+          ),
+          ExperienceModel(
+            position: 'Software Engineer I',
+            period: 'Sep 2023 - Oct 2024',
+            description:
+                'Worked on scalable solutions within the Polygon ecosystem. Collaborated with cross-functional teams to build high-quality features.',
+          ),
+        ],
       ),
-      const ExperienceModel(
-        company: 'Mobile Masters',
-        position: 'Flutter Developer',
-        period: 'Mar 2020 - Dec 2021',
-        description:
-            'Developed and maintained multiple Flutter applications for various clients. Implemented complex UI designs and integrated RESTful APIs. Collaborated with design and backend teams to ensure seamless user experiences.',
-        logoUrl:
-            'https://images.pexels.com/photos/5473298/pexels-photo-5473298.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-      ),
-      const ExperienceModel(
-        company: 'FreelanceHub',
-        position: 'Mobile App Developer',
-        period: 'Jun 2018 - Feb 2020',
-        description:
-            'Created custom mobile applications for small to medium businesses. Utilized React Native before transitioning to Flutter. Managed entire project lifecycle from requirements gathering to app store submission.',
+      ExperienceGroup(
+        company: 'Chowdhury eLab',
         logoUrl:
             'https://images.pexels.com/photos/3277808/pexels-photo-3277808.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+        roles: const [
+          ExperienceModel(
+            position: 'Founder & Developer',
+            period: 'May 2020 - Present',
+            description:
+                'Founded Chowdhury eLab and published multiple mobile apps on Google Play. Led full app lifecycle including design, development, testing, and deployment.',
+          ),
+        ],
+      ),
+      ExperienceGroup(
+        company: 'Palki Motors Limited',
+        logoUrl:
+            'https://images.pexels.com/photos/5473298/pexels-photo-5473298.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+        roles: const [
+          ExperienceModel(
+            position: 'Software Engineer I',
+            period: 'Aug 2023 - Sep 2023',
+            description:
+                'Developed software systems and contributed to digital transformation initiatives in the automotive domain.',
+          ),
+          ExperienceModel(
+            position: 'IoT System Developer',
+            period: 'May 2023 - Jul 2023',
+            description:
+                'Built and tested IoT solutions to enhance smart vehicle capabilities, integrating hardware with cloud-based systems.',
+          ),
+        ],
+      ),
+      ExperienceGroup(
+        company: 'East West University Robotics Club',
+        logoUrl:
+            'https://images.pexels.com/photos/325185/pexels-photo-325185.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+        roles: const [
+          ExperienceModel(
+            position: 'President',
+            period: 'Aug 2021 - Apr 2023',
+            description:
+                'Led the university robotics club, organized national-level tech events and workshops. Promoted innovation and technical skill development.',
+          ),
+          ExperienceModel(
+            position: 'Training Instructor',
+            period: 'Feb 2021 - Feb 2022',
+            description:
+                'Provided robotics training to junior members. Helped design workshop content, mentored new members, and coordinated sessions.',
+          ),
+        ],
+      ),
+      ExperienceGroup(
+        company: 'East West University Telecommunications Club',
+        logoUrl:
+            'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+        roles: const [
+          ExperienceModel(
+            position: 'Executive Member',
+            period: 'Dec 2020 - Apr 2021',
+            description:
+                'Contributed to club operations, including organizing seminars and networking events focused on telecommunications technologies.',
+          ),
+        ],
       ),
     ];
   }
@@ -67,20 +124,29 @@ class PortfolioRepository {
   List<EducationModel> _getEducations() {
     return [
       const EducationModel(
-        institution: 'University of Technology',
-        degree: 'Master of Computer Science',
-        period: '2016 - 2018',
+        institution: 'East West University',
+        degree: 'B.Sc. in Computer Science & Engineering (CSE)',
+        period: 'Jan 2019 - Mar 2023',
         description:
-            'Specialized in Mobile Computing and User Interface Design. Thesis on Cross-Platform Mobile Development Frameworks.',
+            'Focused on software development, data structures, algorithms, and robotics. Actively participated in Robotics and Telecom clubs.',
         logoUrl:
             'https://images.pexels.com/photos/159490/yale-university-landscape-universities-schools-159490.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
       ),
       const EducationModel(
-        institution: 'College of Engineering',
-        degree: 'Bachelor of Computer Engineering',
-        period: '2012 - 2016',
+        institution: 'Engineering University School & College',
+        degree: 'H.S.C. in Science',
+        period: '2016 - 2018',
         description:
-            'Core curriculum covering software development, algorithms, data structures, and computer networks. Participated in mobile app development club.',
+            'Completed Higher Secondary education with a focus on Physics, Chemistry, and Mathematics.',
+        logoUrl:
+            'https://images.pexels.com/photos/159490/yale-university-landscape-universities-schools-159490.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+      ),
+      const EducationModel(
+        institution: 'A.K. High School & College',
+        degree: 'S.S.C. in Science',
+        period: '2011 - 2016',
+        description:
+            'Completed secondary education with a focus on general science and mathematics.',
         logoUrl:
             'https://images.pexels.com/photos/159490/yale-university-landscape-universities-schools-159490.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
       ),
@@ -324,5 +390,14 @@ class PortfolioRepository {
       twitter: 'https://x.com/dipu093',
       calendlyLink: 'https://calendly.com/macdipu',
     );
+  }
+
+  List<String> _getKeyAccomplishments() {
+    return [
+      '100+ UI Screens Designed',
+      '3+ Years Flutter Experience',
+      'Open Source Contributor',
+      'Developed 10+ Production-Ready Apps',
+    ];
   }
 }
