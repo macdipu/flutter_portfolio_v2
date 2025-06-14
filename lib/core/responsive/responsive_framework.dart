@@ -33,7 +33,6 @@ class ResponsiveConfig {
   final bool useDensityAwareBreakpoints;
   final double maxContentWidth;
   final Map<DeviceType, EdgeInsets> defaultPadding;
-  final Map<DeviceType, int> defaultGridColumns;
   final bool enableDebugMode;
 
   const ResponsiveConfig({
@@ -45,13 +44,6 @@ class ResponsiveConfig {
       DeviceType.smallLaptop: EdgeInsets.all(28.0),
       DeviceType.desktop: EdgeInsets.all(32.0),
       DeviceType.largeDesktop: EdgeInsets.all(48.0),
-    },
-    this.defaultGridColumns = const {
-      DeviceType.mobile: 1,
-      DeviceType.tablet: 2,
-      DeviceType.smallLaptop: 2,
-      DeviceType.desktop: 3,
-      DeviceType.largeDesktop: 4,
     },
     this.enableDebugMode = false,
   });
