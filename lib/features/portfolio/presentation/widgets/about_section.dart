@@ -25,13 +25,7 @@ class AboutSection extends StatelessWidget {
   }
 
   Widget _buildLayout(BuildContext context) {
-    final spacing = context.responsive(
-      mobile: 12.0,
-      tablet: 16.0,
-      smallLaptop: 20.0,
-      desktop: 24.0,
-      largeDesktop: 32.0,
-    );
+    final spacing = context.spacing;
 
     return BlocBuilder<PortfolioBloc, PortfolioState>(
       builder: (context, state) {
@@ -41,22 +35,14 @@ class AboutSection extends StatelessWidget {
         }
         return Container(
           width: ResponsiveHelper.getContentWidth(context),
-          padding: ResponsiveHelper.getResponsivePadding(context),
+          padding: context.defaultPadding,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 profile.about,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontSize: ResponsiveHelper.getFontSize(
-                        context,
-                        mobile: 14,
-                        tablet: 16,
-                        smallLaptop: 16,
-                        desktop: 18,
-                        largeDesktop: 20,
-                      ),
-                    ),
+                style: context.responsiveTextStyle(
+                    Theme.of(context).textTheme.bodyLarge!),
               ),
               const SizedBox(height: 32),
               Text(

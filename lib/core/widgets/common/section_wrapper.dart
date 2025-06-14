@@ -72,10 +72,10 @@ class SectionWrapper extends StatelessWidget {
     }
 
     return ResponsiveBuilder(
-      builder: (context, deviceType, constraints) {
+      builder: (context, info) {
         // Select the appropriate child based on device type
         Widget content =
-            _getResponsiveChild(deviceType) ?? const SizedBox.shrink();
+            _getResponsiveChild(info.deviceType) ?? const SizedBox.shrink();
 
         // Wrap content with constraints for better web layout
         if (centerContent) {
@@ -169,7 +169,7 @@ class SectionWrapper extends StatelessWidget {
   }
 
   EdgeInsets _getDefaultPadding(BuildContext context) {
-    final baseVerticalPadding = context.responsive<double>(
+    final baseVerticalPadding = context.responsiveValue<double>(
       mobile: addTopPadding || addBottomPadding ? 32.0 : 0.0,
       tablet: addTopPadding || addBottomPadding ? 48.0 : 0.0,
       smallLaptop: addTopPadding || addBottomPadding ? 64.0 : 0.0,
@@ -177,7 +177,7 @@ class SectionWrapper extends StatelessWidget {
       largeDesktop: addTopPadding || addBottomPadding ? 96.0 : 0.0,
     );
 
-    final horizontalPadding = context.responsive<double>(
+    final horizontalPadding = context.responsiveValue<double>(
       mobile: 16.0,
       tablet: 32.0,
       smallLaptop: 48.0,
@@ -194,7 +194,7 @@ class SectionWrapper extends StatelessWidget {
   }
 
   double _getContentMaxWidth(BuildContext context) {
-    return context.responsive<double>(
+    return context.responsiveValue<double>(
       mobile: double.infinity,
       tablet: 768.0,
       smallLaptop: 1024.0,

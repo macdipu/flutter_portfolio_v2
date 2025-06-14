@@ -44,7 +44,8 @@ class _PortfolioView extends StatelessWidget {
     final scrollCubit = context.read<ScrollCubit>();
 
     return ResponsiveBuilder(
-      builder: (context, deviceType, constraints) {
+      builder: (context, info) {
+        final deviceType = info.deviceType;
         final isDrawer =
             deviceType == DeviceType.mobile || deviceType == DeviceType.tablet;
         final isSidebar = deviceType.index >= DeviceType.smallLaptop.index;

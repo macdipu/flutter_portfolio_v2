@@ -154,17 +154,17 @@ class _ResponsiveButtonState extends State<ResponsiveButton>
     if (widget.padding != null) return widget.padding!;
 
     final basePadding = switch (widget.size) {
-      ButtonSize.small => context.responsive<EdgeInsets>(
+      ButtonSize.small => context.responsiveValue<EdgeInsets>(
           mobile: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           tablet: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           desktop: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
-      ButtonSize.medium => context.responsive<EdgeInsets>(
+      ButtonSize.medium => context.responsiveValue<EdgeInsets>(
           mobile: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           tablet: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
           desktop: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         ),
-      ButtonSize.large => context.responsive<EdgeInsets>(
+      ButtonSize.large => context.responsiveValue<EdgeInsets>(
           mobile: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           tablet: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
           desktop: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
@@ -188,17 +188,17 @@ class _ResponsiveButtonState extends State<ResponsiveButton>
     if (widget.minWidth != null) return widget.minWidth!;
 
     return switch (widget.size) {
-      ButtonSize.small => context.responsive<double>(
+      ButtonSize.small => context.responsiveValue<double>(
           mobile: 80.0,
           tablet: 90.0,
           desktop: 100.0,
         ),
-      ButtonSize.medium => context.responsive<double>(
+      ButtonSize.medium => context.responsiveValue<double>(
           mobile: 120.0,
           tablet: 140.0,
           desktop: 160.0,
         ),
-      ButtonSize.large => context.responsive<double>(
+      ButtonSize.large => context.responsiveValue<double>(
           mobile: 140.0,
           tablet: 160.0,
           desktop: 180.0,
@@ -208,17 +208,17 @@ class _ResponsiveButtonState extends State<ResponsiveButton>
 
   double _getIconSpacing(BuildContext context) {
     return switch (widget.size) {
-      ButtonSize.small => context.responsive<double>(
+      ButtonSize.small => context.responsiveValue<double>(
           mobile: 6.0,
           tablet: 7.0,
           desktop: 8.0,
         ),
-      ButtonSize.medium => context.responsive<double>(
+      ButtonSize.medium => context.responsiveValue<double>(
           mobile: 8.0,
           tablet: 9.0,
           desktop: 10.0,
         ),
-      ButtonSize.large => context.responsive<double>(
+      ButtonSize.large => context.responsiveValue<double>(
           mobile: 10.0,
           tablet: 11.0,
           desktop: 12.0,
@@ -228,17 +228,17 @@ class _ResponsiveButtonState extends State<ResponsiveButton>
 
   double _getIconSize(BuildContext context) {
     return switch (widget.size) {
-      ButtonSize.small => context.responsive<double>(
+      ButtonSize.small => context.responsiveValue<double>(
           mobile: 16.0,
           tablet: 17.0,
           desktop: 18.0,
         ),
-      ButtonSize.medium => context.responsive<double>(
+      ButtonSize.medium => context.responsiveValue<double>(
           mobile: 18.0,
           tablet: 19.0,
           desktop: 20.0,
         ),
-      ButtonSize.large => context.responsive<double>(
+      ButtonSize.large => context.responsiveValue<double>(
           mobile: 20.0,
           tablet: 21.0,
           desktop: 22.0,

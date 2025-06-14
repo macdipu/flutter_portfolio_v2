@@ -32,8 +32,7 @@ class HeroSection extends StatelessWidget {
         }
 
         // Define responsive values for all breakpoints
-        final imageSize = ResponsiveHelper.getResponsiveValue<double>(
-          context: context,
+        final imageSize = context.responsiveValue<double>(
           mobile: 180.0,
           tablet: 240.0,
           smallLaptop: 300.0,
@@ -41,8 +40,7 @@ class HeroSection extends StatelessWidget {
           largeDesktop: 480.0,
         );
 
-        final greetingSize = ResponsiveHelper.getFontSize(
-          context,
+        final greetingSize = context.responsiveValue(
           mobile: 18.0,
           tablet: 20.0,
           smallLaptop: 22.0,
@@ -50,8 +48,7 @@ class HeroSection extends StatelessWidget {
           largeDesktop: 26.0,
         );
 
-        final nameSize = ResponsiveHelper.getFontSize(
-          context,
+        final nameSize = context.responsiveValue(
           mobile: 28.0,
           tablet: 38.0,
           smallLaptop: 46.0,
@@ -59,8 +56,7 @@ class HeroSection extends StatelessWidget {
           largeDesktop: 64.0,
         );
 
-        final titleSize = ResponsiveHelper.getFontSize(
-          context,
+        final titleSize = context.responsiveValue(
           mobile: 18.0,
           tablet: 22.0,
           smallLaptop: 24.0,
@@ -68,8 +64,7 @@ class HeroSection extends StatelessWidget {
           largeDesktop: 30.0,
         );
 
-        final introSize = ResponsiveHelper.getFontSize(
-          context,
+        final introSize = context.responsiveValue(
           mobile: 14.0,
           tablet: 16.0,
           smallLaptop: 17.0,
