@@ -16,6 +16,7 @@ class PortfolioSection extends StatelessWidget {
     'All',
     'Full System',
     'Mobile',
+    'Web',
     'Backend',
     'Others',
   ];
@@ -189,7 +190,7 @@ class _ProjectCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Project title and role
+        // Project title, role, and category
         Text(
           project.title,
           style: theme.textTheme.headlineSmall,
@@ -201,11 +202,78 @@ class _ProjectCard extends StatelessWidget {
             color: theme.colorScheme.primary,
           ),
         ),
+        const SizedBox(height: AppTheme.spacing8),
+        Chip(
+          label: Text(project.category),
+          backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
+          labelStyle: TextStyle(
+            color: theme.colorScheme.primary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: AppTheme.spacing16),
 
         // Screenshots
         _buildScreenshotCarousel(context, theme),
         const SizedBox(height: AppTheme.spacing24),
+
+        // Description
+        Text(
+          project.description,
+          style: theme.textTheme.bodyLarge,
+        ),
+        const SizedBox(height: AppTheme.spacing16),
+
+        // Technologies
+        _buildTechList(theme),
+        const SizedBox(height: AppTheme.spacing24),
+
+        // Challenges
+        if (project.challenge.isNotEmpty) ...[
+          Text(
+            'Challenge:',
+            style: theme.textTheme.titleMedium,
+          ),
+          const SizedBox(height: AppTheme.spacing8),
+          Text(
+            project.challenge,
+            style: theme.textTheme.bodyMedium,
+          ),
+          const SizedBox(height: AppTheme.spacing16),
+        ],
+
+        // Links
+        _buildLinks(theme),
+      ],
+    );
+  }
+
+  Widget _buildProjectDetails(ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Project title, role, and category
+        Text(
+          project.title,
+          style: theme.textTheme.headlineSmall,
+        ),
+        const SizedBox(height: AppTheme.spacing8),
+        Text(
+          project.role,
+          style: theme.textTheme.titleMedium?.copyWith(
+            color: theme.colorScheme.primary,
+          ),
+        ),
+        const SizedBox(height: AppTheme.spacing8),
+        Chip(
+          label: Text(project.category),
+          backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
+          labelStyle: TextStyle(
+            color: theme.colorScheme.primary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: AppTheme.spacing16),
 
         // Description
         Text(
@@ -315,55 +383,6 @@ class _ProjectCard extends StatelessWidget {
                 },
               ),
       ),
-    );
-  }
-
-  Widget _buildProjectDetails(ThemeData theme) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Project title and role
-        Text(
-          project.title,
-          style: theme.textTheme.headlineSmall,
-        ),
-        const SizedBox(height: AppTheme.spacing8),
-        Text(
-          project.role,
-          style: theme.textTheme.titleMedium?.copyWith(
-            color: theme.colorScheme.primary,
-          ),
-        ),
-        const SizedBox(height: AppTheme.spacing16),
-
-        // Description
-        Text(
-          project.description,
-          style: theme.textTheme.bodyLarge,
-        ),
-        const SizedBox(height: AppTheme.spacing16),
-
-        // Technologies
-        _buildTechList(theme),
-        const SizedBox(height: AppTheme.spacing24),
-
-        // Challenges
-        if (project.challenge.isNotEmpty) ...[
-          Text(
-            'Challenge:',
-            style: theme.textTheme.titleMedium,
-          ),
-          const SizedBox(height: AppTheme.spacing8),
-          Text(
-            project.challenge,
-            style: theme.textTheme.bodyMedium,
-          ),
-          const SizedBox(height: AppTheme.spacing16),
-        ],
-
-        // Links
-        _buildLinks(theme),
-      ],
     );
   }
 
