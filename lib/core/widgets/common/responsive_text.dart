@@ -375,7 +375,7 @@ class _ResponsiveTextState extends State<ResponsiveText>
     final (mobile, tablet, smallLaptop, desktop, largeDesktop) =
         _getVariantFontSizes();
 
-    return context.responsive<double>(
+    return context.responsiveValue<double>(
       mobile: widget.mobileFontSize ?? mobile,
       tablet: widget.tabletFontSize ?? tablet,
       smallLaptop: widget.smallLaptopFontSize ?? smallLaptop,

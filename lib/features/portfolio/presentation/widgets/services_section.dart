@@ -40,8 +40,14 @@ class ServicesSection extends StatelessWidget {
   }
 
   Widget _buildLayout(BuildContext context, ProfileModel profile) {
-    final contentWidth = ResponsiveHelper.getContentWidth(context);
-    int crossAxisCount = ResponsiveHelper.getGridColumns(context);
+    final contentWidth = context.contentWidth;
+    int crossAxisCount = context.responsiveValue(
+      mobile: 1,
+      tablet: 2,
+      smallLaptop: 2,
+      desktop: 3,
+      largeDesktop: 4,
+    );
 
     return Container(
       width: contentWidth,

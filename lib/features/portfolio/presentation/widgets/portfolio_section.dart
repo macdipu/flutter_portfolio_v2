@@ -147,7 +147,7 @@ class _ProjectCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDesktop = ResponsiveHelper.isLargeDesktop(context);
+    final isDesktop = context.isDesktop;
 
     return Card(
       elevation: 4,

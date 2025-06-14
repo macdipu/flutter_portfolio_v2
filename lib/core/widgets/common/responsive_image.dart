@@ -162,7 +162,7 @@ class _ResponsiveImageState extends State<ResponsiveImage>
   }
 
   Size _getResponsiveSize(BuildContext context) {
-    final double responsiveWidth = context.responsive<double>(
+    final double responsiveWidth = context.responsiveValue(
       mobile: widget.mobileSize ?? widget.width ?? 150.0,
       tablet: widget.tabletSize ?? widget.width ?? 200.0,
       smallLaptop: widget.smallLaptopSize ?? widget.width ?? 220.0,

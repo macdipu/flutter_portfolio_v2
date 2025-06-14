@@ -18,12 +18,27 @@ class SidebarNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ResponsiveBuilder(
-      builder: (context, deviceType, constraints) {
-        // final double width = switch (deviceType) {
-        //   DeviceType.smallLaptop => constraints.maxWidth * 0.4,
-        // };
+      builder: (context, info) {
+        final deviceType = info.deviceType;
+        double sidebarWidth;
+
+        switch (deviceType) {
+          case DeviceType.smallLaptop:
+            sidebarWidth = 250;
+            break;
+          case DeviceType.desktop:
+            sidebarWidth = 300;
+            break;
+          case DeviceType.largeDesktop:
+            sidebarWidth = 350;
+            break;
+          default:
+            sidebarWidth = 300;
+            break;
+        }
+
         return _SidebarLayout(
-          width: 250,
+          width: sidebarWidth,
           currentSection: currentSection,
           onSectionSelected: onSectionSelected,
         );
