@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_portfolio/core/widgets/common/responsive_text.dart';
 
 class SectionHeader extends StatelessWidget {
   final String title;
   final String? subtitle;
 
   // Title styling
-  final TextVariant titleVariant;
-  final TextWeight? titleWeight;
   final Color? titleColor;
   final TextStyle? titleStyle;
 
   // Subtitle styling
-  final TextVariant subtitleVariant;
-  final TextWeight? subtitleWeight;
   final Color? subtitleColor;
   final TextStyle? subtitleStyle;
 
@@ -42,12 +37,8 @@ class SectionHeader extends StatelessWidget {
     super.key,
     required this.title,
     this.subtitle,
-    this.titleVariant = TextVariant.headline,
-    this.titleWeight,
     this.titleColor,
     this.titleStyle,
-    this.subtitleVariant = TextVariant.title,
-    this.subtitleWeight,
     this.subtitleColor,
     this.subtitleStyle,
     this.textAlign = TextAlign.start,
@@ -82,9 +73,12 @@ class SectionHeader extends StatelessWidget {
           key: key,
           title: title,
           subtitle: subtitle,
-          titleVariant: TextVariant.display,
           titleColor: titleColor,
           subtitleColor: subtitleColor,
+          titleStyle:
+              const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+          subtitleStyle:
+              const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
           textAlign: textAlign,
           crossAxisAlignment: crossAxisAlignment,
           enableFadeIn: enableFadeIn,
@@ -109,9 +103,12 @@ class SectionHeader extends StatelessWidget {
           key: key,
           title: title,
           subtitle: subtitle,
-          titleVariant: TextVariant.headline,
           titleColor: titleColor,
           subtitleColor: subtitleColor,
+          titleStyle:
+              const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          subtitleStyle:
+              const TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
           textAlign: textAlign,
           crossAxisAlignment: crossAxisAlignment,
           enableFadeIn: enableFadeIn,
@@ -124,7 +121,6 @@ class SectionHeader extends StatelessWidget {
     Key? key,
     required String title,
     String? subtitle,
-    TextVariant titleVariant = TextVariant.headline,
     Color? titleColor,
     Color? subtitleColor,
     bool enableFadeIn = false,
@@ -135,9 +131,12 @@ class SectionHeader extends StatelessWidget {
           key: key,
           title: title,
           subtitle: subtitle,
-          titleVariant: titleVariant,
           titleColor: titleColor,
           subtitleColor: subtitleColor,
+          titleStyle:
+              const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          subtitleStyle:
+              const TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
           textAlign: TextAlign.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           enableFadeIn: enableFadeIn,
@@ -169,32 +168,34 @@ class SectionHeader extends StatelessWidget {
   Widget _buildSubtitle(BuildContext context) {
     if (subtitle == null) return const SizedBox.shrink();
 
-    return ResponsiveText(
+    return SelectableText(
       subtitle!,
-      variant: subtitleVariant,
-      weight: subtitleWeight ?? TextWeight.medium,
-      color: _getDefaultSubtitleColor(context),
-      style: subtitleStyle,
+      style: subtitleStyle?.copyWith(
+            color: _getDefaultSubtitleColor(context),
+          ) ??
+          TextStyle(
+            color: _getDefaultSubtitleColor(context),
+            fontSize: 16,
+            fontWeight: FontWeight.normal,
+          ),
       textAlign: textAlign,
-      enableFadeIn: enableFadeIn,
-      enableTypeWriter: enableTypeWriter,
-      animationDuration: animationDuration,
       onTap: onSubtitleTap,
       semanticsLabel: subtitleSemanticsLabel,
     );
   }
 
   Widget _buildTitle(BuildContext context) {
-    return ResponsiveText(
+    return SelectableText(
       title,
-      variant: titleVariant,
-      weight: titleWeight ?? TextWeight.bold,
-      color: titleColor,
-      style: titleStyle,
+      style: titleStyle?.copyWith(
+            color: titleColor,
+          ) ??
+          TextStyle(
+            color: titleColor,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
       textAlign: textAlign,
-      enableFadeIn: enableFadeIn,
-      enableTypeWriter: enableTypeWriter,
-      animationDuration: animationDuration,
       onTap: onTitleTap,
       semanticsLabel: titleSemanticsLabel,
     );
