@@ -3,9 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_portfolio/core/navigation/scroll_controller.dart';
 import 'package:flutter_portfolio/core/responsive/responsive_framework.dart';
-import 'package:flutter_portfolio/core/widgets/common/responsive_button.dart';
 import 'package:flutter_portfolio/core/widgets/common/responsive_image.dart';
-import 'package:flutter_portfolio/core/widgets/common/responsive_text.dart';
 import 'package:flutter_portfolio/core/widgets/common/section_wrapper.dart';
 import 'package:flutter_portfolio/features/portfolio/presentation/bloc/portfolio_bloc.dart';
 
@@ -31,7 +29,7 @@ class HeroSection extends StatelessWidget {
           );
         }
 
-        // Define responsive values for all breakpoints
+        // Define responsive values for image size
         final imageSize = context.responsiveValue<double>(
           mobile: 180.0,
           tablet: 240.0,
@@ -40,50 +38,100 @@ class HeroSection extends StatelessWidget {
           largeDesktop: 480.0,
         );
 
-        final greetingSize = context.responsiveValue(
-          mobile: 18.0,
-          tablet: 20.0,
-          smallLaptop: 22.0,
-          desktop: 24.0,
-          largeDesktop: 26.0,
-        );
+        // Define text styles with responsive font sizes
+        final greetingStyle =
+            Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: context.responsiveValue(
+                        mobile: 18.0,
+                        tablet: 20.0,
+                        smallLaptop: 22.0,
+                        desktop: 24.0,
+                        largeDesktop: 26.0,
+                      ),
+                    ) ??
+                TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: context.responsiveValue(
+                    mobile: 18.0,
+                    tablet: 20.0,
+                    smallLaptop: 22.0,
+                    desktop: 24.0,
+                    largeDesktop: 26.0,
+                  ),
+                );
 
-        final nameSize = context.responsiveValue(
-          mobile: 28.0,
-          tablet: 38.0,
-          smallLaptop: 46.0,
-          desktop: 56.0,
-          largeDesktop: 64.0,
-        );
+        final nameStyle = Theme.of(context).textTheme.displaySmall?.copyWith(
+                  fontSize: context.responsiveValue(
+                    mobile: 28.0,
+                    tablet: 38.0,
+                    smallLaptop: 46.0,
+                    desktop: 56.0,
+                    largeDesktop: 64.0,
+                  ),
+                ) ??
+            TextStyle(
+              fontSize: context.responsiveValue(
+                mobile: 28.0,
+                tablet: 38.0,
+                smallLaptop: 46.0,
+                desktop: 56.0,
+                largeDesktop: 64.0,
+              ),
+              fontWeight: FontWeight.bold,
+            );
 
-        final titleSize = context.responsiveValue(
-          mobile: 18.0,
-          tablet: 22.0,
-          smallLaptop: 24.0,
-          desktop: 28.0,
-          largeDesktop: 30.0,
-        );
+        final titleStyle = Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontSize: context.responsiveValue(
+                    mobile: 18.0,
+                    tablet: 22.0,
+                    smallLaptop: 24.0,
+                    desktop: 28.0,
+                    largeDesktop: 30.0,
+                  ),
+                ) ??
+            TextStyle(
+              fontSize: context.responsiveValue(
+                mobile: 18.0,
+                tablet: 22.0,
+                smallLaptop: 24.0,
+                desktop: 28.0,
+                largeDesktop: 30.0,
+              ),
+              fontWeight: FontWeight.normal,
+            );
 
-        final introSize = context.responsiveValue(
-          mobile: 14.0,
-          tablet: 16.0,
-          smallLaptop: 17.0,
-          desktop: 18.0,
-          largeDesktop: 20.0,
-        );
+        final introStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  fontSize: context.responsiveValue(
+                    mobile: 14.0,
+                    tablet: 16.0,
+                    smallLaptop: 17.0,
+                    desktop: 18.0,
+                    largeDesktop: 20.0,
+                  ),
+                ) ??
+            TextStyle(
+              fontSize: context.responsiveValue(
+                mobile: 14.0,
+                tablet: 16.0,
+                smallLaptop: 17.0,
+                desktop: 18.0,
+                largeDesktop: 20.0,
+              ),
+            );
 
         return SectionWrapper(
           fullHeight: true,
           mobileChild: _buildVerticalLayout(context, profile, imageSize,
-              greetingSize, nameSize, titleSize, introSize),
+              greetingStyle, nameStyle, titleStyle, introStyle),
           tabletChild: _buildVerticalLayout(context, profile, imageSize,
-              greetingSize, nameSize, titleSize, introSize),
+              greetingStyle, nameStyle, titleStyle, introStyle),
           smallLaptopChild: _buildHorizontalLayout(context, profile, imageSize,
-              greetingSize, nameSize, titleSize, introSize),
+              greetingStyle, nameStyle, titleStyle, introStyle),
           desktopChild: _buildHorizontalLayout(context, profile, imageSize,
-              greetingSize, nameSize, titleSize, introSize),
+              greetingStyle, nameStyle, titleStyle, introStyle),
           largeDesktopChild: _buildHorizontalLayout(context, profile, imageSize,
-              greetingSize, nameSize, titleSize, introSize),
+              greetingStyle, nameStyle, titleStyle, introStyle),
         );
       },
     );
@@ -93,13 +141,11 @@ class HeroSection extends StatelessWidget {
     BuildContext context,
     dynamic profile,
     double imageSize,
-    double greetingSize,
-    double nameSize,
-    double titleSize,
-    double introSize,
+    TextStyle greetingStyle,
+    TextStyle nameStyle,
+    TextStyle titleStyle,
+    TextStyle introStyle,
   ) {
-    final theme = Theme.of(context);
-
     return SingleChildScrollView(
       child: ConstrainedBox(
         constraints: BoxConstraints(
@@ -114,59 +160,37 @@ class HeroSection extends StatelessWidget {
               const Flexible(child: SizedBox(height: 20)),
               _buildHeroImage(profile.avatarUrl, imageSize),
               const SizedBox(height: 24),
-              ResponsiveText(
+              SelectableText(
                 'Hello, I\'m',
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  color: theme.colorScheme.primary,
-                ),
+                style: greetingStyle,
                 textAlign: TextAlign.center,
-                mobileFontSize: greetingSize,
-                tabletFontSize: greetingSize,
-                smallLaptopFontSize: greetingSize,
-                desktopFontSize: greetingSize,
-                largeDesktopFontSize: greetingSize,
               )
                   .animate()
                   .fade(duration: 500.ms)
                   .slide(begin: const Offset(0, -0.5)),
               const SizedBox(height: 12),
-              ResponsiveText(
+              SelectableText(
                 profile.name,
-                style: theme.textTheme.displaySmall,
+                style: nameStyle,
                 textAlign: TextAlign.center,
-                mobileFontSize: nameSize,
-                tabletFontSize: nameSize,
-                smallLaptopFontSize: nameSize,
-                desktopFontSize: nameSize,
-                largeDesktopFontSize: nameSize,
               )
                   .animate()
                   .fade(duration: 500.ms, delay: 200.ms)
                   .slide(begin: const Offset(0, -0.5)),
               const SizedBox(height: 12),
-              ResponsiveText(
+              SelectableText(
                 profile.title,
-                style: theme.textTheme.titleLarge,
+                style: titleStyle,
                 textAlign: TextAlign.center,
-                mobileFontSize: titleSize,
-                tabletFontSize: titleSize,
-                smallLaptopFontSize: titleSize,
-                desktopFontSize: titleSize,
-                largeDesktopFontSize: titleSize,
               )
                   .animate()
                   .fade(duration: 500.ms, delay: 400.ms)
                   .slide(begin: const Offset(0, -0.5)),
               const SizedBox(height: 16),
-              ResponsiveText(
+              SelectableText(
                 profile.introduction,
-                style: theme.textTheme.bodyLarge,
+                style: introStyle,
                 textAlign: TextAlign.center,
-                mobileFontSize: introSize,
-                tabletFontSize: introSize,
-                smallLaptopFontSize: introSize,
-                desktopFontSize: introSize,
-                largeDesktopFontSize: introSize,
               )
                   .animate()
                   .fade(duration: 500.ms, delay: 600.ms)
@@ -185,13 +209,11 @@ class HeroSection extends StatelessWidget {
     BuildContext context,
     dynamic profile,
     double imageSize,
-    double greetingSize,
-    double nameSize,
-    double titleSize,
-    double introSize,
+    TextStyle greetingStyle,
+    TextStyle nameStyle,
+    TextStyle titleStyle,
+    TextStyle introStyle,
   ) {
-    final theme = Theme.of(context);
-
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -200,47 +222,33 @@ class HeroSection extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ResponsiveText(
+              SelectableText(
                 'Hello, I\'m',
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  color: theme.colorScheme.primary,
-                ),
-                smallLaptopFontSize: greetingSize,
-                desktopFontSize: greetingSize,
-                largeDesktopFontSize: greetingSize,
+                style: greetingStyle,
               )
                   .animate()
                   .fade(duration: 500.ms)
                   .slide(begin: const Offset(0, -0.5)),
               const SizedBox(height: 16),
-              ResponsiveText(
+              SelectableText(
                 profile.name,
-                style: theme.textTheme.displayLarge,
-                smallLaptopFontSize: nameSize,
-                desktopFontSize: nameSize,
-                largeDesktopFontSize: nameSize,
+                style: nameStyle,
               )
                   .animate()
                   .fade(duration: 500.ms, delay: 200.ms)
                   .slide(begin: const Offset(0, -0.5)),
               const SizedBox(height: 24),
-              ResponsiveText(
+              SelectableText(
                 profile.title,
-                style: theme.textTheme.headlineSmall,
-                smallLaptopFontSize: titleSize,
-                desktopFontSize: titleSize,
-                largeDesktopFontSize: titleSize,
+                style: titleStyle,
               )
                   .animate()
                   .fade(duration: 500.ms, delay: 400.ms)
                   .slide(begin: const Offset(0, -0.5)),
               const SizedBox(height: 32),
-              ResponsiveText(
+              SelectableText(
                 profile.introduction,
-                style: theme.textTheme.bodyLarge,
-                smallLaptopFontSize: introSize,
-                desktopFontSize: introSize,
-                largeDesktopFontSize: introSize,
+                style: introStyle,
               )
                   .animate()
                   .fade(duration: 500.ms, delay: 600.ms)
@@ -269,27 +277,64 @@ class HeroSection extends StatelessWidget {
   }
 
   Widget _buildButtons(BuildContext context, {bool isVertical = false}) {
+    // Define responsive button padding
+    final buttonPadding = context.responsiveValue<EdgeInsets>(
+      mobile: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      tablet: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      smallLaptop: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      desktop: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+      largeDesktop: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+    );
+
+    // Define responsive text style for buttons
+    final buttonTextStyle = Theme.of(context).textTheme.labelLarge?.copyWith(
+              fontSize: context.responsiveValue(
+                mobile: 14.0,
+                tablet: 15.0,
+                smallLaptop: 16.0,
+                desktop: 17.0,
+                largeDesktop: 18.0,
+              ),
+            ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+          fontWeight: FontWeight.w500,
+        );
+
     final children = [
-      ResponsiveButton(
-        text: 'View My Work',
+      ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          padding: buttonPadding,
+          textStyle: buttonTextStyle,
+        ),
         onPressed: () {
           context
               .read<ScrollCubit>()
               .scrollToSection(NavigationSection.portfolio);
         },
+        child: const Text('View My Work'),
       )
           .animate()
           .fade(duration: 500.ms, delay: 800.ms)
           .scale(begin: const Offset(0.9, 0.9)),
-      SizedBox(width: 24),
-      ResponsiveButton(
-        text: 'Contact Me',
-        variant: ButtonVariant.outlined,
+      SizedBox(width: isVertical ? 16 : 24),
+      OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          padding: buttonPadding,
+          textStyle: buttonTextStyle,
+        ),
         onPressed: () {
           context
               .read<ScrollCubit>()
               .scrollToSection(NavigationSection.contact);
         },
+        child: const Text('Contact Me'),
       )
           .animate()
           .fade(duration: 500.ms, delay: 1000.ms)
