@@ -55,14 +55,34 @@ class _ContactSectionState extends State<ContactSection> {
     final isDesktop = MediaQuery.of(context).size.width >= 1024;
     final profile = state.profile;
 
+    // Define responsive text style for no profile data
+    final noProfileStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontSize: context.responsiveValue(
+                mobile: 14.0,
+                tablet: 15.0,
+                smallLaptop: 16.0,
+                desktop: 17.0,
+                largeDesktop: 18.0,
+              ),
+            ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
+
     if (state.isLoading && profile == null) {
       return const Center(child: CircularProgressIndicator());
     }
     if (profile == null) {
       return Center(
-        child: Text(
+        child: SelectableText(
           'No profile data available',
-          style: Theme.of(context).textTheme.bodyMedium,
+          style: noProfileStyle,
         ),
       );
     }
@@ -99,6 +119,45 @@ class _ContactSectionState extends State<ContactSection> {
   }
 
   Widget _buildContactForm(BuildContext context, PortfolioState state) {
+    // Define responsive text styles
+    final titleStyle = Theme.of(context).textTheme.headlineSmall?.copyWith(
+              fontSize: context.responsiveValue(
+                mobile: 20.0,
+                tablet: 22.0,
+                smallLaptop: 24.0,
+                desktop: 26.0,
+                largeDesktop: 28.0,
+              ),
+            ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 20.0,
+            tablet: 22.0,
+            smallLaptop: 24.0,
+            desktop: 26.0,
+            largeDesktop: 28.0,
+          ),
+        );
+
+    final buttonLabelStyle = Theme.of(context).textTheme.labelLarge?.copyWith(
+              fontSize: context.responsiveValue(
+                mobile: 14.0,
+                tablet: 15.0,
+                smallLaptop: 16.0,
+                desktop: 17.0,
+                largeDesktop: 18.0,
+              ),
+            ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
+
     if (state.isContactFormSubmitted) return _buildSuccessMessage();
 
     return Card(
@@ -113,8 +172,10 @@ class _ContactSectionState extends State<ContactSection> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Send a Message',
-                  style: Theme.of(context).textTheme.headlineSmall),
+              SelectableText(
+                'Send a Message',
+                style: titleStyle,
+              ),
               const SizedBox(height: 24),
               TextFormField(
                 controller: _nameController,
@@ -187,7 +248,7 @@ class _ContactSectionState extends State<ContactSection> {
                     state.isContactFormSubmitting
                         ? 'Sending...'
                         : 'Send Message',
-                    style: Theme.of(context).textTheme.labelLarge,
+                    style: buttonLabelStyle,
                   ),
                 ),
               ),
@@ -199,6 +260,66 @@ class _ContactSectionState extends State<ContactSection> {
   }
 
   Widget _buildSuccessMessage() {
+    // Define responsive text styles
+    final successTitleStyle =
+        Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontSize: context.responsiveValue(
+                    mobile: 20.0,
+                    tablet: 22.0,
+                    smallLaptop: 24.0,
+                    desktop: 26.0,
+                    largeDesktop: 28.0,
+                  ),
+                ) ??
+            TextStyle(
+              fontSize: context.responsiveValue(
+                mobile: 20.0,
+                tablet: 22.0,
+                smallLaptop: 24.0,
+                desktop: 26.0,
+                largeDesktop: 28.0,
+              ),
+            );
+
+    final successMessageStyle =
+        Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontSize: context.responsiveValue(
+                    mobile: 14.0,
+                    tablet: 15.0,
+                    smallLaptop: 16.0,
+                    desktop: 17.0,
+                    largeDesktop: 18.0,
+                  ),
+                ) ??
+            TextStyle(
+              fontSize: context.responsiveValue(
+                mobile: 14.0,
+                tablet: 15.0,
+                smallLaptop: 16.0,
+                desktop: 17.0,
+                largeDesktop: 18.0,
+              ),
+            );
+
+    final buttonLabelStyle = Theme.of(context).textTheme.labelMedium?.copyWith(
+              fontSize: context.responsiveValue(
+                mobile: 14.0,
+                tablet: 15.0,
+                smallLaptop: 16.0,
+                desktop: 17.0,
+                largeDesktop: 18.0,
+              ),
+            ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
+
     return Card(
       elevation: 3,
       shape: RoundedRectangleBorder(
@@ -209,15 +330,20 @@ class _ContactSectionState extends State<ContactSection> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.check_circle,
-                color: Theme.of(context).colorScheme.secondary, size: 64),
+            Icon(
+              Icons.check_circle,
+              color: Theme.of(context).colorScheme.secondary,
+              size: 64,
+            ),
             const SizedBox(height: 16),
-            Text('Message Sent!',
-                style: Theme.of(context).textTheme.headlineSmall),
+            SelectableText(
+              'Message Sent!',
+              style: successTitleStyle,
+            ),
             const SizedBox(height: 8),
-            Text(
+            SelectableText(
               'Thank you for reaching out. I\'ll get back to you as soon as possible.',
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: successMessageStyle,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -228,8 +354,10 @@ class _ContactSectionState extends State<ContactSection> {
                 _messageController.clear();
                 context.read<PortfolioBloc>().add(LoadPortfolioData());
               },
-              child: Text('Send Another Message',
-                  style: Theme.of(context).textTheme.labelMedium),
+              child: Text(
+                'Send Another Message',
+                style: buttonLabelStyle,
+              ),
             ),
           ],
         ),
@@ -241,6 +369,64 @@ class _ContactSectionState extends State<ContactSection> {
   }
 
   Widget _buildContactInfo(BuildContext context, ContactInfoModel contactInfo) {
+    // Define responsive text styles
+    final titleStyle = Theme.of(context).textTheme.headlineSmall?.copyWith(
+              fontSize: context.responsiveValue(
+                mobile: 20.0,
+                tablet: 22.0,
+                smallLaptop: 24.0,
+                desktop: 26.0,
+                largeDesktop: 28.0,
+              ),
+            ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 20.0,
+            tablet: 22.0,
+            smallLaptop: 24.0,
+            desktop: 26.0,
+            largeDesktop: 28.0,
+          ),
+        );
+
+    final mediumTitleStyle = Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontSize: context.responsiveValue(
+                mobile: 16.0,
+                tablet: 18.0,
+                smallLaptop: 20.0,
+                desktop: 22.0,
+                largeDesktop: 24.0,
+              ),
+            ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 16.0,
+            tablet: 18.0,
+            smallLaptop: 20.0,
+            desktop: 22.0,
+            largeDesktop: 24.0,
+          ),
+        );
+
+    final buttonLabelStyle = Theme.of(context).textTheme.labelMedium?.copyWith(
+              fontSize: context.responsiveValue(
+                mobile: 14.0,
+                tablet: 15.0,
+                smallLaptop: 16.0,
+                desktop: 17.0,
+                largeDesktop: 18.0,
+              ),
+            ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
+
     return Card(
       elevation: 3,
       shape: RoundedRectangleBorder(
@@ -251,8 +437,10 @@ class _ContactSectionState extends State<ContactSection> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Contact Information',
-                style: Theme.of(context).textTheme.headlineSmall),
+            SelectableText(
+              'Contact Information',
+              style: titleStyle,
+            ),
             const SizedBox(height: 24),
             _buildContactItem(
               icon: Icons.email,
@@ -266,7 +454,10 @@ class _ContactSectionState extends State<ContactSection> {
               },
             ),
             const SizedBox(height: 16),
-            Text('Medium', style: Theme.of(context).textTheme.titleMedium),
+            SelectableText(
+              'Medium',
+              style: mediumTitleStyle,
+            ),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -289,8 +480,10 @@ class _ContactSectionState extends State<ContactSection> {
                   }
                 },
                 icon: const Icon(Icons.calendar_today),
-                label: Text('Schedule a Meeting',
-                    style: Theme.of(context).textTheme.labelMedium),
+                label: Text(
+                  'Schedule a Meeting',
+                  style: buttonLabelStyle,
+                ),
               ),
             ],
           ],
@@ -305,6 +498,45 @@ class _ContactSectionState extends State<ContactSection> {
     required String value,
     required VoidCallback onTap,
   }) {
+    // Define responsive text styles
+    final titleStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
+              fontSize: context.responsiveValue(
+                mobile: 14.0,
+                tablet: 15.0,
+                smallLaptop: 16.0,
+                desktop: 17.0,
+                largeDesktop: 18.0,
+              ),
+            ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
+
+    final valueStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontSize: context.responsiveValue(
+                mobile: 14.0,
+                tablet: 15.0,
+                smallLaptop: 16.0,
+                desktop: 17.0,
+                largeDesktop: 18.0,
+              ),
+            ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
@@ -322,8 +554,14 @@ class _ContactSectionState extends State<ContactSection> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: Theme.of(context).textTheme.titleSmall),
-                  Text(value, style: Theme.of(context).textTheme.bodyMedium),
+                  SelectableText(
+                    title,
+                    style: titleStyle,
+                  ),
+                  SelectableText(
+                    value,
+                    style: valueStyle,
+                  ),
                 ],
               ),
             ),

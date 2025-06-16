@@ -27,11 +27,79 @@ class AboutSection extends StatelessWidget {
   Widget _buildLayout(BuildContext context) {
     final spacing = context.spacing;
 
+    // Define responsive text style for about text
+    final aboutStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontSize: context.responsiveValue(
+                mobile: 14.0,
+                tablet: 16.0,
+                smallLaptop: 17.0,
+                desktop: 18.0,
+                largeDesktop: 20.0,
+              ),
+            ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 16.0,
+            smallLaptop: 17.0,
+            desktop: 18.0,
+            largeDesktop: 20.0,
+          ),
+        );
+
+    // Define text style for accomplishments title
+    final accomplishmentsTitleStyle =
+        Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontSize: context.responsiveValue(
+                    mobile: 16.0,
+                    tablet: 18.0,
+                    smallLaptop: 20.0,
+                    desktop: 22.0,
+                    largeDesktop: 24.0,
+                  ),
+                ) ??
+            TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: context.responsiveValue(
+                mobile: 16.0,
+                tablet: 18.0,
+                smallLaptop: 20.0,
+                desktop: 22.0,
+                largeDesktop: 24.0,
+              ),
+            );
+
+    // Define text style for CV prompt
+    final cvPromptStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontSize: context.responsiveValue(
+                mobile: 14.0,
+                tablet: 15.0,
+                smallLaptop: 16.0,
+                desktop: 17.0,
+                largeDesktop: 18.0,
+              ),
+            ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
+
     return BlocBuilder<PortfolioBloc, PortfolioState>(
       builder: (context, state) {
         final profile = state.profile;
         if (profile == null) {
-          return const Center(child: Text('No profile data available'));
+          return Center(
+            child: SelectableText(
+              'No profile data available',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          );
         }
         return Container(
           width: ResponsiveHelper.getContentWidth(context),
@@ -39,17 +107,14 @@ class AboutSection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              SelectableText(
                 profile.about,
-                style: context.responsiveTextStyle(
-                    Theme.of(context).textTheme.bodyLarge!),
+                style: aboutStyle,
               ),
               const SizedBox(height: 32),
-              Text(
+              SelectableText(
                 'Key Accomplishments',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                style: accomplishmentsTitleStyle,
               ),
               const SizedBox(height: 16),
               state.profile?.keyAccomplishments != null
@@ -67,9 +132,9 @@ class AboutSection extends StatelessWidget {
                     )
                   : const SizedBox.shrink(),
               const SizedBox(height: 32),
-              Text(
+              SelectableText(
                 'Want to know more about my journey? You can download my CV by clicking the button below.',
-                style: Theme.of(context).textTheme.bodyMedium,
+                style: cvPromptStyle,
               ),
               const SizedBox(height: 16),
               ElevatedButton.icon(
@@ -107,16 +172,37 @@ class _AccomplishmentTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Define responsive text style for accomplishment tile
+    final accomplishmentStyle =
+        Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w500,
+                  fontSize: context.responsiveValue(
+                    mobile: 14.0,
+                    tablet: 15.0,
+                    smallLaptop: 16.0,
+                    desktop: 17.0,
+                    largeDesktop: 18.0,
+                  ),
+                ) ??
+            TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: context.responsiveValue(
+                mobile: 14.0,
+                tablet: 15.0,
+                smallLaptop: 16.0,
+                desktop: 17.0,
+                largeDesktop: 18.0,
+              ),
+            );
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, color: Theme.of(context).colorScheme.primary, size: 20),
         const SizedBox(width: 8),
-        Text(
+        SelectableText(
           text,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w500,
-              ),
+          style: accomplishmentStyle,
         ),
       ],
     );

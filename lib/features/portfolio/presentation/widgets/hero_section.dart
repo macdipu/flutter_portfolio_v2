@@ -121,7 +121,7 @@ class HeroSection extends StatelessWidget {
             );
 
         return SectionWrapper(
-          fullHeight: true,
+          // fullHeight: true,
           mobileChild: _buildVerticalLayout(context, profile, imageSize,
               greetingStyle, nameStyle, titleStyle, introStyle),
           tabletChild: _buildVerticalLayout(context, profile, imageSize,

@@ -20,7 +20,12 @@ class ServicesSection extends StatelessWidget {
 
         final profile = state.profile;
         if (profile == null) {
-          return const Center(child: Text('No profile data available'));
+          return Center(
+            child: SelectableText(
+              'No profile data available',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          );
         }
 
         return SectionWrapper(
@@ -99,6 +104,47 @@ class _ServiceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    // Define responsive text styles
+    final titleStyle = theme.textTheme.titleSmall?.copyWith(
+          fontWeight: FontWeight.w600,
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        ) ??
+        TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
+
+    final descriptionStyle = theme.textTheme.bodySmall?.copyWith(
+          fontSize: context.responsiveValue(
+            mobile: 12.0,
+            tablet: 13.0,
+            smallLaptop: 14.0,
+            desktop: 15.0,
+            largeDesktop: 16.0,
+          ),
+        ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 12.0,
+            tablet: 13.0,
+            smallLaptop: 14.0,
+            desktop: 15.0,
+            largeDesktop: 16.0,
+          ),
+        );
+
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(
@@ -136,20 +182,17 @@ class _ServiceCard extends StatelessWidget {
                     ),
             ),
             const SizedBox(height: 12),
-            Text(
+            SelectableText(
               title,
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: titleStyle,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 6),
             Expanded(
-              child: Text(
+              child: SelectableText(
                 description,
-                style: theme.textTheme.bodySmall,
+                style: descriptionStyle,
                 textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
                 maxLines: 4,
               ),
             ),

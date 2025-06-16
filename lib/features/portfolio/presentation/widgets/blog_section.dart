@@ -85,7 +85,47 @@ class BlogSection extends StatelessWidget {
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    var theme = Theme.of(context);
+    final theme = Theme.of(context);
+
+    // Define responsive text styles
+    final emptyTitleStyle = theme.textTheme.labelLarge?.copyWith(
+          fontSize: context.responsiveValue(
+            mobile: 16.0,
+            tablet: 18.0,
+            smallLaptop: 20.0,
+            desktop: 22.0,
+            largeDesktop: 24.0,
+          ),
+        ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 16.0,
+            tablet: 18.0,
+            smallLaptop: 20.0,
+            desktop: 22.0,
+            largeDesktop: 24.0,
+          ),
+        );
+
+    final emptySubtitleStyle = theme.textTheme.bodyMedium?.copyWith(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -96,14 +136,14 @@ class BlogSection extends StatelessWidget {
             color: theme.colorScheme.primary,
           ),
           const SizedBox(height: AppTheme.spacing16),
-          Text(
+          SelectableText(
             'No blog posts available',
-            style: theme.textTheme.labelLarge,
+            style: emptyTitleStyle,
           ),
           const SizedBox(height: AppTheme.spacing8),
-          Text(
+          SelectableText(
             'Check back later for new content',
-            style: theme.textTheme.bodyMedium,
+            style: emptySubtitleStyle,
           ),
         ],
       ),
@@ -124,7 +164,7 @@ class _BlogPostCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isSmallScreen = MediaQuery.of(context).size.width < 600;
 
-// Format date
+    // Format date
     String formattedDate = '';
     try {
       final date = DateTime.tryParse(post.publishDate);
@@ -155,13 +195,13 @@ class _BlogPostCard extends StatelessWidget {
             direction: isSmallScreen ? Axis.vertical : Axis.horizontal,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-// Blog post image
+              // Blog post image
               _buildBlogImage(isSmallScreen),
               SizedBox(
                 width: isSmallScreen ? 0 : AppTheme.spacing16,
                 height: isSmallScreen ? AppTheme.spacing16 : 0,
               ),
-// Blog post content
+              // Blog post content
               Expanded(child: _buildBlogContent(context, formattedDate)),
             ],
           ),
@@ -207,65 +247,133 @@ class _BlogPostCard extends StatelessWidget {
   }
 
   Widget _buildBlogContent(BuildContext context, String formattedDate) {
-    final textTheme = context.textStyles;
-    final textColors = context.textColors;
+    final theme = Theme.of(context);
+    // Fallback to Theme.of(context) if custom extensions are unavailable
+    final textTheme = context.textStyles ?? theme.textTheme;
+
+    // Define responsive text styles
+    final dateAuthorStyle = textTheme.bodySmall?.copyWith(
+          color: context.textColors.secondary,
+          fontSize: context.responsiveValue(
+            mobile: 12.0,
+            tablet: 13.0,
+            smallLaptop: 14.0,
+            desktop: 15.0,
+            largeDesktop: 16.0,
+          ),
+        ) ??
+        TextStyle(
+          color: context.textColors.secondary,
+          fontSize: context.responsiveValue(
+            mobile: 12.0,
+            tablet: 13.0,
+            smallLaptop: 14.0,
+            desktop: 15.0,
+            largeDesktop: 16.0,
+          ),
+        );
+
+    final titleStyle = textTheme.headlineSmall?.copyWith(
+          fontWeight: FontWeight.bold,
+          color: context.textColors.secondary,
+          fontSize: context.responsiveValue(
+            mobile: 20.0,
+            tablet: 22.0,
+            smallLaptop: 24.0,
+            desktop: 26.0,
+            largeDesktop: 28.0,
+          ),
+        ) ??
+        TextStyle(
+          fontWeight: FontWeight.bold,
+          color: context.textColors.primary,
+          fontSize: context.responsiveValue(
+            mobile: 20.0,
+            tablet: 22.0,
+            smallLaptop: 24.0,
+            desktop: 26.0,
+            largeDesktop: 28.0,
+          ),
+        );
+
+    final excerptStyle = textTheme.bodyMedium?.copyWith(
+          color: context.textColors.secondary,
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        ) ??
+        TextStyle(
+          color: context.textColors.secondary,
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
+
+    final readMoreStyle = TextStyle(
+      color: AppTheme.primary,
+      fontWeight: FontWeight.bold,
+      fontSize: context.responsiveValue(
+        mobile: 14.0,
+        tablet: 15.0,
+        smallLaptop: 16.0,
+        desktop: 17.0,
+        largeDesktop: 18.0,
+      ),
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-// Date and author
+        // Date and author
         Row(
           children: [
             Icon(
               Icons.calendar_today,
               size: 14,
-              color: textColors.secondary,
+              color: context.textColors.secondary,
             ),
             const SizedBox(width: AppTheme.spacing4),
-            Text(
+            SelectableText(
               formattedDate,
-              style: textTheme.bodySmall?.copyWith(
-                color: textColors.secondary,
-              ),
+              style: dateAuthorStyle,
             ),
             const SizedBox(width: AppTheme.spacing16),
             Icon(
               Icons.person,
               size: 14,
-              color: textColors.secondary,
+              color: context.textColors.secondary,
             ),
             const SizedBox(width: AppTheme.spacing4),
-            Text(
+            SelectableText(
               post.author,
-              style: textTheme.bodySmall?.copyWith(
-                color: textColors.secondary,
-              ),
+              style: dateAuthorStyle,
             ),
           ],
         ),
         const SizedBox(height: AppTheme.spacing8),
-// Title
-        Text(
+        // Title
+        SelectableText(
           post.title,
-          style: textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: textColors.primary,
-          ),
+          style: titleStyle,
           maxLines: 2,
-          overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: AppTheme.spacing8),
-// Excerpt
-        Text(
+        // Excerpt
+        SelectableText(
           post.excerpt,
-          style: textTheme.bodyMedium?.copyWith(
-            color: textColors.secondary,
-          ),
+          style: excerptStyle,
           maxLines: 3,
-          overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: AppTheme.spacing16),
-// Read more link
+        // Read more link
         TextButton.icon(
           onPressed: () async {
             if (post.link.isNotEmpty) {
@@ -279,12 +387,9 @@ class _BlogPostCard extends StatelessWidget {
             Icons.arrow_forward,
             color: AppTheme.primary,
           ),
-          label: const Text(
+          label: Text(
             'Read More',
-            style: TextStyle(
-              color: AppTheme.primary,
-              fontWeight: FontWeight.bold,
-            ),
+            style: readMoreStyle,
           ),
         ),
       ],

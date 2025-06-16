@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/navigation/scroll_controller.dart';
 import '../../../../core/responsive/responsive_framework.dart';
@@ -79,6 +80,70 @@ class _SidebarLayout extends StatelessWidget {
   Widget _buildSidebarContent(BuildContext context) {
     final theme = Theme.of(context);
 
+    // Define responsive text styles
+    final avatarTextStyle = theme.textTheme.headlineMedium?.copyWith(
+      color: theme.colorScheme.primary,
+      fontWeight: FontWeight.bold,
+      fontSize: context.responsiveValue(
+        mobile: 24.0,
+        tablet: 26.0,
+        smallLaptop: 28.0,
+        desktop: 30.0,
+        largeDesktop: 32.0,
+      ),
+    ) ??
+        TextStyle(
+          color: theme.colorScheme.primary,
+          fontWeight: FontWeight.bold,
+          fontSize: context.responsiveValue(
+            mobile: 24.0,
+            tablet: 26.0,
+            smallLaptop: 28.0,
+            desktop: 30.0,
+            largeDesktop: 32.0,
+          ),
+        );
+
+    final nameStyle = theme.textTheme.titleLarge?.copyWith(
+      fontSize: context.responsiveValue(
+        mobile: 20.0,
+        tablet: 22.0,
+        smallLaptop: 24.0,
+        desktop: 26.0,
+        largeDesktop: 28.0,
+      ),
+    ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 20.0,
+            tablet: 22.0,
+            smallLaptop: 24.0,
+            desktop: 26.0,
+            largeDesktop: 28.0,
+          ),
+        );
+
+    final titleStyle = theme.textTheme.bodyMedium?.copyWith(
+      color: theme.textTheme.bodySmall?.color,
+      fontSize: context.responsiveValue(
+        mobile: 14.0,
+        tablet: 15.0,
+        smallLaptop: 16.0,
+        desktop: 17.0,
+        largeDesktop: 18.0,
+      ),
+    ) ??
+        TextStyle(
+          color: theme.textTheme.bodySmall?.color,
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
+
     return Column(
       children: [
         CircleAvatar(
@@ -86,23 +151,18 @@ class _SidebarLayout extends StatelessWidget {
           backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
           child: Text(
             'MACD',
-            style: theme.textTheme.headlineMedium?.copyWith(
-              color: theme.colorScheme.primary,
-              fontWeight: FontWeight.bold,
-            ),
+            style: avatarTextStyle,
           ),
         ),
         const SizedBox(height: AppTheme.spacing16),
-        Text(
+        SelectableText(
           'Md. Asad Chowdhury Dipu',
-          style: theme.textTheme.titleLarge,
+          style: nameStyle,
           textAlign: TextAlign.center,
         ),
-        Text(
+        SelectableText(
           'Flutter Developer',
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.textTheme.bodySmall?.color,
-          ),
+          style: titleStyle,
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: AppTheme.spacing24),
@@ -129,11 +189,17 @@ class _SidebarLayout extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _SocialIcon(
-                  icon: FontAwesomeIcons.github, url: 'https://github.com'),
+                icon: FontAwesomeIcons.github,
+                url: 'https://github.com/dipu0',
+              ),
               _SocialIcon(
-                  icon: FontAwesomeIcons.linkedin, url: 'https://linkedin.com'),
+                icon: FontAwesomeIcons.linkedin,
+                url: 'https://linkedin.com/in/cdipu',
+              ),
               _SocialIcon(
-                  icon: FontAwesomeIcons.twitter, url: 'https://twitter.com'),
+                icon: FontAwesomeIcons.twitter,
+                url: 'https://twitter.com/c_dipu0',
+              ),
             ],
           ),
         ),
@@ -156,14 +222,37 @@ class _NavigationItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    // Define responsive text style
+    final navItemStyle = theme.textTheme.bodyMedium?.copyWith(
+      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+      fontSize: context.responsiveValue(
+        mobile: 14.0,
+        tablet: 15.0,
+        smallLaptop: 16.0,
+        desktop: 17.0,
+        largeDesktop: 18.0,
+      ),
+    ) ??
+        TextStyle(
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
+
     return ListTile(
-      leading: Icon(section.icon,
-          color: isSelected ? theme.colorScheme.primary : null),
+      leading: Icon(
+        section.icon,
+        color: isSelected ? theme.colorScheme.primary : null,
+      ),
       title: Text(
         section.label,
-        style: TextStyle(
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-        ),
+        style: navItemStyle,
       ),
       onTap: onTap,
     );
@@ -178,10 +267,17 @@ class _SocialIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return IconButton(
-      icon: Icon(icon),
-      onPressed: () {
-        // Launch URL or handle tap
+      icon: FaIcon(
+        icon,
+        color: theme.colorScheme.primary,
+      ),
+      onPressed: () async {
+        final uri = Uri.parse(url);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri);
+        }
       },
     );
   }

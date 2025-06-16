@@ -22,7 +22,12 @@ class ExperienceSection extends StatelessWidget {
 
         final profile = state.profile;
         if (profile == null) {
-          return const Center(child: Text('No profile data available'));
+          return Center(
+            child: SelectableText(
+              'No profile data available',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          );
         }
 
         return SectionWrapper(
@@ -99,15 +104,36 @@ class ExperienceSection extends StatelessWidget {
       required bool isWork}) {
     final theme = Theme.of(context);
 
+    // Define responsive text style for section title
+    final titleStyle = theme.textTheme.headlineSmall?.copyWith(
+          fontWeight: FontWeight.bold,
+          color: theme.colorScheme.primary,
+          fontSize: context.responsiveValue(
+            mobile: 20.0,
+            tablet: 22.0,
+            smallLaptop: 24.0,
+            desktop: 26.0,
+            largeDesktop: 28.0,
+          ),
+        ) ??
+        TextStyle(
+          fontWeight: FontWeight.bold,
+          color: theme.colorScheme.primary,
+          fontSize: context.responsiveValue(
+            mobile: 20.0,
+            tablet: 22.0,
+            smallLaptop: 24.0,
+            desktop: 26.0,
+            largeDesktop: 28.0,
+          ),
+        );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        SelectableText(
           title,
-          style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: theme.colorScheme.primary,
-          ),
+          style: titleStyle,
         ),
         const SizedBox(height: AppTheme.spacing16),
         FixedTimeline.tileBuilder(
@@ -198,6 +224,91 @@ class _GroupedTimelineCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    // Define responsive text styles
+    final companyStyle = theme.textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+          fontSize: context.responsiveValue(
+            mobile: 16.0,
+            tablet: 18.0,
+            smallLaptop: 20.0,
+            desktop: 22.0,
+            largeDesktop: 24.0,
+          ),
+        ) ??
+        TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: context.responsiveValue(
+            mobile: 16.0,
+            tablet: 18.0,
+            smallLaptop: 20.0,
+            desktop: 22.0,
+            largeDesktop: 24.0,
+          ),
+        );
+
+    final positionStyle = theme.textTheme.bodyLarge?.copyWith(
+          fontWeight: FontWeight.w600,
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 16.0,
+            smallLaptop: 17.0,
+            desktop: 18.0,
+            largeDesktop: 20.0,
+          ),
+        ) ??
+        TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 16.0,
+            smallLaptop: 17.0,
+            desktop: 18.0,
+            largeDesktop: 20.0,
+          ),
+        );
+
+    final periodStyle = theme.textTheme.bodySmall?.copyWith(
+          color: theme.colorScheme.primary,
+          fontWeight: FontWeight.bold,
+          fontSize: context.responsiveValue(
+            mobile: 12.0,
+            tablet: 13.0,
+            smallLaptop: 14.0,
+            desktop: 15.0,
+            largeDesktop: 16.0,
+          ),
+        ) ??
+        TextStyle(
+          color: theme.colorScheme.primary,
+          fontWeight: FontWeight.bold,
+          fontSize: context.responsiveValue(
+            mobile: 12.0,
+            tablet: 13.0,
+            smallLaptop: 14.0,
+            desktop: 15.0,
+            largeDesktop: 16.0,
+          ),
+        );
+
+    final descriptionStyle = theme.textTheme.bodyMedium?.copyWith(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
+
     return Card(
       elevation: 2,
       margin: EdgeInsets.zero,
@@ -227,10 +338,9 @@ class _GroupedTimelineCard extends StatelessWidget {
               ),
             ),
           ),
-          title: Text(
+          title: SelectableText(
             company,
-            style: theme.textTheme.titleMedium
-                ?.copyWith(fontWeight: FontWeight.bold),
+            style: companyStyle,
           ),
           childrenPadding: const EdgeInsets.only(
             left: AppTheme.spacing24,
@@ -243,10 +353,9 @@ class _GroupedTimelineCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  SelectableText(
                     role.position,
-                    style: theme.textTheme.bodyLarge
-                        ?.copyWith(fontWeight: FontWeight.w600),
+                    style: positionStyle,
                   ),
                   const SizedBox(height: AppTheme.spacing4),
                   Container(
@@ -259,16 +368,16 @@ class _GroupedTimelineCard extends StatelessWidget {
                       borderRadius:
                           BorderRadius.circular(AppTheme.borderRadius8),
                     ),
-                    child: Text(
+                    child: SelectableText(
                       role.period,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: periodStyle,
                     ),
                   ),
                   const SizedBox(height: AppTheme.spacing8),
-                  Text(role.description, style: theme.textTheme.bodyMedium),
+                  SelectableText(
+                    role.description,
+                    style: descriptionStyle,
+                  ),
                 ],
               ),
             );
@@ -302,6 +411,89 @@ class _TimelineCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    // Define responsive text styles
+    final titleStyle = theme.textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+          fontSize: context.responsiveValue(
+            mobile: 16.0,
+            tablet: 18.0,
+            smallLaptop: 20.0,
+            desktop: 22.0,
+            largeDesktop: 24.0,
+          ),
+        ) ??
+        TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: context.responsiveValue(
+            mobile: 16.0,
+            tablet: 18.0,
+            smallLaptop: 20.0,
+            desktop: 22.0,
+            largeDesktop: 24.0,
+          ),
+        );
+
+    final subtitleStyle = theme.textTheme.bodyMedium?.copyWith(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
+
+    final periodStyle = theme.textTheme.bodySmall?.copyWith(
+          color: theme.colorScheme.primary,
+          fontWeight: FontWeight.bold,
+          fontSize: context.responsiveValue(
+            mobile: 12.0,
+            tablet: 13.0,
+            smallLaptop: 14.0,
+            desktop: 15.0,
+            largeDesktop: 16.0,
+          ),
+        ) ??
+        TextStyle(
+          color: theme.colorScheme.primary,
+          fontWeight: FontWeight.bold,
+          fontSize: context.responsiveValue(
+            mobile: 12.0,
+            tablet: 13.0,
+            smallLaptop: 14.0,
+            desktop: 15.0,
+            largeDesktop: 16.0,
+          ),
+        );
+
+    final descriptionStyle = theme.textTheme.bodyMedium?.copyWith(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
 
     return Card(
       elevation: 2,
@@ -348,16 +540,14 @@ class _TimelineCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      SelectableText(
                         title,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: titleStyle,
                       ),
                       const SizedBox(height: AppTheme.spacing4),
-                      Text(
+                      SelectableText(
                         subtitle,
-                        style: theme.textTheme.bodyMedium,
+                        style: subtitleStyle,
                       ),
                     ],
                   ),
@@ -374,18 +564,15 @@ class _TimelineCard extends StatelessWidget {
                 color: theme.colorScheme.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
               ),
-              child: Text(
+              child: SelectableText(
                 period,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: periodStyle,
               ),
             ),
             const SizedBox(height: AppTheme.spacing16),
-            Text(
+            SelectableText(
               description,
-              style: theme.textTheme.bodyMedium,
+              style: descriptionStyle,
             ),
           ],
         ),

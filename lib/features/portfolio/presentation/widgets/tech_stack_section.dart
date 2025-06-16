@@ -21,7 +21,12 @@ class TechStackSection extends StatelessWidget {
 
         final profile = state.profile;
         if (profile == null) {
-          return const Center(child: Text('No profile data available'));
+          return Center(
+            child: SelectableText(
+              'No profile data available',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          );
         }
 
         return SectionWrapper(
@@ -67,6 +72,26 @@ class TechStackSection extends StatelessWidget {
       largeDesktop: 6,
     );
 
+    // Define responsive text style for category chip
+    final chipLabelStyle = theme.textTheme.bodyMedium?.copyWith(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
+
     return Container(
       width: contentWidth,
       padding: ResponsiveHelper.getResponsivePadding(context),
@@ -86,7 +111,17 @@ class TechStackSection extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.only(right: AppTheme.spacing8),
                   child: ChoiceChip(
-                    label: Text(category),
+                    label: Text(
+                      category,
+                      style: chipLabelStyle.copyWith(
+                        color: selectedCategory == category
+                            ? theme.colorScheme.primary
+                            : theme.textTheme.bodyMedium?.color,
+                        fontWeight: selectedCategory == category
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                      ),
+                    ),
                     selected: selectedCategory == category,
                     onSelected: (selected) {
                       if (selected) {
@@ -97,14 +132,6 @@ class TechStackSection extends StatelessWidget {
                     },
                     selectedColor: theme.colorScheme.primary.withOpacity(0.2),
                     backgroundColor: theme.colorScheme.surface,
-                    labelStyle: theme.textTheme.bodyMedium?.copyWith(
-                      color: selectedCategory == category
-                          ? theme.colorScheme.primary
-                          : theme.textTheme.bodyMedium?.color,
-                      fontWeight: selectedCategory == category
-                          ? FontWeight.bold
-                          : FontWeight.normal,
-                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius:
                           BorderRadius.circular(AppTheme.borderRadius8),
@@ -165,6 +192,28 @@ class _TechStackCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    // Define responsive text style for tech name
+    final nameStyle = theme.textTheme.bodySmall?.copyWith(
+          fontWeight: FontWeight.w500,
+          fontSize: context.responsiveValue(
+            mobile: 12.0,
+            tablet: 13.0,
+            smallLaptop: 14.0,
+            desktop: 15.0,
+            largeDesktop: 16.0,
+          ),
+        ) ??
+        TextStyle(
+          fontWeight: FontWeight.w500,
+          fontSize: context.responsiveValue(
+            mobile: 12.0,
+            tablet: 13.0,
+            smallLaptop: 14.0,
+            desktop: 15.0,
+            largeDesktop: 16.0,
+          ),
+        );
+
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(
@@ -202,13 +251,10 @@ class _TechStackCard extends StatelessWidget {
                     ),
             ),
             const SizedBox(height: AppTheme.spacing4),
-            Text(
+            SelectableText(
               name,
-              style: theme.textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.w500,
-              ),
+              style: nameStyle,
               textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
