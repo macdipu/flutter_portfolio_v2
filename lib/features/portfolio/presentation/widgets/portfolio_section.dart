@@ -31,7 +31,12 @@ class PortfolioSection extends StatelessWidget {
 
         final profile = state.profile;
         if (profile == null) {
-          return const Center(child: Text('No profile data available'));
+          return Center(
+            child: SelectableText(
+              'No profile data available',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          );
         }
 
         final filteredProjects = state.filteredProjects;
@@ -62,6 +67,26 @@ class PortfolioSection extends StatelessWidget {
     final theme = Theme.of(context);
     final contentWidth = ResponsiveHelper.getContentWidth(context);
 
+    // Define responsive text style for category chip
+    final chipLabelStyle = theme.textTheme.bodyMedium?.copyWith(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
+
     return Container(
       width: contentWidth,
       padding: ResponsiveHelper.getResponsivePadding(context),
@@ -80,7 +105,17 @@ class PortfolioSection extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.only(right: AppTheme.spacing8),
                   child: ChoiceChip(
-                    label: Text(category),
+                    label: SelectableText(
+                      category,
+                      style: chipLabelStyle.copyWith(
+                        color: selectedCategory == category
+                            ? theme.colorScheme.primary
+                            : theme.textTheme.bodyMedium?.color,
+                        fontWeight: selectedCategory == category
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                      ),
+                    ),
                     selected: selectedCategory == category,
                     onSelected: (selected) {
                       if (selected) {
@@ -91,14 +126,6 @@ class PortfolioSection extends StatelessWidget {
                     },
                     selectedColor: theme.colorScheme.primary.withOpacity(0.2),
                     backgroundColor: theme.colorScheme.surface,
-                    labelStyle: theme.textTheme.bodyMedium?.copyWith(
-                      color: selectedCategory == category
-                          ? theme.colorScheme.primary
-                          : theme.textTheme.bodyMedium?.color,
-                      fontWeight: selectedCategory == category
-                          ? FontWeight.bold
-                          : FontWeight.normal,
-                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius:
                           BorderRadius.circular(AppTheme.borderRadius8),
@@ -180,36 +207,156 @@ class _ProjectCard extends StatelessWidget {
 
         // Project details
         Expanded(
-          child: _buildProjectDetails(theme),
+          child: _buildProjectDetails(context, theme),
         ),
       ],
     );
   }
 
   Widget _buildMobileLayout(BuildContext context, ThemeData theme) {
+    // Define responsive text styles
+    final titleStyle = theme.textTheme.headlineSmall?.copyWith(
+          fontSize: context.responsiveValue(
+            mobile: 20.0,
+            tablet: 22.0,
+            smallLaptop: 24.0,
+            desktop: 26.0,
+            largeDesktop: 28.0,
+          ),
+        ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 20.0,
+            tablet: 22.0,
+            smallLaptop: 24.0,
+            desktop: 26.0,
+            largeDesktop: 28.0,
+          ),
+          fontWeight: FontWeight.bold,
+        );
+
+    final roleStyle = theme.textTheme.titleMedium?.copyWith(
+          color: theme.colorScheme.primary,
+          fontSize: context.responsiveValue(
+            mobile: 16.0,
+            tablet: 18.0,
+            smallLaptop: 20.0,
+            desktop: 22.0,
+            largeDesktop: 24.0,
+          ),
+        ) ??
+        TextStyle(
+          color: theme.colorScheme.primary,
+          fontSize: context.responsiveValue(
+            mobile: 16.0,
+            tablet: 18.0,
+            smallLaptop: 20.0,
+            desktop: 22.0,
+            largeDesktop: 24.0,
+          ),
+        );
+
+    final categoryStyle = theme.textTheme.bodyMedium?.copyWith(
+          color: theme.colorScheme.primary,
+          fontWeight: FontWeight.bold,
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        ) ??
+        TextStyle(
+          color: theme.colorScheme.primary,
+          fontWeight: FontWeight.bold,
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
+
+    final descriptionStyle = theme.textTheme.bodyLarge?.copyWith(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 16.0,
+            smallLaptop: 17.0,
+            desktop: 18.0,
+            largeDesktop: 20.0,
+          ),
+        ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 16.0,
+            smallLaptop: 17.0,
+            desktop: 18.0,
+            largeDesktop: 20.0,
+          ),
+        );
+
+    final sectionTitleStyle = theme.textTheme.titleMedium?.copyWith(
+          fontSize: context.responsiveValue(
+            mobile: 16.0,
+            tablet: 18.0,
+            smallLaptop: 20.0,
+            desktop: 22.0,
+            largeDesktop: 24.0,
+          ),
+        ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 16.0,
+            tablet: 18.0,
+            smallLaptop: 20.0,
+            desktop: 22.0,
+            largeDesktop: 24.0,
+          ),
+          fontWeight: FontWeight.w500,
+        );
+
+    final challengeStyle = theme.textTheme.bodyMedium?.copyWith(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Project title, role, and category
-        Text(
+        SelectableText(
           project.title,
-          style: theme.textTheme.headlineSmall,
+          style: titleStyle,
         ),
         const SizedBox(height: AppTheme.spacing8),
-        Text(
+        SelectableText(
           project.role,
-          style: theme.textTheme.titleMedium?.copyWith(
-            color: theme.colorScheme.primary,
-          ),
+          style: roleStyle,
         ),
         const SizedBox(height: AppTheme.spacing8),
         Chip(
-          label: Text(project.category),
-          backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
-          labelStyle: TextStyle(
-            color: theme.colorScheme.primary,
-            fontWeight: FontWeight.bold,
+          label: SelectableText(
+            project.category,
+            style: categoryStyle,
           ),
+          backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
         ),
         const SizedBox(height: AppTheme.spacing16),
 
@@ -218,26 +365,26 @@ class _ProjectCard extends StatelessWidget {
         const SizedBox(height: AppTheme.spacing24),
 
         // Description
-        Text(
+        SelectableText(
           project.description,
-          style: theme.textTheme.bodyLarge,
+          style: descriptionStyle,
         ),
         const SizedBox(height: AppTheme.spacing16),
 
         // Technologies
-        _buildTechList(theme),
+        _buildTechList(context, theme),
         const SizedBox(height: AppTheme.spacing24),
 
         // Challenges
         if (project.challenge.isNotEmpty) ...[
-          Text(
+          SelectableText(
             'Challenge:',
-            style: theme.textTheme.titleMedium,
+            style: sectionTitleStyle,
           ),
           const SizedBox(height: AppTheme.spacing8),
-          Text(
+          SelectableText(
             project.challenge,
-            style: theme.textTheme.bodyMedium,
+            style: challengeStyle,
           ),
           const SizedBox(height: AppTheme.spacing16),
         ],
@@ -248,54 +395,174 @@ class _ProjectCard extends StatelessWidget {
     );
   }
 
-  Widget _buildProjectDetails(ThemeData theme) {
+  Widget _buildProjectDetails(BuildContext context, ThemeData theme) {
+    // Define responsive text styles
+    final titleStyle = theme.textTheme.headlineSmall?.copyWith(
+          fontSize: context.responsiveValue(
+            mobile: 20.0,
+            tablet: 22.0,
+            smallLaptop: 24.0,
+            desktop: 26.0,
+            largeDesktop: 28.0,
+          ),
+        ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 20.0,
+            tablet: 22.0,
+            smallLaptop: 24.0,
+            desktop: 26.0,
+            largeDesktop: 28.0,
+          ),
+          fontWeight: FontWeight.bold,
+        );
+
+    final roleStyle = theme.textTheme.titleMedium?.copyWith(
+          color: theme.colorScheme.primary,
+          fontSize: context.responsiveValue(
+            mobile: 16.0,
+            tablet: 18.0,
+            smallLaptop: 20.0,
+            desktop: 22.0,
+            largeDesktop: 24.0,
+          ),
+        ) ??
+        TextStyle(
+          color: theme.colorScheme.primary,
+          fontSize: context.responsiveValue(
+            mobile: 16.0,
+            tablet: 18.0,
+            smallLaptop: 20.0,
+            desktop: 22.0,
+            largeDesktop: 24.0,
+          ),
+        );
+
+    final categoryStyle = theme.textTheme.bodyMedium?.copyWith(
+          color: theme.colorScheme.primary,
+          fontWeight: FontWeight.bold,
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        ) ??
+        TextStyle(
+          color: theme.colorScheme.primary,
+          fontWeight: FontWeight.bold,
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
+
+    final descriptionStyle = theme.textTheme.bodyLarge?.copyWith(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 16.0,
+            smallLaptop: 17.0,
+            desktop: 18.0,
+            largeDesktop: 20.0,
+          ),
+        ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 16.0,
+            smallLaptop: 17.0,
+            desktop: 18.0,
+            largeDesktop: 20.0,
+          ),
+        );
+
+    final sectionTitleStyle = theme.textTheme.titleMedium?.copyWith(
+          fontSize: context.responsiveValue(
+            mobile: 16.0,
+            tablet: 18.0,
+            smallLaptop: 20.0,
+            desktop: 22.0,
+            largeDesktop: 24.0,
+          ),
+        ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 16.0,
+            tablet: 18.0,
+            smallLaptop: 20.0,
+            desktop: 22.0,
+            largeDesktop: 24.0,
+          ),
+          fontWeight: FontWeight.w500,
+        );
+
+    final challengeStyle = theme.textTheme.bodyMedium?.copyWith(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Project title, role, and category
-        Text(
+        SelectableText(
           project.title,
-          style: theme.textTheme.headlineSmall,
+          style: titleStyle,
         ),
         const SizedBox(height: AppTheme.spacing8),
-        Text(
+        SelectableText(
           project.role,
-          style: theme.textTheme.titleMedium?.copyWith(
-            color: theme.colorScheme.primary,
-          ),
+          style: roleStyle,
         ),
         const SizedBox(height: AppTheme.spacing8),
         Chip(
-          label: Text(project.category),
-          backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
-          labelStyle: TextStyle(
-            color: theme.colorScheme.primary,
-            fontWeight: FontWeight.bold,
+          label: SelectableText(
+            project.category,
+            style: categoryStyle,
           ),
+          backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
         ),
         const SizedBox(height: AppTheme.spacing16),
 
         // Description
-        Text(
+        SelectableText(
           project.description,
-          style: theme.textTheme.bodyLarge,
+          style: descriptionStyle,
         ),
         const SizedBox(height: AppTheme.spacing16),
 
         // Technologies
-        _buildTechList(theme),
+        _buildTechList(context, theme),
         const SizedBox(height: AppTheme.spacing24),
 
         // Challenges
         if (project.challenge.isNotEmpty) ...[
-          Text(
+          SelectableText(
             'Challenge:',
-            style: theme.textTheme.titleMedium,
+            style: sectionTitleStyle,
           ),
           const SizedBox(height: AppTheme.spacing8),
-          Text(
+          SelectableText(
             project.challenge,
-            style: theme.textTheme.bodyMedium,
+            style: challengeStyle,
           ),
           const SizedBox(height: AppTheme.spacing16),
         ],
@@ -386,13 +653,55 @@ class _ProjectCard extends StatelessWidget {
     );
   }
 
-  Widget _buildTechList(ThemeData theme) {
+  Widget _buildTechList(BuildContext context, ThemeData theme) {
+    // Define responsive text style for technologies section
+    final sectionTitleStyle = theme.textTheme.titleMedium?.copyWith(
+          fontSize: context.responsiveValue(
+            mobile: 16.0,
+            tablet: 18.0,
+            smallLaptop: 20.0,
+            desktop: 22.0,
+            largeDesktop: 24.0,
+          ),
+        ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 16.0,
+            tablet: 18.0,
+            smallLaptop: 20.0,
+            desktop: 22.0,
+            largeDesktop: 24.0,
+          ),
+          fontWeight: FontWeight.w500,
+        );
+
+    final techChipStyle = theme.textTheme.bodyMedium?.copyWith(
+          color: theme.colorScheme.primary,
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        ) ??
+        TextStyle(
+          color: theme.colorScheme.primary,
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        SelectableText(
           'Technologies:',
-          style: theme.textTheme.titleMedium,
+          style: sectionTitleStyle,
         ),
         const SizedBox(height: AppTheme.spacing8),
         Wrap(
@@ -400,11 +709,11 @@ class _ProjectCard extends StatelessWidget {
           runSpacing: AppTheme.spacing8,
           children: project.technologies.map((tech) {
             return Chip(
-              label: Text(tech),
-              backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
-              labelStyle: TextStyle(
-                color: theme.colorScheme.primary,
+              label: SelectableText(
+                tech,
+                style: techChipStyle,
               ),
+              backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
             );
           }).toList(),
         ),

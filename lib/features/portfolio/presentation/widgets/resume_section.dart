@@ -36,7 +36,84 @@ class ResumeSection extends StatelessWidget {
       {required bool isFooterVisible}) {
     final contentWidth = ResponsiveHelper.getContentWidth(context);
     final theme = Theme.of(context);
-    final textColors = theme.extension<TextColors>();
+    final textColors = theme.extension<TextColors>() ?? theme.colorScheme;
+
+    // Define responsive text styles
+    final noProfileStyle = theme.textTheme.bodyLarge?.copyWith(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
+
+    final titleStyle = theme.textTheme.headlineMedium?.copyWith(
+          fontSize: context.responsiveValue(
+            mobile: 24.0,
+            tablet: 26.0,
+            smallLaptop: 28.0,
+            desktop: 30.0,
+            largeDesktop: 32.0,
+          ),
+        ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 24.0,
+            tablet: 26.0,
+            smallLaptop: 28.0,
+            desktop: 30.0,
+            largeDesktop: 32.0,
+          ),
+        );
+
+    final descriptionStyle = theme.textTheme.bodyLarge?.copyWith(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
+
+    final buttonLabelStyle = theme.textTheme.labelLarge?.copyWith(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        ) ??
+        TextStyle(
+          fontSize: context.responsiveValue(
+            mobile: 14.0,
+            tablet: 15.0,
+            smallLaptop: 16.0,
+            desktop: 17.0,
+            largeDesktop: 18.0,
+          ),
+        );
 
     if (state.isLoading && state.profile == null) {
       return const Center(child: CircularProgressIndicator());
@@ -45,9 +122,9 @@ class ResumeSection extends StatelessWidget {
     final profile = state.profile;
     if (profile == null) {
       return Center(
-        child: Text(
+        child: SelectableText(
           'No profile data available',
-          style: theme.textTheme.bodyMedium,
+          style: noProfileStyle,
         ),
       );
     }
@@ -56,13 +133,13 @@ class ResumeSection extends StatelessWidget {
       width: contentWidth,
       padding: ResponsiveHelper.getResponsivePadding(context).copyWith(
         bottom: MediaQuery.of(context).padding.bottom +
-            theme.textTheme.bodyMedium!.fontSize! * 4,
+            (theme.textTheme.bodyMedium?.fontSize ?? 16.0) * 4,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(height: AppTheme.spacing48),
-// Resume download section
+          // Resume download section
           Card(
             elevation: 3,
             shape: RoundedRectangleBorder(
@@ -78,30 +155,33 @@ class ResumeSection extends StatelessWidget {
                     color: theme.colorScheme.primary,
                   ),
                   const SizedBox(height: AppTheme.spacing16),
-                  Text(
+                  SelectableText(
                     'My Resume',
-                    style: theme.textTheme.headlineMedium,
+                    style: titleStyle,
                   ),
                   const SizedBox(height: AppTheme.spacing8),
-                  Text(
+                  SelectableText(
                     'Download my detailed resume to learn more about my skills, experience, and qualifications.',
-                    style: theme.textTheme.bodyLarge,
+                    style: descriptionStyle,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: AppTheme.spacing32),
                   ElevatedButton.icon(
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Resume download started'),
-                          duration: Duration(seconds: 2),
+                        SnackBar(
+                          content: SelectableText(
+                            'Resume download started',
+                            style: theme.textTheme.bodyMedium,
+                          ),
+                          duration: const Duration(seconds: 2),
                         ),
                       );
                     },
                     icon: const Icon(Icons.download),
                     label: Text(
                       'Download Resume',
-                      style: theme.textTheme.labelLarge,
+                      style: buttonLabelStyle,
                     ),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
@@ -128,14 +208,58 @@ class ResumeSection extends StatelessWidget {
 
   Widget _buildFooter(BuildContext context) {
     final theme = Theme.of(context);
-    final textColors = theme.extension<TextColors>();
+
+    // Define responsive text styles
+    final footerTextStyle = theme.textTheme.bodySmall?.copyWith(
+          color: context.textColors.secondary,
+          fontSize: context.responsiveValue(
+            mobile: 12.0,
+            tablet: 13.0,
+            smallLaptop: 14.0,
+            desktop: 15.0,
+            largeDesktop: 16.0,
+          ),
+        ) ??
+        TextStyle(
+          color: context.textColors.secondary,
+          fontSize: context.responsiveValue(
+            mobile: 12.0,
+            tablet: 13.0,
+            smallLaptop: 14.0,
+            desktop: 15.0,
+            largeDesktop: 16.0,
+          ),
+        );
+
+    final linkStyle = theme.textTheme.bodySmall?.copyWith(
+          color: theme.colorScheme.primary,
+          decoration: TextDecoration.underline,
+          fontSize: context.responsiveValue(
+            mobile: 12.0,
+            tablet: 13.0,
+            smallLaptop: 14.0,
+            desktop: 15.0,
+            largeDesktop: 16.0,
+          ),
+        ) ??
+        TextStyle(
+          color: theme.colorScheme.primary,
+          decoration: TextDecoration.underline,
+          fontSize: context.responsiveValue(
+            mobile: 12.0,
+            tablet: 13.0,
+            smallLaptop: 14.0,
+            desktop: 15.0,
+            largeDesktop: 16.0,
+          ),
+        );
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing16),
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: textColors?.secondary?.withOpacity(0.2) ??
+            color: context.textColors.secondary?.withOpacity(0.2) ??
                 Colors.grey.withOpacity(0.2),
             width: 1,
           ),
@@ -144,11 +268,9 @@ class ResumeSection extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
+          SelectableText(
             '© ${DateTime.now().year} Md. Asad Chowdhury Dipu. All rights reserved.',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: textColors?.secondary,
-            ),
+            style: footerTextStyle,
           ),
           const SizedBox(width: AppTheme.spacing16),
           InkWell(
@@ -159,12 +281,9 @@ class ResumeSection extends StatelessWidget {
                 await launchUrl(url);
               }
             },
-            child: Text(
+            child: SelectableText(
               'View Source on GitHub',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.primary,
-                decoration: TextDecoration.underline,
-              ),
+              style: linkStyle,
             ),
           ),
         ],
