@@ -36,7 +36,6 @@ class ResumeSection extends StatelessWidget {
       {required bool isFooterVisible}) {
     final contentWidth = context.contentWidth;
     final theme = Theme.of(context);
-    final textColors = theme.extension<TextColors>() ?? theme.colorScheme;
 
     // Define responsive text styles
     final noProfileStyle = theme.textTheme.bodyLarge?.copyWith(
