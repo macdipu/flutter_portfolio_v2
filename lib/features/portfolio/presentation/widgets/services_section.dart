@@ -56,7 +56,7 @@ class ServicesSection extends StatelessWidget {
 
     return Container(
       width: contentWidth,
-      padding: ResponsiveHelper.getResponsivePadding(context),
+      padding: ResponsiveHelper.padding(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

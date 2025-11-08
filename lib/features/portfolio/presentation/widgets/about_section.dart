@@ -102,7 +102,7 @@ class AboutSection extends StatelessWidget {
           );
         }
         return Container(
-          width: ResponsiveHelper.getContentWidth(context),
+          width: context.contentWidth,
           padding: context.defaultPadding,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

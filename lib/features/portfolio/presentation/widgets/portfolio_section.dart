@@ -65,7 +65,7 @@ class PortfolioSection extends StatelessWidget {
   Widget _buildLayout(BuildContext context, List<ProjectModel> projects,
       String selectedCategory) {
     final theme = Theme.of(context);
-    final contentWidth = ResponsiveHelper.getContentWidth(context);
+    final contentWidth = context.contentWidth;
 
     // Define responsive text style for category chip
     final chipLabelStyle = theme.textTheme.bodyMedium?.copyWith(
@@ -89,7 +89,7 @@ class PortfolioSection extends StatelessWidget {
 
     return Container(
       width: contentWidth,
-      padding: ResponsiveHelper.getResponsivePadding(context),
+      padding:  context.defaultPadding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
