@@ -56,7 +56,7 @@ class ResponsiveConfig {
   final bool debugOverlay;
 
   const ResponsiveConfig({
-    this.densityAware = false,
+    this.densityAware = true,
     this.maxContentWidth = 1400.0,
     this.breakpoints = const ResponsiveBreakpoints(),
     this.debugOverlay = false,
