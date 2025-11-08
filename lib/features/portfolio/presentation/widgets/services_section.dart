@@ -46,42 +46,50 @@ class ServicesSection extends StatelessWidget {
 
   Widget _buildLayout(BuildContext context, ProfileModel profile) {
     final contentWidth = context.contentWidth;
-    int crossAxisCount = context.responsiveValue(
-      mobile: 1,
-      tablet: 2,
-      smallLaptop: 2,
-      desktop: 3,
-      largeDesktop: 4,
-    );
 
     return Container(
       width: contentWidth,
-      padding: ResponsiveHelper.padding(context),
+      padding: context.defaultPadding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 48),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: profile.services.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: crossAxisCount,
-              crossAxisSpacing: 24,
-              mainAxisSpacing: 24,
-              childAspectRatio: 4 / 3,
-            ),
-            itemBuilder: (context, index) {
-              final service = profile.services[index];
-              return _ServiceCard(
-                title: service.title,
-                description: service.description,
-                iconUrl: service.iconUrl,
-                index: index,
-              );
-            },
-          ),
+          ServicesGrid(services: profile.services),
         ],
+      ),
+    );
+  }
+}
+
+class ServicesGrid extends StatelessWidget {
+  final List<ServiceModel> services;
+
+  const ServicesGrid({super.key, required this.services});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300),
+      child: GridView.builder(
+        key: ValueKey(services.length),
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: services.length,
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 400, // item max width for services
+          crossAxisSpacing: 24,
+          mainAxisSpacing: 24,
+          childAspectRatio: 4 / 3,
+        ),
+        itemBuilder: (context, index) {
+          final service = services[index];
+          return _ServiceCard(
+            title: service.title,
+            description: service.description,
+            iconUrl: service.iconUrl,
+            index: index,
+          );
+        },
       ),
     );
   }
