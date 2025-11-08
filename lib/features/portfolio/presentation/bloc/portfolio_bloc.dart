@@ -50,7 +50,7 @@ class PortfolioBloc extends Bloc<PortfolioEvent, PortfolioState> {
       emit(state.copyWith(
         isLoading: false,
         blogPosts: blogPosts,
-        visibleBlogPostCount: 6, // Default to 6 posts
+        visibleBlogPostCount: 2, // Default to 2 posts
       ));
     } catch (e) {
       emit(state.copyWith(
