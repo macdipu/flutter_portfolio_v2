@@ -9,7 +9,7 @@ class MediumService {
 
   Future<List<BlogPostModel>> fetchBlogPosts() async {
     try {
-      final response = await http.get(Uri.parse('$_rssToJsonApi'));
+      final response = await http.get(Uri.parse(_rssToJsonApi));
 
       if (response.statusCode != 200) {
         throw Exception('Failed to load blog posts: ${response.statusCode}');
