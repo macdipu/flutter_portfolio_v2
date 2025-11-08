@@ -41,8 +41,14 @@ class PortfolioRepository {
             'https://images.pexels.com/photos/4348404/pexels-photo-4348404.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
         roles: const [
           ExperienceModel(
+            position: 'Software Engineer III',
+            period: 'July 2025 - Present',
+            description:
+            'Promoted to Software Engineer II. Contributing to cutting-edge blockchain and technology solutions in a collaborative engineering environment.',
+          ),
+          ExperienceModel(
             position: 'Software Engineer II',
-            period: 'Sep 2024 - Present',
+            period: 'Sep 2024 - June 2025',
             description:
                 'Promoted to Software Engineer II. Contributing to cutting-edge blockchain and technology solutions in a collaborative engineering environment.',
           ),
