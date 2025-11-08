@@ -48,12 +48,12 @@ class ExperienceSection extends StatelessWidget {
 
   Widget _buildLayout(BuildContext context, ProfileModel profile,
       {required bool isVertical}) {
-    final contentWidth = ResponsiveHelper.getContentWidth(context);
+    final contentWidth = context.contentWidth;
     final groupedExperiences = profile.experiences;
 
     return Container(
       width: contentWidth,
-      padding: ResponsiveHelper.getResponsivePadding(context),
+      padding: context.defaultPadding,
       child: isVertical
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,

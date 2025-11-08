@@ -34,7 +34,7 @@ class ResumeSection extends StatelessWidget {
 
   Widget _buildLayout(BuildContext context, PortfolioState state,
       {required bool isFooterVisible}) {
-    final contentWidth = ResponsiveHelper.getContentWidth(context);
+    final contentWidth = context.contentWidth;
     final theme = Theme.of(context);
     final textColors = theme.extension<TextColors>() ?? theme.colorScheme;
 
@@ -131,7 +131,7 @@ class ResumeSection extends StatelessWidget {
 
     return Container(
       width: contentWidth,
-      padding: ResponsiveHelper.getResponsivePadding(context).copyWith(
+      padding: context.defaultPadding.copyWith(
         bottom: MediaQuery.of(context).padding.bottom +
             (theme.textTheme.bodyMedium?.fontSize ?? 16.0) * 4,
       ),

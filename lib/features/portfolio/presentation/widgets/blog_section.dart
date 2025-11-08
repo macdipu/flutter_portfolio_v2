@@ -34,13 +34,13 @@ class BlogSection extends StatelessWidget {
   }
 
   Widget _buildLayout(BuildContext context, PortfolioState state) {
-    final contentWidth = ResponsiveHelper.getContentWidth(context);
+    final contentWidth = context.contentWidth;
     final maxPosts =
         state.visibleBlogPostCount.clamp(0, state.blogPosts.length);
 
     return Container(
       width: contentWidth,
-      padding: ResponsiveHelper.getResponsivePadding(context),
+      padding: context.defaultPadding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

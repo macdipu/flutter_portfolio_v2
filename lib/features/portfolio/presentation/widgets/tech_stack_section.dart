@@ -53,7 +53,7 @@ class TechStackSection extends StatelessWidget {
   Widget _buildLayout(BuildContext context,
       List<TechStackModel> filteredTechStacks, selectedCategory) {
     final theme = Theme.of(context);
-    final contentWidth = ResponsiveHelper.getContentWidth(context);
+    final contentWidth = context.contentWidth;
     final categories = [
       'All',
       'Frameworks',
@@ -63,8 +63,7 @@ class TechStackSection extends StatelessWidget {
       'Other Technologies',
     ];
     // Override getGridColumns for denser grid
-    final crossAxisCount = ResponsiveHelper.getResponsiveValue<int>(
-      context: context,
+    final crossAxisCount = context.responsiveValue<int>(
       mobile: 2,
       tablet: 3,
       smallLaptop: 4,
@@ -94,7 +93,7 @@ class TechStackSection extends StatelessWidget {
 
     return Container(
       width: contentWidth,
-      padding: ResponsiveHelper.getResponsivePadding(context),
+      padding: context.defaultPadding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -51,7 +51,7 @@ class _ContactSectionState extends State<ContactSection> {
   }
 
   Widget _buildLayout(BuildContext context, PortfolioState state) {
-    final contentWidth = ResponsiveHelper.getContentWidth(context);
+    final contentWidth = context.contentWidth;
     final isDesktop = MediaQuery.of(context).size.width >= 1024;
     final profile = state.profile;
 
@@ -91,7 +91,7 @@ class _ContactSectionState extends State<ContactSection> {
 
     return Container(
       width: contentWidth,
-      padding: ResponsiveHelper.getResponsivePadding(context),
+      padding: context.defaultPadding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

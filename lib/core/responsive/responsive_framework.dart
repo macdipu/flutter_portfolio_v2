@@ -1,7 +1,9 @@
 import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 
+/// ----------------------------------------------
+/// DEVICE TYPES
+/// ----------------------------------------------
 enum DeviceType {
   mobile,
   tablet,
@@ -10,6 +12,9 @@ enum DeviceType {
   largeDesktop,
 }
 
+/// ----------------------------------------------
+/// BREAKPOINTS (also density-aware)
+/// ----------------------------------------------
 class ResponsiveBreakpoints {
   static const double mobile = 600;
   static const double tablet = 1024;
@@ -17,53 +22,57 @@ class ResponsiveBreakpoints {
   static const double desktop = 1680;
   static const double largeDesktop = 1920;
 
-  // Custom breakpoints
-  static const double smallMobile = 360;
-  static const double largeMobile = 480;
+  /// Optional custom breakpoints override
+  final Map<DeviceType, double>? custom;
 
-  // Density-aware breakpoints (considering pixel density)
-  static double getDensityAwareBreakpoint(
-      double breakpoint, double pixelRatio) {
-    return breakpoint *
-        math.min(pixelRatio, 2.0); // Cap at 2x for reasonable scaling
+  const ResponsiveBreakpoints({this.custom});
+
+  double _scaled(double base, double pixelRatio, bool useDensity) {
+    if (!useDensity) return base;
+    return base * math.min(pixelRatio, 2.0);
+  }
+
+  double value(DeviceType type, double pixelRatio, bool useDensity) {
+    final base = custom?[type] ??
+        {
+          DeviceType.mobile: mobile,
+          DeviceType.tablet: tablet,
+          DeviceType.smallLaptop: smallLaptop,
+          DeviceType.desktop: desktop,
+          DeviceType.largeDesktop: largeDesktop,
+        }[type]!;
+    return _scaled(base, pixelRatio, useDensity);
   }
 }
 
+/// ----------------------------------------------
+/// CONFIG
+/// ----------------------------------------------
 class ResponsiveConfig {
-  final bool useDensityAwareBreakpoints;
+  final bool densityAware;
   final double maxContentWidth;
   final Map<DeviceType, EdgeInsets> defaultPadding;
-  final bool enableDebugMode;
+  final ResponsiveBreakpoints breakpoints;
+  final bool debugOverlay;
 
   const ResponsiveConfig({
-    this.useDensityAwareBreakpoints = false,
+    this.densityAware = false,
     this.maxContentWidth = 1400.0,
+    this.breakpoints = const ResponsiveBreakpoints(),
+    this.debugOverlay = false,
     this.defaultPadding = const {
-      DeviceType.mobile: EdgeInsets.all(16.0),
-      DeviceType.tablet: EdgeInsets.all(24.0),
-      DeviceType.smallLaptop: EdgeInsets.all(28.0),
-      DeviceType.desktop: EdgeInsets.all(32.0),
-      DeviceType.largeDesktop: EdgeInsets.all(48.0),
+      DeviceType.mobile: EdgeInsets.all(16),
+      DeviceType.tablet: EdgeInsets.all(24),
+      DeviceType.smallLaptop: EdgeInsets.all(28),
+      DeviceType.desktop: EdgeInsets.all(32),
+      DeviceType.largeDesktop: EdgeInsets.all(48),
     },
-    this.enableDebugMode = false,
   });
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ResponsiveConfig &&
-          runtimeType == other.runtimeType &&
-          useDensityAwareBreakpoints == other.useDensityAwareBreakpoints &&
-          maxContentWidth == other.maxContentWidth &&
-          enableDebugMode == other.enableDebugMode;
-
-  @override
-  int get hashCode =>
-      useDensityAwareBreakpoints.hashCode ^
-      maxContentWidth.hashCode ^
-      enableDebugMode.hashCode;
 }
 
+/// ----------------------------------------------
+/// INHERITED PROVIDER (cached for performance)
+/// ----------------------------------------------
 class ResponsiveProvider extends InheritedWidget {
   final ResponsiveConfig config;
 
@@ -73,34 +82,34 @@ class ResponsiveProvider extends InheritedWidget {
     required super.child,
   });
 
-  static ResponsiveProvider? of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<ResponsiveProvider>();
-  }
-
-  static ResponsiveConfig configOf(BuildContext context) {
-    return ResponsiveProvider.of(context)?.config ?? const ResponsiveConfig();
-  }
+  static ResponsiveConfig of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<ResponsiveProvider>()?.config ??
+      const ResponsiveConfig();
 
   @override
-  bool updateShouldNotify(ResponsiveProvider oldWidget) {
-    return config != oldWidget.config;
-  }
+  bool updateShouldNotify(ResponsiveProvider oldWidget) =>
+      oldWidget.config != config;
 }
 
+/// ----------------------------------------------
+/// DATA MODEL (cached snapshot of layout)
+/// ----------------------------------------------
 class ResponsiveInfo {
   final DeviceType deviceType;
-  final double screenWidth;
-  final double screenHeight;
+  final double width;
+  final double height;
+  final bool portrait;
   final double pixelRatio;
-  final EdgeInsets safeArea;
+  final EdgeInsets padding;
   final EdgeInsets viewInsets;
 
   const ResponsiveInfo({
     required this.deviceType,
-    required this.screenWidth,
-    required this.screenHeight,
+    required this.width,
+    required this.height,
+    required this.portrait,
     required this.pixelRatio,
-    required this.safeArea,
+    required this.padding,
     required this.viewInsets,
   });
 
@@ -110,87 +119,71 @@ class ResponsiveInfo {
   bool get isDesktop => deviceType == DeviceType.desktop;
   bool get isLargeDesktop => deviceType == DeviceType.largeDesktop;
 
-  // Utility getters
   bool get isMobileOrTablet => isMobile || isTablet;
-  bool get isDesktopOrLarger => isDesktop || isLargeDesktop;
+  bool get isDesktopOrAbove => isDesktop || isLargeDesktop;
 
-  double get availableWidth => screenWidth - safeArea.horizontal;
+  double get availableWidth => width - padding.horizontal;
   double get availableHeight =>
-      screenHeight - safeArea.vertical - viewInsets.vertical;
+      height - padding.vertical - viewInsets.vertical;
 }
 
+/// ----------------------------------------------
+/// RESPONSIVE BUILDER
+/// ----------------------------------------------
 class ResponsiveBuilder extends StatelessWidget {
   final Widget Function(BuildContext context, ResponsiveInfo info) builder;
 
-  const ResponsiveBuilder({
-    super.key,
-    required this.builder,
-  });
+  const ResponsiveBuilder({super.key, required this.builder});
 
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final mediaQuery = MediaQuery.of(context);
-        final config = ResponsiveProvider.configOf(context);
-
-        final info = ResponsiveInfo(
-          deviceType: _getDeviceType(
-              constraints.maxWidth, mediaQuery.devicePixelRatio, config),
-          screenWidth: constraints.maxWidth,
-          screenHeight: constraints.maxHeight,
-          pixelRatio: mediaQuery.devicePixelRatio,
-          safeArea: mediaQuery.padding,
-          viewInsets: mediaQuery.viewInsets,
-        );
-
-        Widget child = builder(context, info);
-
-        // Add debug overlay if enabled
-        if (config.enableDebugMode) {
-          child = Stack(
-            children: [
-              child,
-              Positioned(
-                top: 0,
-                right: 0,
-                child: _DebugOverlay(info: info),
-              ),
-            ],
-          );
-        }
-
-        return child;
-      },
-    );
-  }
-
-  DeviceType _getDeviceType(
+  DeviceType _resolveType(
       double width, double pixelRatio, ResponsiveConfig config) {
-    // Adjust breakpoints based on pixel density if enabled
-    final mobile = config.useDensityAwareBreakpoints
-        ? ResponsiveBreakpoints.getDensityAwareBreakpoint(
-            ResponsiveBreakpoints.mobile, pixelRatio)
-        : ResponsiveBreakpoints.mobile;
-    final tablet = config.useDensityAwareBreakpoints
-        ? ResponsiveBreakpoints.getDensityAwareBreakpoint(
-            ResponsiveBreakpoints.tablet, pixelRatio)
-        : ResponsiveBreakpoints.tablet;
+    final bp = config.breakpoints;
+    final d = config.densityAware;
 
-    if (width < mobile) {
+    if (width < bp.value(DeviceType.mobile, pixelRatio, d)) {
       return DeviceType.mobile;
-    } else if (width < tablet) {
+    } else if (width < bp.value(DeviceType.tablet, pixelRatio, d)) {
       return DeviceType.tablet;
-    } else if (width < ResponsiveBreakpoints.smallLaptop) {
+    } else if (width < bp.value(DeviceType.smallLaptop, pixelRatio, d)) {
       return DeviceType.smallLaptop;
-    } else if (width < ResponsiveBreakpoints.desktop) {
+    } else if (width < bp.value(DeviceType.desktop, pixelRatio, d)) {
       return DeviceType.desktop;
     } else {
       return DeviceType.largeDesktop;
     }
   }
+
+  @override
+  Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context);
+    final config = ResponsiveProvider.of(context);
+
+    final info = ResponsiveInfo(
+      deviceType: _resolveType(mq.size.width, mq.devicePixelRatio, config),
+      width: mq.size.width,
+      height: mq.size.height,
+      portrait: mq.orientation == Orientation.portrait,
+      pixelRatio: mq.devicePixelRatio,
+      padding: mq.padding,
+      viewInsets: mq.viewInsets,
+    );
+
+    Widget child = builder(context, info);
+
+    if (config.debugOverlay) {
+      child = Stack(children: [
+        child,
+        Positioned(top: 0, right: 0, child: _DebugOverlay(info)),
+      ]);
+    }
+
+    return child;
+  }
 }
 
+/// ----------------------------------------------
+/// RESPONSIVE WIDGET (simple switch)
+/// ----------------------------------------------
 class ResponsiveWidget extends StatelessWidget {
   final Widget? mobile;
   final Widget? tablet;
@@ -245,58 +238,40 @@ class ResponsiveWidget extends StatelessWidget {
   }
 }
 
+/// ----------------------------------------------
+/// HELPER API
+/// ----------------------------------------------
 class ResponsiveHelper {
-  static ResponsiveInfo getInfo(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final config = ResponsiveProvider.configOf(context);
+  static ResponsiveInfo info(BuildContext context) {
+    final mq = MediaQuery.of(context);
+    final config = ResponsiveProvider.of(context);
+
+    final builder = ResponsiveBuilder(builder: (_, __) => const SizedBox());
+    final type = builder._resolveType(
+        mq.size.width, mq.devicePixelRatio, config);
 
     return ResponsiveInfo(
-      deviceType: _getDeviceType(
-          mediaQuery.size.width, mediaQuery.devicePixelRatio, config),
-      screenWidth: mediaQuery.size.width,
-      screenHeight: mediaQuery.size.height,
-      pixelRatio: mediaQuery.devicePixelRatio,
-      safeArea: mediaQuery.padding,
-      viewInsets: mediaQuery.viewInsets,
+      deviceType: type,
+      width: mq.size.width,
+      height: mq.size.height,
+      portrait: mq.orientation == Orientation.portrait,
+      pixelRatio: mq.devicePixelRatio,
+      padding: mq.padding,
+      viewInsets: mq.viewInsets,
     );
   }
 
-  static DeviceType _getDeviceType(
-      double width, double pixelRatio, ResponsiveConfig config) {
-    final mobile = config.useDensityAwareBreakpoints
-        ? ResponsiveBreakpoints.getDensityAwareBreakpoint(
-            ResponsiveBreakpoints.mobile, pixelRatio)
-        : ResponsiveBreakpoints.mobile;
-    final tablet = config.useDensityAwareBreakpoints
-        ? ResponsiveBreakpoints.getDensityAwareBreakpoint(
-            ResponsiveBreakpoints.tablet, pixelRatio)
-        : ResponsiveBreakpoints.tablet;
-
-    if (width < mobile) {
-      return DeviceType.mobile;
-    } else if (width < tablet) {
-      return DeviceType.tablet;
-    } else if (width < ResponsiveBreakpoints.smallLaptop) {
-      return DeviceType.smallLaptop;
-    } else if (width < ResponsiveBreakpoints.desktop) {
-      return DeviceType.desktop;
-    } else {
-      return DeviceType.largeDesktop;
-    }
-  }
-
-  // Enhanced responsive value getter
-  static T getResponsiveValue<T>({
-    required BuildContext context,
+  static T value<T>(
+    BuildContext context, {
     required T mobile,
     T? tablet,
     T? smallLaptop,
     T? desktop,
     T? largeDesktop,
   }) {
-    final info = getInfo(context);
+    final i = info(context);
 
-    switch (info.deviceType) {
+    switch (i.deviceType) {
       case DeviceType.mobile:
         return mobile;
       case DeviceType.tablet:
@@ -310,143 +285,116 @@ class ResponsiveHelper {
     }
   }
 
-  // Get default padding for current device type
-  static EdgeInsets getDefaultPadding(BuildContext context) {
-    final config = ResponsiveProvider.configOf(context);
-    final info = getInfo(context);
-    return config.defaultPadding[info.deviceType] ?? const EdgeInsets.all(16.0);
-  }
+  static EdgeInsets padding(BuildContext context,
+      {EdgeInsets? mobile,
+      EdgeInsets? tablet,
+      EdgeInsets? smallLaptop,
+      EdgeInsets? desktop,
+      EdgeInsets? largeDesktop}) {
+    final config = ResponsiveProvider.of(context);
 
-  // Get responsive padding with optional overrides
-  static EdgeInsets getResponsivePadding(
-    BuildContext context, {
-    EdgeInsets? mobile,
-    EdgeInsets? tablet,
-    EdgeInsets? smallLaptop,
-    EdgeInsets? desktop,
-    EdgeInsets? largeDesktop,
-  }) {
-    final config = ResponsiveProvider.configOf(context);
-    return getResponsiveValue<EdgeInsets>(
-      context: context,
+    return value(
+      context,
       mobile: mobile ?? config.defaultPadding[DeviceType.mobile]!,
       tablet: tablet ?? config.defaultPadding[DeviceType.tablet],
       smallLaptop: smallLaptop ?? config.defaultPadding[DeviceType.smallLaptop],
       desktop: desktop ?? config.defaultPadding[DeviceType.desktop],
-      largeDesktop:
-          largeDesktop ?? config.defaultPadding[DeviceType.largeDesktop],
+      largeDesktop: largeDesktop ??
+          config.defaultPadding[DeviceType.largeDesktop],
     );
   }
 
-  // Smart content width with configurable max width
-  static double getContentWidth(BuildContext context) {
-    final config = ResponsiveProvider.configOf(context);
-    final info = getInfo(context);
+  static double spacing(BuildContext context, {double scale = 1.0}) {
+    return value<double>(
+      context,
+      mobile: 8 * scale,
+      tablet: 12 * scale,
+      smallLaptop: 16 * scale,
+      desktop: 20 * scale,
+      largeDesktop: 24 * scale,
+    );
+  }
 
-    if (info.isMobile) return double.infinity;
+  static double contentWidth(BuildContext context) {
+    final config = ResponsiveProvider.of(context);
+    final i = info(context);
 
-    final maxWidth = getResponsiveValue<double>(
-      context: context,
+    if (i.isMobile) return double.infinity;
+    final max = value<double>(
+      context,
       mobile: double.infinity,
-      tablet: 720.0,
-      smallLaptop: 860.0,
-      desktop: 1024.0,
+      tablet: 720,
+      smallLaptop: 860,
+      desktop: 1024,
       largeDesktop: config.maxContentWidth,
     );
 
-    return math.min(maxWidth, info.screenWidth * 0.9);
+    return math.min(max, i.width * .9);
   }
 
-  // Responsive spacing system
-  static double getSpacing(
-    BuildContext context, {
-    double scale = 1.0,
-  }) {
-    return getResponsiveValue<double>(
-      context: context,
-      mobile: 8.0 * scale,
-      tablet: 12.0 * scale,
-      smallLaptop: 16.0 * scale,
-      desktop: 20.0 * scale,
-      largeDesktop: 24.0 * scale,
-    );
-  }
-
-  // Typography scaling
-  static TextStyle getResponsiveTextStyle(
+  static TextStyle text(
     BuildContext context,
-    TextStyle baseStyle, {
+    TextStyle style, {
     double? mobileScale,
     double? tabletScale,
     double? desktopScale,
   }) {
-    final scale = getResponsiveValue<double>(
-      context: context,
-      mobile: mobileScale ?? 0.9,
-      tablet: tabletScale ?? 1.0,
-      smallLaptop: 1.0,
+    final scale = value<double>(
+      context,
+      mobile: mobileScale ?? .9,
+      tablet: tabletScale ?? 1,
+      smallLaptop: 1,
       desktop: desktopScale ?? 1.1,
       largeDesktop: 1.2,
     );
 
-    return baseStyle.copyWith(
-      fontSize: (baseStyle.fontSize ?? 14.0) * scale,
+    return style.copyWith(
+      fontSize: (style.fontSize ?? 14) * scale,
     );
   }
 }
 
+/// ----------------------------------------------
+/// DEBUG OVERLAY
+/// ----------------------------------------------
 class _DebugOverlay extends StatelessWidget {
   final ResponsiveInfo info;
-
-  const _DebugOverlay({required this.info});
+  const _DebugOverlay(this.info);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(4.0),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Device: ${info.deviceType.name}',
-            style: const TextStyle(color: Colors.white, fontSize: 10),
-          ),
-          Text(
-            'Size: ${info.screenWidth.toInt()}x${info.screenHeight.toInt()}',
-            style: const TextStyle(color: Colors.white, fontSize: 10),
-          ),
-          Text(
-            'Pixel Ratio: ${info.pixelRatio.toStringAsFixed(1)}',
-            style: const TextStyle(color: Colors.white, fontSize: 10),
-          ),
-        ],
+      padding: const EdgeInsets.all(6),
+      color: Colors.black.withValues(alpha: .7),
+      child: Text(
+        '${info.deviceType.name}\n${info.width.toInt()}x${info.height.toInt()}',
+        style: const TextStyle(color: Colors.white, fontSize: 10),
       ),
     );
   }
 }
 
-// Enhanced extension with all convenience methods
+/// ----------------------------------------------
+/// EXTENSIONS
+/// ----------------------------------------------
 extension ResponsiveContext on BuildContext {
-  ResponsiveInfo get responsive => ResponsiveHelper.getInfo(this);
-  ResponsiveConfig get responsiveConfig => ResponsiveProvider.configOf(this);
+  ResponsiveInfo get responsive => ResponsiveHelper.info(this);
 
-  // Quick access to device type checks
   bool get isMobile => responsive.isMobile;
   bool get isTablet => responsive.isTablet;
-  bool get isSmallLaptop => responsive.isSmallLaptop;
   bool get isDesktop => responsive.isDesktop;
   bool get isLargeDesktop => responsive.isLargeDesktop;
-
-  // Utility checks
   bool get isMobileOrTablet => responsive.isMobileOrTablet;
-  bool get isDesktopOrLarger => responsive.isDesktopOrLarger;
 
-  // Enhanced responsiveValue method
+  EdgeInsets get defaultPadding =>
+      ResponsiveProvider.of(this).defaultPadding[responsive.deviceType] ??
+      const EdgeInsets.all(16);
+
+  double get spacing => ResponsiveHelper.spacing(this);
+  double spacingScale(double s) => ResponsiveHelper.spacing(this, scale: s);
+
+  double get contentWidth => ResponsiveHelper.contentWidth(this);
+
   T responsiveValue<T>({
     required T mobile,
     T? tablet,
@@ -454,8 +402,8 @@ extension ResponsiveContext on BuildContext {
     T? desktop,
     T? largeDesktop,
   }) =>
-      ResponsiveHelper.getResponsiveValue<T>(
-        context: this,
+      ResponsiveHelper.value(
+        this,
         mobile: mobile,
         tablet: tablet,
         smallLaptop: smallLaptop,
@@ -463,35 +411,17 @@ extension ResponsiveContext on BuildContext {
         largeDesktop: largeDesktop,
       );
 
-  // Padding convenience methods
-  EdgeInsets get defaultPadding =>
-      responsiveConfig.defaultPadding[responsive.deviceType] ??
-      const EdgeInsets.all(16.0);
-
-  EdgeInsets responsivePadding({
-    EdgeInsets? mobile,
-    EdgeInsets? tablet,
-    EdgeInsets? smallLaptop,
-    EdgeInsets? desktop,
-    EdgeInsets? largeDesktop,
-  }) {
-    return responsiveValue<EdgeInsets>(
-      mobile: mobile ?? responsiveConfig.defaultPadding[DeviceType.mobile]!,
-      tablet: tablet ?? responsiveConfig.defaultPadding[DeviceType.tablet],
-      smallLaptop: smallLaptop ??
-          responsiveConfig.defaultPadding[DeviceType.smallLaptop],
-      desktop: desktop ?? responsiveConfig.defaultPadding[DeviceType.desktop],
-      largeDesktop: largeDesktop ??
-          responsiveConfig.defaultPadding[DeviceType.largeDesktop],
-    );
-  }
-
-  // Spacing convenience methods
-  double get spacing => ResponsiveHelper.getSpacing(this);
-  double spacingScale(double scale) =>
-      ResponsiveHelper.getSpacing(this, scale: scale);
-
-  // Content width convenience
-  double get contentWidth => ResponsiveHelper.getContentWidth(this);
-
+  TextStyle responsiveText(
+    TextStyle base, {
+    double? mobileScale,
+    double? tabletScale,
+    double? desktopScale,
+  }) =>
+      ResponsiveHelper.text(
+        this,
+        base,
+        mobileScale: mobileScale,
+        tabletScale: tabletScale,
+        desktopScale: desktopScale,
+      );
 }
