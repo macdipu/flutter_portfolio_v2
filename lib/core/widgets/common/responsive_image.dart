@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_portfolio/core/responsive/responsive_framework.dart';
+import 'package:any_image_view/any_image_view.dart';
 
 class ResponsiveImage extends StatefulWidget {
-  final String imageUrl;
+  final Object? imagePath;
   final String? altText;
-  final String? placeholder;
+  final Widget? placeholderWidget;
+  final Widget? errorWidget;
   final double? width;
   final double? height;
   final double? aspectRatio;
@@ -29,9 +31,10 @@ class ResponsiveImage extends StatefulWidget {
 
   const ResponsiveImage({
     super.key,
-    required this.imageUrl,
+    required this.imagePath,
     this.altText,
-    this.placeholder,
+    this.placeholderWidget,
+    this.errorWidget,
     this.width,
     this.height,
     this.aspectRatio,
@@ -61,9 +64,6 @@ class ResponsiveImage extends StatefulWidget {
 
 class _ResponsiveImageState extends State<ResponsiveImage>
     with SingleTickerProviderStateMixin {
-  bool _isHovered = false;
-  bool _isLoading = true;
-  bool _hasError = false;
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
 
@@ -105,7 +105,6 @@ class _ResponsiveImageState extends State<ResponsiveImage>
 
     Widget imageWidget = _buildImageContent(effectiveWidth, effectiveHeight);
 
-    // Add hero animation if heroTag is provided
     if (widget.heroTag != null) {
       imageWidget = Hero(
         tag: widget.heroTag!,
@@ -151,9 +150,6 @@ class _ResponsiveImageState extends State<ResponsiveImage>
 
   void _onHover(bool isHovered) {
     if (!mounted) return;
-    setState(() {
-      _isHovered = isHovered;
-    });
     if (isHovered) {
       _animationController.forward();
     } else {
@@ -189,7 +185,7 @@ class _ResponsiveImageState extends State<ResponsiveImage>
 
     final defaultShadow = [
       BoxShadow(
-        color: Colors.black.withOpacity(0.1),
+        color: Colors.black.withValues(alpha: 0.1),
         blurRadius: 8,
         offset: const Offset(0, 4),
         spreadRadius: 0,
@@ -199,7 +195,6 @@ class _ResponsiveImageState extends State<ResponsiveImage>
     return Container(
       width: width,
       height: height,
-      margin: widget.margin,
       padding: widget.padding,
       decoration: BoxDecoration(
         color: widget.backgroundColor,
@@ -207,105 +202,93 @@ class _ResponsiveImageState extends State<ResponsiveImage>
         boxShadow: widget.boxShadow ?? defaultShadow,
       ),
       clipBehavior: borderRadius != null ? Clip.antiAlias : Clip.none,
-      child: widget.imageUrl.isNotEmpty
-          ? _buildNetworkImage(width, height)
+      child: widget.imagePath != null
+          ? _buildHeroImage(width, height)
           : _buildPlaceholder(width, height),
     );
   }
 
-  Widget _buildNetworkImage(double width, double height) {
-    return Image.network(
-      widget.imageUrl,
-      fit: widget.fit,
-      width: width,
-      height: height,
-      loadingBuilder: widget.enableLoadingAnimation
-          ? (context, child, loadingProgress) {
-              if (loadingProgress == null) {
-                _isLoading = false;
-                return child;
+  Widget _buildHeroImage(double width, double height) {
+    if (widget.imagePath is String && (widget.imagePath as String).startsWith('http')) {
+      return Image.network(
+        widget.imagePath as String,
+        height: height,
+        width: width,
+        fit: widget.fit,
+        loadingBuilder: widget.enableLoadingAnimation
+            ? (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Container(
+                  width: width,
+                  height: height,
+                  color: Colors.grey[100],
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                          : null,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ),
+                );
               }
-              return _buildLoadingIndicator(width, height, loadingProgress);
-            }
-          : null,
-      errorBuilder: (context, error, stackTrace) {
-        _hasError = true;
-        return _buildErrorPlaceholder(width, height);
-      },
-      semanticLabel: widget.altText,
-    );
-  }
-
-  Widget _buildLoadingIndicator(
-      double width, double height, ImageChunkEvent loadingProgress) {
-    final progress = loadingProgress.expectedTotalBytes != null
-        ? loadingProgress.cumulativeBytesLoaded /
-            loadingProgress.expectedTotalBytes!
-        : null;
-
-    return Container(
-      width: width,
-      height: height,
-      color: Colors.grey[100],
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: width * 0.2,
-              height: width * 0.2,
-              child: CircularProgressIndicator(
-                value: progress,
-                strokeWidth: 2,
-                backgroundColor: Colors.grey[300],
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  Theme.of(context).primaryColor,
-                ),
-              ),
-            ),
-            if (progress != null) ...[
-              const SizedBox(height: 8),
-              Text(
-                '${(progress * 100).toInt()}%',
-                style: TextStyle(
-                  fontSize: width * 0.03,
-                  color: Colors.grey[600],
-                ),
-              ),
-            ],
-          ],
+            : null,
+        errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+          return widget.errorWidget ?? _buildErrorPlaceholder(width, height);
+        },
+      );
+    } else {
+      return SizedBox(
+        width: width,
+        height: height,
+        child: AnyImageView(
+          imagePath: widget.imagePath,
+          fit: widget.fit,
+          placeholderWidget: widget.enableLoadingAnimation
+              ? Container(
+                  width: width,
+                  height: height,
+                  color: Colors.grey[100],
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ),
+                )
+              : null,
+          errorWidget: widget.errorWidget ?? _buildErrorPlaceholder(width, height),
+          fadeDuration: const Duration(milliseconds: 400),
         ),
-      ),
-    );
+      );
+    }
   }
 
   Widget _buildPlaceholder(double width, double height) {
-    return Container(
-      width: width,
-      height: height,
-      color: Colors.grey[200],
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.image_outlined,
-            size: width * 0.25,
-            color: Colors.grey[400],
-          ),
-          if (widget.placeholder != null) ...[
-            const SizedBox(height: 8),
-            Text(
-              widget.placeholder!,
-              style: TextStyle(
-                fontSize: width * 0.03,
-                color: Colors.grey[600],
-              ),
-              textAlign: TextAlign.center,
+    if (widget.placeholderWidget != null) {
+      return widget.placeholderWidget!;
+    } else {
+      return Container(
+        width: width,
+        height: height,
+        color: Colors.grey[200],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.image_outlined,
+              size: width * 0.25,
+              color: Colors.grey[400],
             ),
           ],
-        ],
-      ),
-    );
+        ),
+      );
+    }
   }
 
   Widget _buildErrorPlaceholder(double width, double height) {
@@ -334,61 +317,4 @@ class _ResponsiveImageState extends State<ResponsiveImage>
       ),
     );
   }
-}
-
-// Specialized responsive image widgets for common use cases
-class ResponsiveAvatar extends ResponsiveImage {
-  const ResponsiveAvatar({
-    super.key,
-    required super.imageUrl,
-    super.altText,
-    super.mobileSize = 60,
-    super.tabletSize = 80,
-    super.smallLaptopSize = 100,
-    super.desktopSize = 120,
-    super.largeDesktopSize = 140,
-    super.enableHoverEffect = true,
-    super.onTap,
-    super.heroTag,
-  }) : super(
-          isCircular: true,
-          fit: BoxFit.cover,
-        );
-}
-
-class ResponsiveProjectImage extends ResponsiveImage {
-  const ResponsiveProjectImage({
-    super.key,
-    required super.imageUrl,
-    super.altText,
-    super.aspectRatio = 16 / 9,
-    super.borderRadius = const BorderRadius.all(Radius.circular(12)),
-    super.enableHoverEffect = true,
-    super.enableLoadingAnimation = true,
-    super.onTap,
-    super.heroTag,
-    super.mobileSize = 300,
-    super.tabletSize = 400,
-    super.smallLaptopSize = 450,
-    super.desktopSize = 500,
-    super.largeDesktopSize = 600,
-  });
-}
-
-class ResponsiveGalleryImage extends ResponsiveImage {
-  const ResponsiveGalleryImage({
-    super.key,
-    required super.imageUrl,
-    super.altText,
-    super.aspectRatio = 1,
-    super.borderRadius = const BorderRadius.all(Radius.circular(8)),
-    super.enableHoverEffect = true,
-    super.onTap,
-    super.heroTag,
-    super.mobileSize = 150,
-    super.tabletSize = 200,
-    super.smallLaptopSize = 220,
-    super.desktopSize = 250,
-    super.largeDesktopSize = 280,
-  });
 }
