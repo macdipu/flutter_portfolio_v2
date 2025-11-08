@@ -62,14 +62,6 @@ class TechStackSection extends StatelessWidget {
       'Dev Tools & Productivity',
       'Other Technologies',
     ];
-    // Override getGridColumns for denser grid
-    final crossAxisCount = context.responsiveValue<int>(
-      mobile: 2,
-      tablet: 3,
-      smallLaptop: 4,
-      desktop: 6,
-      largeDesktop: 6,
-    );
 
     // Define responsive text style for category chip
     final chipLabelStyle = theme.textTheme.bodyMedium?.copyWith(
@@ -151,26 +143,37 @@ class TechStackSection extends StatelessWidget {
           ),
           const SizedBox(height: AppTheme.spacing32),
           // Tech stack grid
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: crossAxisCount,
-              crossAxisSpacing: AppTheme.spacing8,
-              mainAxisSpacing: AppTheme.spacing8,
-              childAspectRatio: 1.0,
-            ),
-            itemCount: filteredTechStacks.length,
-            itemBuilder: (context, index) {
-              final tech = filteredTechStacks[index];
-              return _TechStackCard(
-                name: tech.name,
-                iconUrl: tech.iconUrl,
-                index: index,
-              );
-            },
-          ),
+          TechStackGrid(items: filteredTechStacks),
         ],
+      ),
+    );
+  }
+}
+
+class TechStackGrid extends StatelessWidget {
+  final List<TechStackModel> items;
+
+  const TechStackGrid({super.key, required this.items});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300),
+      child: GridView.builder(
+        key: ValueKey(items.length),
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 200,
+          crossAxisSpacing: AppTheme.spacing8,
+          mainAxisSpacing: AppTheme.spacing8,
+        ),
+        itemCount: items.length,
+        itemBuilder: (context, index) => _TechStackCard(
+          name: items[index].name,
+          iconUrl: items[index].iconUrl,
+          index: index,
+        ),
       ),
     );
   }
