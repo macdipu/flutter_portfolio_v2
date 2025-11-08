@@ -176,17 +176,14 @@ class ResponsiveBuilder extends StatelessWidget {
         ? ResponsiveBreakpoints.getDensityAwareBreakpoint(
             ResponsiveBreakpoints.tablet, pixelRatio)
         : ResponsiveBreakpoints.tablet;
-    final smallLaptop = ResponsiveBreakpoints.smallLaptop;
-    final desktop = ResponsiveBreakpoints.desktop;
-    final largeDesktop = ResponsiveBreakpoints.largeDesktop;
 
     if (width < mobile) {
       return DeviceType.mobile;
     } else if (width < tablet) {
       return DeviceType.tablet;
-    } else if (width < smallLaptop) {
+    } else if (width < ResponsiveBreakpoints.smallLaptop) {
       return DeviceType.smallLaptop;
-    } else if (width < desktop) {
+    } else if (width < ResponsiveBreakpoints.desktop) {
       return DeviceType.desktop;
     } else {
       return DeviceType.largeDesktop;
@@ -283,8 +280,6 @@ class ResponsiveHelper {
       return DeviceType.smallLaptop;
     } else if (width < ResponsiveBreakpoints.desktop) {
       return DeviceType.desktop;
-    } else if (width < ResponsiveBreakpoints.largeDesktop) {
-      return DeviceType.largeDesktop;
     } else {
       return DeviceType.largeDesktop;
     }
@@ -410,7 +405,7 @@ class _DebugOverlay extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.7),
+        color: Colors.black.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(4.0),
       ),
       child: Column(
@@ -499,19 +494,4 @@ extension ResponsiveContext on BuildContext {
   // Content width convenience
   double get contentWidth => ResponsiveHelper.getContentWidth(this);
 
-// Get default text style with responsive scaling
-  TextStyle responsiveTextStyle(
-    TextStyle baseStyle, {
-    double? mobileScale,
-    double? tabletScale,
-    double? desktopScale,
-  }) {
-    return ResponsiveHelper.getResponsiveTextStyle(
-      this,
-      baseStyle,
-      mobileScale: mobileScale,
-      tabletScale: tabletScale,
-      desktopScale: desktopScale,
-    );
-  }
 }
