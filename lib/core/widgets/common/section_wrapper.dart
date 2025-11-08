@@ -86,30 +86,6 @@ class SectionWrapper extends StatelessWidget {
                 minHeight:
                 fullHeight ? screenHeight - effectivePadding.vertical : 0,
               ),
-              child:SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (header != null) ...[
-                      header,
-                      const SizedBox(height: 16.0),
-                    ],
-                    content,
-                  ],
-                ),
-              )
-            ),
-          );
-        } else {
-          content = Container(
-            width: double.infinity,
-            constraints: BoxConstraints(
-              maxWidth: contentMaxWidth,
-              minHeight:
-              fullHeight ? screenHeight - effectivePadding.vertical : 0,
-            ),
-            child:SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -121,6 +97,26 @@ class SectionWrapper extends StatelessWidget {
                   content,
                 ],
               ),
+            ),
+          );
+        } else {
+          content = Container(
+            width: double.infinity,
+            constraints: BoxConstraints(
+              maxWidth: contentMaxWidth,
+              minHeight:
+              fullHeight ? screenHeight - effectivePadding.vertical : 0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (header != null) ...[
+                  header,
+                  const SizedBox(height: 16.0),
+                ],
+                content,
+              ],
             ),
           );
         }

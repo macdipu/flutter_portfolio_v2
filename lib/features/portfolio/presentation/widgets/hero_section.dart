@@ -38,6 +38,15 @@ class HeroSection extends StatelessWidget {
           largeDesktop: 480.0,
         );
 
+        // Define responsive fullHeight value
+        final fullHeight = context.responsiveValue<bool>(
+          mobile: false,
+          tablet: false,
+          smallLaptop: true,
+          desktop: true,
+          largeDesktop: true,
+        );
+
         // Define text styles with responsive font sizes
         final greetingStyle =
             Theme.of(context).textTheme.headlineMedium?.copyWith(
@@ -121,7 +130,7 @@ class HeroSection extends StatelessWidget {
             );
 
         return SectionWrapper(
-          fullHeight: true,
+          fullHeight: fullHeight,
           mobileChild: _buildVerticalLayout(context, profile, imageSize,
               greetingStyle, nameStyle, titleStyle, introStyle),
           tabletChild: _buildVerticalLayout(context, profile, imageSize,
