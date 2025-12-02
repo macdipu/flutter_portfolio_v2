@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:timelines_plus/timelines_plus.dart';
 
 import '../../../../core/responsive/responsive_framework.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/common/responsive_image.dart';
 import '../../../../core/widgets/common/section_wrapper.dart';
 import '../../data/models/profile_model.dart';
 import '../bloc/portfolio_bloc.dart';
@@ -136,71 +136,67 @@ class ExperienceSection extends StatelessWidget {
           style: titleStyle,
         ),
         const SizedBox(height: AppTheme.spacing16),
-        FixedTimeline.tileBuilder(
-          theme: TimelineThemeData(
-            nodePosition: 0,
-            color: theme.colorScheme.primary,
-            indicatorTheme: IndicatorThemeData(
-              size: 20,
-              color: theme.colorScheme.primary,
-            ),
-            connectorTheme: ConnectorThemeData(
-              thickness: 2.5,
-              color: theme.colorScheme.primary.withOpacity(0.5),
-            ),
-          ),
-          builder: TimelineTileBuilder.connected(
-            connectionDirection: ConnectionDirection.before,
-            itemCount: items.length,
-            contentsBuilder: (_, index) {
-              if (isWork) {
-                final group = items[index] as ExperienceGroup;
-                return Padding(
-                  padding: const EdgeInsets.only(
-                    left: AppTheme.spacing24,
-                    bottom: AppTheme.spacing32,
-                  ),
-                  child: _GroupedTimelineCard(
-                    company: group.company,
-                    logoUrl: group.logoUrl,
-                    roles: group.roles,
-                    index: index,
-                  ),
-                );
-              } else {
-                final edu = items[index] as EducationModel;
-                return Padding(
-                  padding: const EdgeInsets.only(
-                    left: AppTheme.spacing24,
-                    bottom: AppTheme.spacing32,
-                  ),
-                  child: _TimelineCard(
-                    title: edu.institution,
-                    subtitle: edu.degree,
-                    period: edu.period,
-                    description: edu.description,
-                    logoUrl: edu.logoUrl,
-                    index: index,
-                  ),
-                );
-              }
-            },
-            indicatorBuilder: (_, index) {
-              return DotIndicator(
-                color: theme.colorScheme.primary,
-                child: Icon(
-                  isWork ? Icons.work : Icons.school,
-                  color: Colors.white,
-                  size: 12,
+        Column(
+          children: List.generate(items.length, (index) {
+            Widget content;
+            if (isWork) {
+              final group = items[index] as ExperienceGroup;
+              content = _GroupedTimelineCard(
+                company: group.company,
+                logoUrl: group.logoUrl,
+                roles: group.roles,
+                index: index,
+              );
+            } else {
+              final edu = items[index] as EducationModel;
+              content = _TimelineCard(
+                title: edu.institution,
+                subtitle: edu.degree,
+                period: edu.period,
+                description: edu.description,
+                logoUrl: edu.logoUrl,
+                index: index,
+              );
+            }
+
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  children: [
+                    Container(
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        isWork ? Icons.work : Icons.school,
+                        color: Colors.white,
+                        size: 12,
+                      ),
+                    ),
+                    if (index < items.length - 1)
+                      Container(
+                        width: 2.5,
+                        height: 100,
+                        color: theme.colorScheme.primary.withOpacity(0.5),
+                      ),
+                  ],
                 ),
-              );
-            },
-            connectorBuilder: (_, index, __) {
-              return SolidLineConnector(
-                color: theme.colorScheme.primary.withOpacity(0.5),
-              );
-            },
-          ),
+                const SizedBox(width: AppTheme.spacing24),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      bottom: AppTheme.spacing32,
+                    ),
+                    child: content,
+                  ),
+                ),
+              ],
+            );
+          }),
         ),
       ],
     );
@@ -320,74 +316,130 @@ class _GroupedTimelineCard extends StatelessWidget {
         child: ExpansionTile(
           tilePadding: EdgeInsets.zero,
           expandedCrossAxisAlignment: CrossAxisAlignment.start,
-          leading: Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
-              child: Image.network(
-                logoUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Icon(Icons.business, color: theme.colorScheme.primary);
-                },
-              ),
-            ),
-          ),
-          title: SelectableText(
-            company,
-            style: companyStyle,
-          ),
           childrenPadding: const EdgeInsets.only(
             left: AppTheme.spacing24,
             bottom: AppTheme.spacing16,
             right: AppTheme.spacing8,
           ),
-          children: roles.map((role) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: AppTheme.spacing16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SelectableText(
-                    role.position,
-                    style: positionStyle,
-                  ),
-                  const SizedBox(height: AppTheme.spacing4),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppTheme.spacing12,
-                      vertical: AppTheme.spacing4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.1),
-                      borderRadius:
-                          BorderRadius.circular(AppTheme.borderRadius8),
-                    ),
-                    child: SelectableText(
-                      role.period,
-                      style: periodStyle,
-                    ),
-                  ),
-                  const SizedBox(height: AppTheme.spacing8),
-                  SelectableText(
-                    role.description,
-                    style: descriptionStyle,
-                  ),
-                ],
+          leading: _CompanyLogo(logoUrl: logoUrl),
+          title: SelectableText(
+            company,
+            style: companyStyle,
+          ),
+          children: [
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 400),
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: roles.map((role) {
+                    return Padding(
+                      padding:
+                          const EdgeInsets.only(bottom: AppTheme.spacing16),
+                      child: _ExperienceRoleCard(
+                        role: role,
+                        positionStyle: positionStyle,
+                        periodStyle: periodStyle,
+                        descriptionStyle: descriptionStyle,
+                        theme: theme,
+                      ),
+                    );
+                  }).toList(),
+                ),
               ),
-            );
-          }).toList(),
+            ),
+          ],
         ),
       ),
     )
         .animate()
         .fade(duration: 600.ms, delay: Duration(milliseconds: 200 * index))
         .slideY(begin: 0.1, end: 0);
+  }
+}
+
+class _ExperienceRoleCard extends StatelessWidget {
+  final ExperienceModel role;
+  final TextStyle positionStyle;
+  final TextStyle periodStyle;
+  final TextStyle descriptionStyle;
+  final ThemeData theme;
+
+  const _ExperienceRoleCard({
+    required this.role,
+    required this.positionStyle,
+    required this.periodStyle,
+    required this.descriptionStyle,
+    required this.theme,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SelectableText(role.position, style: positionStyle),
+        const SizedBox(height: AppTheme.spacing4),
+        Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppTheme.spacing12,
+            vertical: AppTheme.spacing4,
+          ),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.primary.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
+          ),
+          child: SelectableText(role.period, style: periodStyle),
+        ),
+        const SizedBox(height: AppTheme.spacing8),
+        SelectableText(role.description, style: descriptionStyle),
+      ],
+    );
+  }
+}
+
+class _CompanyLogo extends StatelessWidget {
+  final String logoUrl;
+  const _CompanyLogo({required this.logoUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final borderRadius = BorderRadius.circular(AppTheme.borderRadius8);
+    final child = logoUrl.isNotEmpty
+        ? ResponsiveImage(
+            imageUrl: logoUrl,
+            width: 50,
+            height: 50,
+            maxWidth: 50,
+            maxHeight: 50,
+            enableHoverEffect: false,
+            borderRadius: borderRadius,
+            backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
+            fit: BoxFit.cover,
+          )
+        : Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primary.withOpacity(0.1),
+              borderRadius: borderRadius,
+            ),
+            child: Icon(
+              Icons.business,
+              color: theme.colorScheme.primary,
+            ),
+          );
+
+    return SizedBox(
+      width: 56,
+      height: 56,
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: child,
+      ),
+    );
   }
 }
 
@@ -508,33 +560,33 @@ class _TimelineCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
-                  ),
-                  child: logoUrl.isNotEmpty
-                      ? ClipRRect(
+                logoUrl.isNotEmpty
+                    ? ResponsiveImage(
+                        imageUrl: logoUrl,
+                        width: 50,
+                        height: 50,
+                        maxWidth: 50,
+                        maxHeight: 50,
+                        enableHoverEffect: false,
+                        borderRadius:
+                            BorderRadius.circular(AppTheme.borderRadius8),
+                        backgroundColor:
+                            theme.colorScheme.primary.withOpacity(0.1),
+                        fit: BoxFit.cover,
+                      )
+                    : Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary.withOpacity(0.1),
                           borderRadius:
                               BorderRadius.circular(AppTheme.borderRadius8),
-                          child: Image.network(
-                            logoUrl,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Icon(
-                                Icons.business,
-                                color: theme.colorScheme.primary,
-                              );
-                            },
-                          ),
-                        )
-                      : Icon(
+                        ),
+                        child: Icon(
                           Icons.business,
                           color: theme.colorScheme.primary,
                         ),
-                ),
+                      ),
                 const SizedBox(width: AppTheme.spacing16),
                 Expanded(
                   child: Column(

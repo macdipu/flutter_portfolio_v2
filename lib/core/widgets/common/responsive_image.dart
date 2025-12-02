@@ -1,214 +1,44 @@
 import 'package:any_image_view/any_image_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_portfolio/core/responsive/responsive_framework.dart';
+import 'package:flutter_portfolio/core/widgets/common/base_responsive_image.dart';
 
-class ResponsiveImage extends StatefulWidget {
-  final String imageUrl;
-  final String? altText;
-  final String? placeholder;
-  final double? width;
-  final double? height;
-  final double? aspectRatio;
-  final BoxFit fit;
-  final BorderRadius? borderRadius;
-  final double? mobileSize;
-  final double? tabletSize;
-  final double? smallLaptopSize;
-  final double? desktopSize;
-  final double? largeDesktopSize;
-  final List<BoxShadow>? boxShadow;
-  final bool enableHoverEffect;
-  final bool enableLoadingAnimation;
-  final Color? backgroundColor;
-  final EdgeInsets? padding;
-  final EdgeInsets? margin;
-  final VoidCallback? onTap;
-  final String? heroTag;
-  final bool isCircular;
-  final double? maxWidth;
-  final double? maxHeight;
-
+class ResponsiveImage extends BaseResponsiveImage {
   const ResponsiveImage({
     super.key,
-    required this.imageUrl,
-    this.altText,
-    this.placeholder,
-    this.width,
-    this.height,
-    this.aspectRatio,
-    this.fit = BoxFit.cover,
-    this.borderRadius,
-    this.mobileSize,
-    this.tabletSize,
-    this.smallLaptopSize,
-    this.desktopSize,
-    this.largeDesktopSize,
-    this.boxShadow,
-    this.enableHoverEffect = false,
-    this.enableLoadingAnimation = true,
-    this.backgroundColor,
-    this.padding,
-    this.margin,
-    this.onTap,
-    this.heroTag,
-    this.isCircular = false,
-    this.maxWidth,
-    this.maxHeight,
+    required super.imageUrl,
+    super.altText,
+    super.placeholder,
+    super.width,
+    super.height,
+    super.aspectRatio,
+    super.fit,
+    super.borderRadius,
+    super.mobileSize,
+    super.tabletSize,
+    super.smallLaptopSize,
+    super.desktopSize,
+    super.largeDesktopSize,
+    super.boxShadow,
+    super.enableHoverEffect,
+    super.enableLoadingAnimation,
+    super.backgroundColor,
+    super.padding,
+    super.margin,
+    super.onTap,
+    super.heroTag,
+    super.isCircular,
+    super.maxWidth,
+    super.maxHeight,
   });
 
   @override
   State<ResponsiveImage> createState() => _ResponsiveImageState();
 }
 
-class _ResponsiveImageState extends State<ResponsiveImage>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _scaleAnimation;
-
+class _ResponsiveImageState
+    extends BaseResponsiveImageState<ResponsiveImage> {
   @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 200),
-      vsync: this,
-    );
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.05,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final responsiveSize = _getResponsiveSize(context);
-    final effectiveWidth = widget.maxWidth != null
-        ? responsiveSize.width > widget.maxWidth!
-            ? widget.maxWidth!
-            : responsiveSize.width
-        : responsiveSize.width;
-    final effectiveHeight = widget.maxHeight != null
-        ? responsiveSize.height > widget.maxHeight!
-            ? widget.maxHeight!
-            : responsiveSize.height
-        : responsiveSize.height;
-
-    Widget imageWidget = _buildImageContent(effectiveWidth, effectiveHeight);
-
-    // Add hero animation if heroTag is provided
-    if (widget.heroTag != null) {
-      imageWidget = Hero(
-        tag: widget.heroTag!,
-        child: imageWidget,
-      );
-    }
-
-    // Add hover effect for web
-    if (widget.enableHoverEffect) {
-      imageWidget = MouseRegion(
-        onEnter: (_) => _onHover(true),
-        onExit: (_) => _onHover(false),
-        child: AnimatedBuilder(
-          animation: _scaleAnimation,
-          builder: (context, child) {
-            return Transform.scale(
-              scale: _scaleAnimation.value,
-              child: imageWidget,
-            );
-          },
-        ),
-      );
-    }
-
-    // Add tap functionality
-    if (widget.onTap != null) {
-      imageWidget = GestureDetector(
-        onTap: widget.onTap,
-        child: imageWidget,
-      );
-    }
-
-    // Add margin if specified
-    if (widget.margin != null) {
-      imageWidget = Padding(
-        padding: widget.margin!,
-        child: imageWidget,
-      );
-    }
-
-    return imageWidget;
-  }
-
-  void _onHover(bool isHovered) {
-    if (isHovered) {
-      _animationController.forward();
-    } else {
-      _animationController.reverse();
-    }
-  }
-
-  Size _getResponsiveSize(BuildContext context) {
-    final double responsiveWidth = context.responsiveValue(
-      mobile: widget.mobileSize ?? widget.width ?? 150.0,
-      tablet: widget.tabletSize ?? widget.width ?? 200.0,
-      smallLaptop: widget.smallLaptopSize ?? widget.width ?? 220.0,
-      desktop: widget.desktopSize ?? widget.width ?? 250.0,
-      largeDesktop: widget.largeDesktopSize ?? widget.width ?? 280.0,
-    );
-
-    double responsiveHeight;
-    if (widget.height != null) {
-      responsiveHeight = widget.height!;
-    } else if (widget.aspectRatio != null) {
-      responsiveHeight = responsiveWidth / widget.aspectRatio!;
-    } else {
-      responsiveHeight = responsiveWidth;
-    }
-
-    return Size(responsiveWidth, responsiveHeight);
-  }
-
-  Widget _buildImageContent(double width, double height) {
-    final borderRadius = widget.isCircular
-        ? BorderRadius.circular(width / 2)
-        : widget.borderRadius;
-    final shape = widget.isCircular ? BoxShape.circle : BoxShape.rectangle;
-
-    final defaultShadow = [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.1),
-        blurRadius: 8,
-        offset: const Offset(0, 4),
-        spreadRadius: 0,
-      ),
-    ];
-
-    return Container(
-      width: width,
-      height: height,
-      margin: widget.margin,
-      padding: widget.padding,
-      decoration: BoxDecoration(
-        color: widget.backgroundColor,
-        borderRadius: borderRadius,
-        boxShadow: widget.boxShadow ?? defaultShadow,
-      ),
-      clipBehavior: borderRadius != null ? Clip.antiAlias : Clip.none,
-      child: widget.imageUrl.isNotEmpty
-          ? _buildNetworkImage(width, height, shape, borderRadius)
-          : _buildPlaceholder(width, height),
-    );
-  }
-
-  Widget _buildNetworkImage(
+  Widget buildImageWidget(
     double width,
     double height,
     BoxShape shape,
@@ -221,86 +51,10 @@ class _ResponsiveImageState extends State<ResponsiveImage>
       fit: widget.fit,
       shape: shape,
       borderRadius: shape == BoxShape.rectangle ? borderRadius : null,
-      placeholderWidget:
-          widget.enableLoadingAnimation ? _buildLoadingPlaceholder(width, height) : null,
-      errorWidget: _buildErrorPlaceholder(width, height),
-    );
-  }
-
-  Widget _buildLoadingPlaceholder(double width, double height) {
-    return Container(
-      width: width,
-      height: height,
-      color: Colors.grey[100],
-      child: Center(
-        child: SizedBox(
-          width: width * 0.2,
-          height: width * 0.2,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            backgroundColor: Colors.grey[300],
-            valueColor: AlwaysStoppedAnimation<Color>(
-              Theme.of(context).primaryColor,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPlaceholder(double width, double height) {
-    return Container(
-      width: width,
-      height: height,
-      color: Colors.grey[200],
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.image_outlined,
-            size: width * 0.25,
-            color: Colors.grey[400],
-          ),
-          if (widget.placeholder != null) ...[
-            const SizedBox(height: 8),
-            Text(
-              widget.placeholder!,
-              style: TextStyle(
-                fontSize: width * 0.03,
-                color: Colors.grey[600],
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildErrorPlaceholder(double width, double height) {
-    return Container(
-      width: width,
-      height: height,
-      color: Colors.red[50],
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.broken_image_outlined,
-            size: width * 0.25,
-            color: Colors.red[300],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Failed to load image',
-            style: TextStyle(
-              fontSize: width * 0.03,
-              color: Colors.red[600],
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
+      placeholderWidget: widget.enableLoadingAnimation
+          ? buildLoadingPlaceholder(width, height)
+          : null,
+      errorWidget: buildErrorPlaceholder(width, height),
     );
   }
 }

@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/responsive/responsive_framework.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/common/responsive_image.dart';
 import '../../../../core/widgets/common/section_wrapper.dart';
 import '../../data/models/blog_post_model.dart';
 import '../bloc/portfolio_bloc.dart';
@@ -214,35 +215,34 @@ class _BlogPostCard extends StatelessWidget {
   }
 
   Widget _buildBlogImage(bool isSmallScreen) {
-    return Container(
+    if (post.imageUrl.isEmpty) {
+      return Container(
+        width: isSmallScreen ? double.infinity : 200,
+        height: 120,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
+          color: AppTheme.primary.withOpacity(0.1),
+        ),
+        child: const Center(
+          child: Icon(
+            Icons.article,
+            size: 40,
+            color: AppTheme.primary,
+          ),
+        ),
+      );
+    }
+
+    return ResponsiveImage(
+      imageUrl: post.imageUrl,
       width: isSmallScreen ? double.infinity : 200,
       height: 120,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
-        color: AppTheme.primary.withOpacity(0.1),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: post.imageUrl.isNotEmpty
-          ? Image.network(
-              post.imageUrl,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return const Center(
-                  child: Icon(
-                    Icons.article,
-                    size: 40,
-                    color: AppTheme.primary,
-                  ),
-                );
-              },
-            )
-          : const Center(
-              child: Icon(
-                Icons.article,
-                size: 40,
-                color: AppTheme.primary,
-              ),
-            ),
+      aspectRatio: isSmallScreen ? null : 16 / 9,
+      enableHoverEffect: false,
+      borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
+      backgroundColor: AppTheme.primary.withOpacity(0.1),
+      fit: BoxFit.cover,
+      placeholder: 'Loading image',
     );
   }
 
