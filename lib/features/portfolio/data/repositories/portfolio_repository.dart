@@ -277,7 +277,7 @@ class PortfolioRepository {
         role: 'Independent Developer',
         description:
             'A motorcycle tracking app for mileage, fuel logs, and service history, with real-time sync, offline mode, and Supabase backend.',
-        technologies: ['Flutter', 'GetX', 'Supabase'],
+        technologies: ['Flutter', 'GetX', 'SpringBoot'],
         screenshots: [
           'https://images.pexels.com/photos/7578926/pexels-photo-7578926.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
           'https://images.pexels.com/photos/7579830/pexels-photo-7579830.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
@@ -745,7 +745,7 @@ class PortfolioRepository {
     return const ContactInfoModel(
       email: 'c.dipu0@gmail.com',
       linkedIn: 'https://www.linkedin.com/in/md-asad-chowdhury-dipu/',
-      github: 'https://github.com/dipu0',
+      github: 'https://github.com/macdipu',
       twitter: 'https://x.com/dipu093',
       calendlyLink: 'https://calendly.com/macdipu',
     );
