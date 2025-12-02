@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_portfolio/core/responsive/responsive_framework.dart';
 import 'package:flutter_portfolio/core/theme/app_theme.dart';
+import 'package:flutter_portfolio/core/widgets/common/responsive_image.dart';
 import 'package:flutter_portfolio/core/widgets/common/section_wrapper.dart';
 import 'package:flutter_portfolio/features/portfolio/data/models/profile_model.dart';
 import 'package:flutter_portfolio/features/portfolio/presentation/bloc/portfolio_bloc.dart';
@@ -608,20 +609,16 @@ class _ProjectCard extends StatelessWidget {
         child: project.screenshots.length > 1
             ? CarouselSlider(
                 items: project.screenshots.map((screenshot) {
-                  return Image.network(
-                    screenshot,
-                    fit: BoxFit.cover,
+                  return ResponsiveImage(
+                    imageUrl: screenshot,
                     width: double.infinity,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: theme.colorScheme.primary.withOpacity(0.1),
-                        child: Icon(
-                          Icons.image_not_supported,
-                          size: 64,
-                          color: theme.colorScheme.primary,
-                        ),
-                      );
-                    },
+                    height: 250,
+                    fit: BoxFit.cover,
+                    enableHoverEffect: false,
+                    borderRadius:
+                        BorderRadius.circular(AppTheme.borderRadius16),
+                    backgroundColor:
+                        theme.colorScheme.primary.withOpacity(0.1),
                   );
                 }).toList(),
                 options: CarouselOptions(
@@ -634,20 +631,16 @@ class _ProjectCard extends StatelessWidget {
                   enlargeCenterPage: true,
                 ),
               )
-            : Image.network(
-                project.screenshots.first,
-                fit: BoxFit.cover,
+            : ResponsiveImage(
+                imageUrl: project.screenshots.first,
                 width: double.infinity,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: theme.colorScheme.primary.withOpacity(0.1),
-                    child: Icon(
-                      Icons.image_not_supported,
-                      size: 64,
-                      color: theme.colorScheme.primary,
-                    ),
-                  );
-                },
+                height: 250,
+                fit: BoxFit.cover,
+                enableHoverEffect: false,
+                borderRadius:
+                    BorderRadius.circular(AppTheme.borderRadius16),
+                backgroundColor:
+                    theme.colorScheme.primary.withOpacity(0.1),
               ),
       ),
     );

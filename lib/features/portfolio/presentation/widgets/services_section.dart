@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/responsive/responsive_framework.dart';
+import '../../../../core/widgets/common/responsive_image.dart';
 import '../../../../core/widgets/common/section_wrapper.dart';
 import '../../data/models/profile_model.dart';
 import '../bloc/portfolio_bloc.dart';
@@ -163,32 +164,31 @@ class _ServiceCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: const EdgeInsets.all(6),
-              child: iconUrl.isNotEmpty
-                  ? Image.network(
-                      iconUrl,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Icon(
-                          Icons.code,
-                          color: theme.colorScheme.primary,
-                          size: 24,
-                        );
-                      },
-                    )
-                  : Icon(
+            iconUrl.isNotEmpty
+                ? ResponsiveImage(
+                    imageUrl: iconUrl,
+                    width: 48,
+                    height: 48,
+                    fit: BoxFit.contain,
+                    enableHoverEffect: false,
+                    backgroundColor:
+                        theme.colorScheme.primary.withOpacity(0.1),
+                    padding: const EdgeInsets.all(6),
+                    borderRadius: BorderRadius.circular(12),
+                  )
+                : Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
                       Icons.code,
                       color: theme.colorScheme.primary,
                       size: 24,
                     ),
-            ),
+                  ),
             const SizedBox(height: 12),
             SelectableText(
               title,
