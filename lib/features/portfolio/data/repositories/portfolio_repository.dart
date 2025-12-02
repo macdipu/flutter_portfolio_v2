@@ -38,7 +38,7 @@ class PortfolioRepository {
       ExperienceGroup(
         company: 'Polygon Technology',
         logoUrl:
-            'https://images.pexels.com/photos/4348404/pexels-photo-4348404.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+            'https://media.licdn.com/dms/image/v2/D560BAQEqKBLaCHxhEA/company-logo_200_200/company-logo_200_200/0/1691577235644/polygontechxyz_logo?e=1766016000&v=beta&t=wDSNYO6aOPpHFkq2rUbs1IvB5SOYRzK2BvG3o7MrT7g',
         roles: const [
           ExperienceModel(
             position: 'Software Engineer III',
@@ -63,7 +63,7 @@ class PortfolioRepository {
       ExperienceGroup(
         company: 'Chowdhury eLab',
         logoUrl:
-            'https://images.pexels.com/photos/3277808/pexels-photo-3277808.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+            'https://media.licdn.com/dms/image/v2/D560BAQFibK2WK_nyzA/company-logo_100_100/company-logo_100_100/0/1702666475953/chowdhury_elab_logo?e=1766016000&v=beta&t=ZQM_59OqYls6M6VUlhhKm3zTwWrVH63ITFvlfISElhA',
         roles: const [
           ExperienceModel(
             position: 'Founder & Developer',
@@ -76,7 +76,7 @@ class PortfolioRepository {
       ExperienceGroup(
         company: 'Palki Motors Limited',
         logoUrl:
-            'https://images.pexels.com/photos/5473298/pexels-photo-5473298.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+            'https://media.licdn.com/dms/image/v2/D560BAQEM5DcgpE1eeA/company-logo_200_200/company-logo_200_200/0/1664963823045/palkimotors_logo?e=1766016000&v=beta&t=-TjpRKT6ie5q9OVHmAwRMvsOnZxLZH-se6v6LAUjghs',
         roles: const [
           ExperienceModel(
             position: 'Software Engineer I',
@@ -95,7 +95,7 @@ class PortfolioRepository {
       ExperienceGroup(
         company: 'East West University Robotics Club',
         logoUrl:
-            'https://images.pexels.com/photos/325185/pexels-photo-325185.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+            'https://media.licdn.com/dms/image/v2/C510BAQENncUmrD8khQ/company-logo_100_100/company-logo_100_100/0/1631432166987?e=1766016000&v=beta&t=7vQ145JdU2i9mPrtB0tTNoWVz2lStxThR5pJP2RnG_U',
         roles: const [
           ExperienceModel(
             position: 'President',
@@ -114,7 +114,7 @@ class PortfolioRepository {
       ExperienceGroup(
         company: 'East West University Telecommunications Club',
         logoUrl:
-            'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+            'https://media.licdn.com/dms/image/v2/D560BAQE3Ig16zmdTbQ/company-logo_200_200/company-logo_200_200/0/1667837153058?e=1766016000&v=beta&t=Kli2EduqgQfGn1ghG8or0JN9svDBg5pQMcdO190bRVg',
         roles: const [
           ExperienceModel(
             position: 'Executive Member',
@@ -136,7 +136,7 @@ class PortfolioRepository {
         description:
             'Focused on software development, data structures, algorithms, and robotics. Actively participated in Robotics and Telecom clubs.',
         logoUrl:
-            'https://images.pexels.com/photos/159490/yale-university-landscape-universities-schools-159490.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+            'https://media.licdn.com/dms/image/v2/C510BAQH2cytqbI1UmQ/company-logo_200_200/company-logo_200_200/0/1630606663213/ewubd_logo?e=1766016000&v=beta&t=eGkGnTRspA65pkS99NGdm4axxmC5yafQwTc2hrBk_PA',
       ),
       const EducationModel(
         institution: 'Engineering University School & College',
@@ -145,7 +145,7 @@ class PortfolioRepository {
         description:
             'Completed Higher Secondary education with a focus on Physics, Chemistry, and Mathematics.',
         logoUrl:
-            'https://images.pexels.com/photos/159490/yale-university-landscape-universities-schools-159490.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+            'https://media.licdn.com/dms/image/v2/C560BAQEoAguxZkmliA/company-logo_200_200/company-logo_200_200/0/1676649091271?e=1766016000&v=beta&t=IoXQEcsyzbzRITIq5ttFTd2pjf1WzIOhblHlI1EN8gg',
       ),
       const EducationModel(
         institution: 'A.K. High School & College',
@@ -154,7 +154,7 @@ class PortfolioRepository {
         description:
             'Completed secondary education with a focus on general science and mathematics.',
         logoUrl:
-            'https://images.pexels.com/photos/159490/yale-university-landscape-universities-schools-159490.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+            'https://media.licdn.com/dms/image/v2/C560BAQFinT-wyRnjng/company-logo_200_200/company-logo_200_200/0/1630646597668?e=1766016000&v=beta&t=5DDhQBHPyuQSai2ZtVQ7Y6Wkc8V55PSU0jb7C1zxhKU',
       ),
     ];
   }
