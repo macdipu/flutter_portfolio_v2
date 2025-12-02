@@ -1,3 +1,4 @@
+import 'package:any_image_view/any_image_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_portfolio/core/responsive/responsive_framework.dart';
 
@@ -61,9 +62,6 @@ class ResponsiveImage extends StatefulWidget {
 
 class _ResponsiveImageState extends State<ResponsiveImage>
     with SingleTickerProviderStateMixin {
-  bool _isHovered = false;
-  bool _isLoading = true;
-  bool _hasError = false;
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
 
@@ -150,10 +148,6 @@ class _ResponsiveImageState extends State<ResponsiveImage>
   }
 
   void _onHover(bool isHovered) {
-    if (!mounted) return;
-    setState(() {
-      _isHovered = isHovered;
-    });
     if (isHovered) {
       _animationController.forward();
     } else {
@@ -186,6 +180,7 @@ class _ResponsiveImageState extends State<ResponsiveImage>
     final borderRadius = widget.isCircular
         ? BorderRadius.circular(width / 2)
         : widget.borderRadius;
+    final shape = widget.isCircular ? BoxShape.circle : BoxShape.rectangle;
 
     final defaultShadow = [
       BoxShadow(
@@ -208,72 +203,46 @@ class _ResponsiveImageState extends State<ResponsiveImage>
       ),
       clipBehavior: borderRadius != null ? Clip.antiAlias : Clip.none,
       child: widget.imageUrl.isNotEmpty
-          ? _buildNetworkImage(width, height)
+          ? _buildNetworkImage(width, height, shape, borderRadius)
           : _buildPlaceholder(width, height),
     );
   }
 
-  Widget _buildNetworkImage(double width, double height) {
-    return Image.network(
-      widget.imageUrl,
-      fit: widget.fit,
+  Widget _buildNetworkImage(
+    double width,
+    double height,
+    BoxShape shape,
+    BorderRadius? borderRadius,
+  ) {
+    return AnyImageView(
+      imagePath: widget.imageUrl,
       width: width,
       height: height,
-      loadingBuilder: widget.enableLoadingAnimation
-          ? (context, child, loadingProgress) {
-              if (loadingProgress == null) {
-                _isLoading = false;
-                return child;
-              }
-              return _buildLoadingIndicator(width, height, loadingProgress);
-            }
-          : null,
-      errorBuilder: (context, error, stackTrace) {
-        _hasError = true;
-        return _buildErrorPlaceholder(width, height);
-      },
-      semanticLabel: widget.altText,
+      fit: widget.fit,
+      shape: shape,
+      borderRadius: shape == BoxShape.rectangle ? borderRadius : null,
+      placeholderWidget:
+          widget.enableLoadingAnimation ? _buildLoadingPlaceholder(width, height) : null,
+      errorWidget: _buildErrorPlaceholder(width, height),
     );
   }
 
-  Widget _buildLoadingIndicator(
-      double width, double height, ImageChunkEvent loadingProgress) {
-    final progress = loadingProgress.expectedTotalBytes != null
-        ? loadingProgress.cumulativeBytesLoaded /
-            loadingProgress.expectedTotalBytes!
-        : null;
-
+  Widget _buildLoadingPlaceholder(double width, double height) {
     return Container(
       width: width,
       height: height,
       color: Colors.grey[100],
       child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: width * 0.2,
-              height: width * 0.2,
-              child: CircularProgressIndicator(
-                value: progress,
-                strokeWidth: 2,
-                backgroundColor: Colors.grey[300],
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  Theme.of(context).primaryColor,
-                ),
-              ),
+        child: SizedBox(
+          width: width * 0.2,
+          height: width * 0.2,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            backgroundColor: Colors.grey[300],
+            valueColor: AlwaysStoppedAnimation<Color>(
+              Theme.of(context).primaryColor,
             ),
-            if (progress != null) ...[
-              const SizedBox(height: 8),
-              Text(
-                '${(progress * 100).toInt()}%',
-                style: TextStyle(
-                  fontSize: width * 0.03,
-                  color: Colors.grey[600],
-                ),
-              ),
-            ],
-          ],
+          ),
         ),
       ),
     );

@@ -44,7 +44,7 @@ class PortfolioRepository {
             position: 'Software Engineer III',
             period: 'July 2025 - Present',
             description:
-            'Promoted to Software Engineer II. Contributing to cutting-edge blockchain and technology solutions in a collaborative engineering environment.',
+            'Promoted to Software Engineer III. Contributing to cutting-edge blockchain and technology solutions in a collaborative engineering environment.',
           ),
           ExperienceModel(
             position: 'Software Engineer II',
