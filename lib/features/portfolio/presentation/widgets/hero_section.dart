@@ -274,7 +274,7 @@ class HeroSection extends StatelessWidget {
 
   Widget _buildHeroImage(String avatarUrl, double size) {
     return ResponsiveImage(
-      imagePath: avatarUrl,
+      imageUrl: avatarUrl,
       width: size,
       height: size,
       borderRadius: BorderRadius.circular(size / 2),
