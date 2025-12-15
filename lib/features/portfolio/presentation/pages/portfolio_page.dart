@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_portfolio/core/config/site_config_scope.dart';
+import 'package:flutter_portfolio/core/widgets/common/custom_cursor_overlay.dart';
 import 'package:flutter_portfolio/features/portfolio/presentation/widgets/hero_section.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
@@ -43,32 +45,68 @@ class _PortfolioView extends StatelessWidget {
   Widget build(BuildContext context) {
     final scrollCubit = context.read<ScrollCubit>();
 
-    return ResponsiveBuilder(
-      builder: (context, info) {
-        final deviceType = info.deviceType;
-        final isDrawer =
-            deviceType == DeviceType.mobile || deviceType == DeviceType.tablet;
-        final isSidebar = deviceType.index >= DeviceType.smallLaptop.index;
+    return BlocBuilder<PortfolioBloc, PortfolioState>(
+      builder: (context, state) {
+        final profile = state.profile;
+        if (profile == null) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-        return BlocBuilder<ScrollCubit, ScrollState>(
-          builder: (context, scrollState) {
-            return Scaffold(
-                drawer: isDrawer ? _buildDrawer(context, scrollCubit) : null,
-                body: Stack(
-                  children: [
-                    Row(
+        return SiteConfigScope(
+          config: profile.siteConfig,
+          child: ResponsiveBuilder(
+            builder: (context, info) {
+              final deviceType = info.deviceType;
+              final isDrawer = deviceType == DeviceType.mobile ||
+                  deviceType == DeviceType.tablet;
+              final isSidebar =
+                  deviceType.index >= DeviceType.smallLaptop.index;
+              final enableCursor =
+                  profile.siteConfig.cursor.enabled && context.isDesktop;
+
+              return BlocBuilder<ScrollCubit, ScrollState>(
+                builder: (context, scrollState) {
+                  final scaffold = Scaffold(
+                    drawer: isDrawer
+                        ? _buildDrawer(context, scrollCubit)
+                        : null,
+                    body: Stack(
                       children: [
-                        if (isSidebar)
-                          SafeArea(
-                              child: _buildSidebar(scrollState, scrollCubit)),
-                        Expanded(child: _buildScrollableContent(scrollCubit)),
+                        Row(
+                          children: [
+                            if (isSidebar)
+                              SafeArea(
+                                  child:
+                                      _buildSidebar(scrollState, scrollCubit)),
+                            Expanded(
+                              child: _buildScrollableContent(scrollCubit),
+                            ),
+                          ],
+                        ),
+                        _buildThemeToggle(context),
+                        if (isDrawer) _buildDrawerToggleButton(context),
                       ],
                     ),
-                    _buildThemeToggle(context),
-                    if (isDrawer) _buildDrawerToggleButton(context),
-                  ],
-                ));
-          },
+                  );
+
+                  return enableCursor
+                      ? CustomCursorOverlay(
+                          child: scaffold,
+                          innerRadius:
+                              profile.siteConfig.cursor.innerRadius,
+                          outerRadius:
+                              profile.siteConfig.cursor.outerRadius,
+                          hoverScale:
+                              profile.siteConfig.cursor.hoverScale,
+                          followDuration:
+                              profile.siteConfig.cursor.followDuration,
+                          enabled: enableCursor,
+                        )
+                      : scaffold;
+                },
+              );
+            },
+          ),
         );
       },
     );

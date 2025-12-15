@@ -1,5 +1,6 @@
 import '../models/blog_post_model.dart';
 import '../models/profile_model.dart';
+import '../models/site_config_model.dart';
 import '../services/medium_service.dart';
 
 class PortfolioRepository {
@@ -8,7 +9,7 @@ class PortfolioRepository {
   PortfolioRepository({MediumService? mediumService})
       : _mediumService = mediumService ?? MediumService();
 
-  Future<ProfileModel> getProfileData() async {
+    Future<ProfileModel> getProfileData() async {
     return ProfileModel(
       name: 'Md. Asad Chowdhury Dipu',
       title: 'Flutter Developer | Mobile & Web App Specialist',
@@ -26,8 +27,96 @@ class PortfolioRepository {
       techStacks: _getTechStacks(),
       contactInfo: _getContactInfo(),
       resumeUrl: 'assets/resume.pdf',
+      siteConfig: _buildSiteConfig(),
     );
-  }
+    }
+
+    SiteConfigModel _buildSiteConfig() {
+    return SiteConfigModel(
+      header: HeaderConfigModel(
+        greeting: 'Hey, I\'m',
+        heroNameLines: const [
+          'Md. Asad',
+          'Chowdhury Dipu',
+        ],
+        roleLines: const [
+          'Sr. Mobile Apps Developer',
+        ],
+        infoParagraph:
+            'Since beginning my journey as a Mobile Application Developer 5+ years ago, I\'ve done remote work for agencies, consulted for startups, and collaborated with talented people to create digital products for both business and consumer use. I\'m quietly confident, naturally curious, and perpetually working on improving my chops.',
+        primaryCtaLabel: "Let's Talk!",
+        secondaryCtaLabel: 'Download Resume',
+      ),
+      sidebar: SidebarConfigModel(
+        salutation: 'Hey!',
+        tagline: 'Md. Asad Chowdhury Dipu',
+        navigationLinks: const [
+          NavigationLinkConfig(
+            sectionId: 'hero',
+            label: 'Home',
+            asciiLabel: '</Home>',
+          ),
+          NavigationLinkConfig(
+            sectionId: 'about',
+            label: 'About Me',
+            asciiLabel: '</AboutMe>',
+          ),
+          NavigationLinkConfig(
+            sectionId: 'experience',
+            label: 'Experience',
+            asciiLabel: '</Experience>',
+          ),
+          NavigationLinkConfig(
+            sectionId: 'portfolio',
+            label: 'Projects',
+            asciiLabel: '</Projects>',
+          ),
+          NavigationLinkConfig(
+            sectionId: 'services',
+            label: 'Services',
+            asciiLabel: '</Services>',
+          ),
+          NavigationLinkConfig(
+            sectionId: 'techStack',
+            label: 'Skills',
+            asciiLabel: '</Skills>',
+          ),
+          NavigationLinkConfig(
+            sectionId: 'blog',
+            label: 'Blog',
+            asciiLabel: '</Blog>',
+          ),
+          NavigationLinkConfig(
+            sectionId: 'contact',
+            label: 'Contact',
+            asciiLabel: '</Contact>',
+          ),
+          NavigationLinkConfig(
+            sectionId: 'resume',
+            label: 'Resume',
+            asciiLabel: '</Resume>',
+          ),
+        ],
+        socialLinks: const [
+          SocialLinkConfig(platform: 'linkedin', url: 'https://www.linkedin.com/in/farhansadikgalib'),
+          SocialLinkConfig(platform: 'github', url: 'https://github.com/farhansadikgalib'),
+          SocialLinkConfig(platform: 'email', url: 'mailto:hello@farhansadikgalib.com'),
+        ],
+      ),
+      cursor: const CursorConfigModel(
+        enabled: true,
+        innerRadius: 4,
+        outerRadius: 18,
+        hoverScale: 1.6,
+        followDuration: Duration(milliseconds: 350),
+      ),
+      animations: const AnimationConfigModel(
+        enableAos: true,
+        baseDelay: Duration(milliseconds: 200),
+        verticalOffset: 0.2,
+      ),
+    );
+    }
 
   Future<List<BlogPostModel>> getBlogPosts() async {
     return await _mediumService.fetchBlogPosts();

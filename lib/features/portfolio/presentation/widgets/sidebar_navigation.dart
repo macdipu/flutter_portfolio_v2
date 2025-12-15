@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/config/site_config_scope.dart';
 import '../../../../core/navigation/scroll_controller.dart';
 import '../../../../core/responsive/responsive_framework.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -79,128 +80,60 @@ class _SidebarLayout extends StatelessWidget {
 
   Widget _buildSidebarContent(BuildContext context) {
     final theme = Theme.of(context);
-
-    // Define responsive text styles
-    final avatarTextStyle = theme.textTheme.headlineMedium?.copyWith(
-      color: theme.colorScheme.primary,
-      fontWeight: FontWeight.bold,
-      fontSize: context.responsiveValue(
-        mobile: 24.0,
-        tablet: 26.0,
-        smallLaptop: 28.0,
-        desktop: 30.0,
-        largeDesktop: 32.0,
-      ),
-    ) ??
-        TextStyle(
-          color: theme.colorScheme.primary,
-          fontWeight: FontWeight.bold,
-          fontSize: context.responsiveValue(
-            mobile: 24.0,
-            tablet: 26.0,
-            smallLaptop: 28.0,
-            desktop: 30.0,
-            largeDesktop: 32.0,
-          ),
-        );
-
-    final nameStyle = theme.textTheme.titleLarge?.copyWith(
-      fontSize: context.responsiveValue(
-        mobile: 20.0,
-        tablet: 22.0,
-        smallLaptop: 24.0,
-        desktop: 26.0,
-        largeDesktop: 28.0,
-      ),
-    ) ??
-        TextStyle(
-          fontSize: context.responsiveValue(
-            mobile: 20.0,
-            tablet: 22.0,
-            smallLaptop: 24.0,
-            desktop: 26.0,
-            largeDesktop: 28.0,
-          ),
-        );
-
-    final titleStyle = theme.textTheme.bodyMedium?.copyWith(
-      color: theme.textTheme.bodySmall?.color,
-      fontSize: context.responsiveValue(
-        mobile: 14.0,
-        tablet: 15.0,
-        smallLaptop: 16.0,
-        desktop: 17.0,
-        largeDesktop: 18.0,
-      ),
-    ) ??
-        TextStyle(
-          color: theme.textTheme.bodySmall?.color,
-          fontSize: context.responsiveValue(
-            mobile: 14.0,
-            tablet: 15.0,
-            smallLaptop: 16.0,
-            desktop: 17.0,
-            largeDesktop: 18.0,
-          ),
-        );
+    final config = SiteConfigScope.of(context);
 
     return Column(
       children: [
-        CircleAvatar(
-          radius: 50,
-          backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
-          child: Text(
-            'MACD',
-            style: avatarTextStyle,
+        const SizedBox(height: AppTheme.spacing24),
+        Text(
+          config.sidebar.salutation,
+          style: theme.textTheme.labelLarge?.copyWith(
+            color: theme.colorScheme.primary.withValues(alpha: 0.9),
+            letterSpacing: 2,
           ),
         ),
-        const SizedBox(height: AppTheme.spacing16),
+        const SizedBox(height: AppTheme.spacing8),
         SelectableText(
-          'Md. Asad Chowdhury Dipu',
-          style: nameStyle,
-          textAlign: TextAlign.center,
-        ),
-        SelectableText(
-          'Flutter Developer',
-          style: titleStyle,
+          config.sidebar.tagline,
+          style: theme.textTheme.titleLarge,
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: AppTheme.spacing24),
         Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacing16),
-            child: Column(
-              children: NavigationSection.values.map((section) {
-                return _NavigationItem(
-                  section: section,
-                  isSelected: section == currentSection,
-                  onTap: () {
-                    onSectionSelected(section);
-                  },
-                );
-              }).toList(),
-            ),
+          child: ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacing24),
+            itemCount: config.sidebar.navigationLinks.length,
+            itemBuilder: (context, index) {
+              final navLink = config.sidebar.navigationLinks[index];
+              final section = NavigationSection.values.firstWhere(
+                (nav) => nav.name == navLink.sectionId,
+                orElse: () => NavigationSection.hero,
+              );
+              final isSelected = section == currentSection;
+
+              return _AsciiNavItem(
+                label: navLink.label,
+                asciiLabel: navLink.asciiLabel,
+                isSelected: isSelected,
+                onTap: () => onSectionSelected(section),
+              );
+            },
           ),
         ),
-        const SizedBox(height: AppTheme.spacing16),
+        const Divider(),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacing24),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _SocialIcon(
-                icon: FontAwesomeIcons.github,
-                url: 'https://github.com/dipu0',
-              ),
-              _SocialIcon(
-                icon: FontAwesomeIcons.linkedin,
-                url: 'https://linkedin.com/in/cdipu',
-              ),
-              _SocialIcon(
-                icon: FontAwesomeIcons.twitter,
-                url: 'https://twitter.com/c_dipu0',
-              ),
-            ],
+          padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing16),
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            spacing: AppTheme.spacing16,
+            children: config.sidebar.socialLinks
+                .map(
+                  (link) => _SocialIcon(
+                    icon: _mapPlatformToIcon(link.platform),
+                    url: link.url,
+                  ),
+                )
+                .toList(),
           ),
         ),
       ],
@@ -208,13 +141,15 @@ class _SidebarLayout extends StatelessWidget {
   }
 }
 
-class _NavigationItem extends StatelessWidget {
-  final NavigationSection section;
+class _AsciiNavItem extends StatelessWidget {
+  final String label;
+  final String asciiLabel;
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _NavigationItem({
-    required this.section,
+  const _AsciiNavItem({
+    required this.label,
+    required this.asciiLabel,
     required this.isSelected,
     required this.onTap,
   });
@@ -223,36 +158,39 @@ class _NavigationItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    // Define responsive text style
-    final navItemStyle = theme.textTheme.bodyMedium?.copyWith(
-      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-      fontSize: context.responsiveValue(
-        mobile: 14.0,
-        tablet: 15.0,
-        smallLaptop: 16.0,
-        desktop: 17.0,
-        largeDesktop: 18.0,
-      ),
-    ) ??
-        TextStyle(
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          fontSize: context.responsiveValue(
-            mobile: 14.0,
-            tablet: 15.0,
-            smallLaptop: 16.0,
-            desktop: 17.0,
-            largeDesktop: 18.0,
-          ),
-        );
-
     return ListTile(
-      leading: Icon(
-        section.icon,
-        color: isSelected ? theme.colorScheme.primary : null,
-      ),
-      title: Text(
-        section.label,
-        style: navItemStyle,
+      contentPadding: EdgeInsets.zero,
+      title: Container(
+        decoration: BoxDecoration(
+          color: isSelected
+              ? theme.colorScheme.primary.withValues(alpha: 0.1)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+          border: isSelected
+              ? Border.all(
+                  color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                  width: 1.2,
+                )
+              : null,
+        ),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacing16,
+          vertical: AppTheme.spacing8,
+        ),
+        child: RichText(
+          text: TextSpan(
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: isSelected
+                  ? theme.colorScheme.primary
+                  : theme.textTheme.bodyLarge?.color,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            ),
+            children: [
+              TextSpan(text: '$asciiLabel '),
+              TextSpan(text: label),
+            ],
+          ),
+        ),
       ),
       onTap: onTap,
     );
@@ -283,29 +221,17 @@ class _SocialIcon extends StatelessWidget {
   }
 }
 
-extension NavigationSectionExtension on NavigationSection {
-  IconData get icon {
-    switch (this) {
-      case NavigationSection.hero:
-        return Icons.home;
-      case NavigationSection.about:
-        return Icons.person;
-      case NavigationSection.experience:
-        return Icons.work;
-      case NavigationSection.portfolio:
-        return Icons.cases;
-      case NavigationSection.services:
-        return Icons.design_services;
-      case NavigationSection.techStack:
-        return Icons.code;
-      case NavigationSection.blog:
-        return Icons.article;
-      case NavigationSection.contact:
-        return Icons.email;
-      case NavigationSection.resume:
-        return Icons.description;
-    }
+IconData _mapPlatformToIcon(String platform) {
+  switch (platform.toLowerCase()) {
+    case 'github':
+      return FontAwesomeIcons.github;
+    case 'linkedin':
+      return FontAwesomeIcons.linkedin;
+    case 'twitter':
+      return FontAwesomeIcons.twitter;
+    case 'email':
+      return FontAwesomeIcons.envelope;
+    default:
+      return FontAwesomeIcons.globe;
   }
-
-  String get label => name[0].toUpperCase() + name.substring(1);
 }

@@ -1,11 +1,14 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_portfolio/core/navigation/scroll_controller.dart';
 import 'package:flutter_portfolio/core/responsive/responsive_framework.dart';
 import 'package:flutter_portfolio/core/widgets/common/responsive_image.dart';
 import 'package:flutter_portfolio/core/widgets/common/section_wrapper.dart';
 import 'package:flutter_portfolio/features/portfolio/presentation/bloc/portfolio_bloc.dart';
+import 'package:flutter_portfolio/core/config/site_config_scope.dart';
+import 'package:flutter_portfolio/core/animations/aos_wrapper.dart';
+import 'package:flutter_portfolio/features/portfolio/data/models/profile_model.dart';
 
 class HeroSection extends StatelessWidget {
   const HeroSection({super.key});
@@ -28,6 +31,8 @@ class HeroSection extends StatelessWidget {
             mobileChild: Center(child: Text('No profile data available')),
           );
         }
+        final config = SiteConfigScope.of(context).header;
+        final animationConfig = SiteConfigScope.of(context).animations;
 
         // Define responsive values for image size
         final imageSize = context.responsiveValue<double>(
@@ -131,16 +136,70 @@ class HeroSection extends StatelessWidget {
 
         return SectionWrapper(
           fullHeight: fullHeight,
-          mobileChild: _buildVerticalLayout(context, profile, imageSize,
-              greetingStyle, nameStyle, titleStyle, introStyle),
-          tabletChild: _buildVerticalLayout(context, profile, imageSize,
-              greetingStyle, nameStyle, titleStyle, introStyle),
-          smallLaptopChild: _buildHorizontalLayout(context, profile, imageSize,
-              greetingStyle, nameStyle, titleStyle, introStyle),
-          desktopChild: _buildHorizontalLayout(context, profile, imageSize,
-              greetingStyle, nameStyle, titleStyle, introStyle),
-          largeDesktopChild: _buildHorizontalLayout(context, profile, imageSize,
-              greetingStyle, nameStyle, titleStyle, introStyle),
+          backgroundGradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF0F2027),
+              Color(0xFF203A43),
+              Color(0xFF2C5364),
+            ],
+          ),
+          mobileChild: _buildVerticalLayout(
+            context,
+            profile,
+            imageSize,
+            greetingStyle,
+            nameStyle,
+            titleStyle,
+            introStyle,
+            config,
+            animationConfig,
+          ),
+          tabletChild: _buildVerticalLayout(
+            context,
+            profile,
+            imageSize,
+            greetingStyle,
+            nameStyle,
+            titleStyle,
+            introStyle,
+            config,
+            animationConfig,
+          ),
+          smallLaptopChild: _buildHorizontalLayout(
+            context,
+            profile,
+            imageSize,
+            greetingStyle,
+            nameStyle,
+            titleStyle,
+            introStyle,
+            config,
+            animationConfig,
+          ),
+          desktopChild: _buildHorizontalLayout(
+            context,
+            profile,
+            imageSize,
+            greetingStyle,
+            nameStyle,
+            titleStyle,
+            introStyle,
+            config,
+            animationConfig,
+          ),
+          largeDesktopChild: _buildHorizontalLayout(
+            context,
+            profile,
+            imageSize,
+            greetingStyle,
+            nameStyle,
+            titleStyle,
+            introStyle,
+            config,
+            animationConfig,
+          ),
         );
       },
     );
@@ -148,13 +207,63 @@ class HeroSection extends StatelessWidget {
 
   Widget _buildVerticalLayout(
     BuildContext context,
-    dynamic profile,
+    ProfileModel profile,
     double imageSize,
     TextStyle greetingStyle,
     TextStyle nameStyle,
     TextStyle titleStyle,
     TextStyle introStyle,
+    HeaderConfigModel config,
+    AnimationConfigModel animationConfig,
   ) {
+    final glassChild = Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Flexible(child: SizedBox(height: 20)),
+        _buildHeroImage(profile.avatarUrl, imageSize),
+        const SizedBox(height: 24),
+        _AnimatedLetterBlock(
+          lines: [config.greeting],
+          style: greetingStyle,
+          textAlign: TextAlign.center,
+          animationConfig: animationConfig,
+          delayMultiplier: 1,
+        ),
+        const SizedBox(height: 12),
+        _AnimatedLetterBlock(
+          lines: config.heroNameLines,
+          style: nameStyle,
+          textAlign: TextAlign.center,
+          animationConfig: animationConfig,
+          delayMultiplier: 2,
+        ),
+        const SizedBox(height: 12),
+        _AnimatedLetterBlock(
+          lines: config.roleLines,
+          style: titleStyle,
+          textAlign: TextAlign.center,
+          animationConfig: animationConfig,
+          delayMultiplier: 3,
+        ),
+        const SizedBox(height: 16),
+        AosWrapper(
+          enabled: animationConfig.enableAos,
+          delay: animationConfig.baseDelay * 3,
+          duration: const Duration(milliseconds: 600),
+          verticalOffset: animationConfig.verticalOffset,
+          child: SelectableText(
+            config.infoParagraph,
+            style: introStyle,
+            textAlign: TextAlign.center,
+          ),
+        ),
+        const SizedBox(height: 24),
+        _buildButtons(context, isVertical: true, config: config),
+        const Flexible(child: SizedBox(height: 20)),
+      ],
+    );
+
     return SingleChildScrollView(
       child: ConstrainedBox(
         constraints: BoxConstraints(
@@ -162,52 +271,8 @@ class HeroSection extends StatelessWidget {
               MediaQuery.of(context).padding.vertical,
         ),
         child: IntrinsicHeight(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Flexible(child: SizedBox(height: 20)),
-              _buildHeroImage(profile.avatarUrl, imageSize),
-              const SizedBox(height: 24),
-              SelectableText(
-                'Hello, I\'m',
-                style: greetingStyle,
-                textAlign: TextAlign.center,
-              )
-                  .animate()
-                  .fade(duration: 500.ms)
-                  .slide(begin: const Offset(0, -0.5)),
-              const SizedBox(height: 12),
-              SelectableText(
-                profile.name,
-                style: nameStyle,
-                textAlign: TextAlign.center,
-              )
-                  .animate()
-                  .fade(duration: 500.ms, delay: 200.ms)
-                  .slide(begin: const Offset(0, -0.5)),
-              const SizedBox(height: 12),
-              SelectableText(
-                profile.title,
-                style: titleStyle,
-                textAlign: TextAlign.center,
-              )
-                  .animate()
-                  .fade(duration: 500.ms, delay: 400.ms)
-                  .slide(begin: const Offset(0, -0.5)),
-              const SizedBox(height: 16),
-              SelectableText(
-                profile.introduction,
-                style: introStyle,
-                textAlign: TextAlign.center,
-              )
-                  .animate()
-                  .fade(duration: 500.ms, delay: 600.ms)
-                  .slide(begin: const Offset(0, -0.5)),
-              const SizedBox(height: 24),
-              _buildButtons(context, isVertical: true),
-              const Flexible(child: SizedBox(height: 20)),
-            ],
+          child: Center(
+            child: _GlassContainer(child: glassChild),
           ),
         ),
       ),
@@ -216,14 +281,16 @@ class HeroSection extends StatelessWidget {
 
   Widget _buildHorizontalLayout(
     BuildContext context,
-    dynamic profile,
+    ProfileModel profile,
     double imageSize,
     TextStyle greetingStyle,
     TextStyle nameStyle,
     TextStyle titleStyle,
     TextStyle introStyle,
+    HeaderConfigModel config,
+    AnimationConfigModel animationConfig,
   ) {
-    return Row(
+    final glassChild = Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
@@ -231,61 +298,72 @@ class HeroSection extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SelectableText(
-                'Hello, I\'m',
+              _AnimatedLetterBlock(
+                lines: [config.greeting],
                 style: greetingStyle,
-              )
-                  .animate()
-                  .fade(duration: 500.ms)
-                  .slide(begin: const Offset(0, -0.5)),
+                textAlign: TextAlign.start,
+                animationConfig: animationConfig,
+                delayMultiplier: 1,
+              ),
               const SizedBox(height: 16),
-              SelectableText(
-                profile.name,
+              _AnimatedLetterBlock(
+                lines: config.heroNameLines,
                 style: nameStyle,
-              )
-                  .animate()
-                  .fade(duration: 500.ms, delay: 200.ms)
-                  .slide(begin: const Offset(0, -0.5)),
+                textAlign: TextAlign.start,
+                animationConfig: animationConfig,
+                delayMultiplier: 2,
+              ),
               const SizedBox(height: 24),
-              SelectableText(
-                profile.title,
+              _AnimatedLetterBlock(
+                lines: config.roleLines,
                 style: titleStyle,
-              )
-                  .animate()
-                  .fade(duration: 500.ms, delay: 400.ms)
-                  .slide(begin: const Offset(0, -0.5)),
+                textAlign: TextAlign.start,
+                animationConfig: animationConfig,
+                delayMultiplier: 3,
+              ),
               const SizedBox(height: 32),
-              SelectableText(
-                profile.introduction,
-                style: introStyle,
-              )
-                  .animate()
-                  .fade(duration: 500.ms, delay: 600.ms)
-                  .slide(begin: const Offset(0, -0.5)),
+              AosWrapper(
+                enabled: animationConfig.enableAos,
+                delay: animationConfig.baseDelay * 3,
+                duration: const Duration(milliseconds: 600),
+                verticalOffset: animationConfig.verticalOffset,
+                child: SelectableText(
+                  config.infoParagraph,
+                  style: introStyle,
+                ),
+              ),
               const SizedBox(height: 48),
-              _buildButtons(context),
+              _buildButtons(context, config: config),
             ],
           ),
         ),
         _buildHeroImage(profile.avatarUrl, imageSize),
       ],
     );
+
+    return Center(
+      child: _GlassContainer(child: glassChild),
+    );
   }
 
   Widget _buildHeroImage(String avatarUrl, double size) {
-    return ResponsiveImage(
-      imageUrl: avatarUrl,
-      width: size,
-      height: size,
-      borderRadius: BorderRadius.circular(size / 2),
-      fit: BoxFit.cover,
-    )
-        .animate()
-        .fade(duration: 800.ms, delay: 400.ms)
-        .scale(begin: const Offset(0.8, 0.8));
+    return AosWrapper(
+      enabled: true,
+      delay: const Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 800),
+      verticalOffset: 0.1,
+      child: ResponsiveImage(
+        imageUrl: avatarUrl,
+        width: size,
+        height: size,
+        borderRadius: BorderRadius.circular(size / 2),
+        fit: BoxFit.cover,
+      ),
+    );
   }
 
-  Widget _buildButtons(BuildContext context, {bool isVertical = false}) {
+  Widget _buildButtons(BuildContext context,
+      {bool isVertical = false, required HeaderConfigModel config}) {
     // Define responsive button padding
     final buttonPadding = context.responsiveValue<EdgeInsets>(
       mobile: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -327,11 +405,8 @@ class HeroSection extends StatelessWidget {
               .read<ScrollCubit>()
               .scrollToSection(NavigationSection.portfolio);
         },
-        child: const Text('View My Work'),
-      )
-          .animate()
-          .fade(duration: 500.ms, delay: 800.ms)
-          .scale(begin: const Offset(0.9, 0.9)),
+        child: Text(config.primaryCtaLabel),
+      ),
       SizedBox(width: isVertical ? 16 : 24),
       OutlinedButton(
         style: OutlinedButton.styleFrom(
@@ -343,11 +418,8 @@ class HeroSection extends StatelessWidget {
               .read<ScrollCubit>()
               .scrollToSection(NavigationSection.contact);
         },
-        child: const Text('Contact Me'),
-      )
-          .animate()
-          .fade(duration: 500.ms, delay: 1000.ms)
-          .scale(begin: const Offset(0.9, 0.9)),
+        child: Text(config.secondaryCtaLabel),
+      ),
     ];
 
     return Row(
@@ -357,3 +429,99 @@ class HeroSection extends StatelessWidget {
     );
   }
 }
+
+class _AnimatedLetterBlock extends StatelessWidget {
+  final List<String> lines;
+  final TextStyle style;
+  final TextAlign textAlign;
+  final AnimationConfigModel animationConfig;
+  final int delayMultiplier;
+
+  const _AnimatedLetterBlock({
+    required this.lines,
+    required this.style,
+    required this.textAlign,
+    required this.animationConfig,
+    required this.delayMultiplier,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AosWrapper(
+      enabled: animationConfig.enableAos,
+      delay: animationConfig.baseDelay * delayMultiplier,
+      duration: const Duration(milliseconds: 600),
+      verticalOffset: animationConfig.verticalOffset,
+      child: Column(
+        crossAxisAlignment: textAlign == TextAlign.center
+            ? CrossAxisAlignment.center
+            : CrossAxisAlignment.start,
+        children: lines
+            .map(
+              (line) => Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Wrap(
+                  alignment: textAlign == TextAlign.center
+                      ? WrapAlignment.center
+                      : WrapAlignment.start,
+                  children: line.split('').map((char) {
+                    if (char == ' ') {
+                      return const SizedBox(width: 8);
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      child: SelectableText(
+                        char,
+                        style: style,
+                        textAlign: textAlign,
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            )
+            .toList(),
+      ),
+    );
+  }
+}
+
+class _GlassContainer extends StatelessWidget {
+  final Widget child;
+
+  const _GlassContainer({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 1100),
+      padding: const EdgeInsets.all(32),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(32),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(32),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.2),
+                width: 1.2,
+              ),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white.withOpacity(0.20),
+                  Colors.white.withOpacity(0.05),
+                ],
+              ),
+            ),
+            child: child,
+          ),
+        ),
+      ),
+    );
+  }
+}
+

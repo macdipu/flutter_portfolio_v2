@@ -14,6 +14,7 @@ class ProfileModel extends Equatable {
   final List<TechStackModel> techStacks;
   final ContactInfoModel contactInfo;
   final String resumeUrl;
+  final SiteConfigModel siteConfig;
 
   const ProfileModel({
     required this.name,
@@ -29,6 +30,7 @@ class ProfileModel extends Equatable {
     required this.techStacks,
     required this.contactInfo,
     required this.resumeUrl,
+    required this.siteConfig,
   });
 
   @override
@@ -46,6 +48,7 @@ class ProfileModel extends Equatable {
         techStacks,
         contactInfo,
         resumeUrl,
+        siteConfig,
       ];
 }
 
@@ -179,4 +182,134 @@ class ContactInfoModel extends Equatable {
 
   @override
   List<Object> get props => [email, linkedIn, github, twitter, calendlyLink];
+}
+
+class SiteConfigModel extends Equatable {
+  final HeaderConfigModel header;
+  final SidebarConfigModel sidebar;
+  final CursorConfigModel cursor;
+  final AnimationConfigModel animations;
+
+  const SiteConfigModel({
+    required this.header,
+    required this.sidebar,
+    required this.cursor,
+    required this.animations,
+  });
+
+  @override
+  List<Object> get props => [header, sidebar, cursor, animations];
+}
+
+class HeaderConfigModel extends Equatable {
+  final String greeting;
+  final List<String> heroNameLines;
+  final List<String> roleLines;
+  final String infoParagraph;
+  final String primaryCtaLabel;
+  final String secondaryCtaLabel;
+
+  const HeaderConfigModel({
+    required this.greeting,
+    required this.heroNameLines,
+    required this.roleLines,
+    required this.infoParagraph,
+    required this.primaryCtaLabel,
+    required this.secondaryCtaLabel,
+  });
+
+  @override
+  List<Object> get props => [
+        greeting,
+        heroNameLines,
+        roleLines,
+        infoParagraph,
+        primaryCtaLabel,
+        secondaryCtaLabel,
+      ];
+}
+
+class SidebarConfigModel extends Equatable {
+  final String salutation;
+  final String tagline;
+  final List<NavigationLinkConfig> navigationLinks;
+  final List<SocialLinkConfig> socialLinks;
+
+  const SidebarConfigModel({
+    required this.salutation,
+    required this.tagline,
+    required this.navigationLinks,
+    required this.socialLinks,
+  });
+
+  @override
+  List<Object> get props => [salutation, tagline, navigationLinks, socialLinks];
+}
+
+class NavigationLinkConfig extends Equatable {
+  final String sectionId;
+  final String label;
+  final String asciiLabel;
+
+  const NavigationLinkConfig({
+    required this.sectionId,
+    required this.label,
+    required this.asciiLabel,
+  });
+
+  @override
+  List<Object> get props => [sectionId, label, asciiLabel];
+}
+
+class SocialLinkConfig extends Equatable {
+  final String platform;
+  final String url;
+
+  const SocialLinkConfig({
+    required this.platform,
+    required this.url,
+  });
+
+  @override
+  List<Object> get props => [platform, url];
+}
+
+class CursorConfigModel extends Equatable {
+  final bool enabled;
+  final double innerRadius;
+  final double outerRadius;
+  final double hoverScale;
+  final Duration followDuration;
+
+  const CursorConfigModel({
+    required this.enabled,
+    required this.innerRadius,
+    required this.outerRadius,
+    required this.hoverScale,
+    required this.followDuration,
+  });
+
+  @override
+  List<Object> get props => [
+        enabled,
+        innerRadius,
+        outerRadius,
+        hoverScale,
+        followDuration,
+      ];
+}
+
+class AnimationConfigModel extends Equatable {
+  final bool enableAos;
+  final Duration baseDelay;
+  final double verticalOffset;
+
+  const AnimationConfigModel({
+    required this.enableAos,
+    required this.baseDelay,
+    required this.verticalOffset,
+  });
+
+  @override
+  List<Object> get props => [enableAos, baseDelay, verticalOffset];
 }
