@@ -9,6 +9,7 @@ import 'package:flutter_portfolio/features/portfolio/presentation/bloc/portfolio
 import 'package:flutter_portfolio/core/config/site_config_scope.dart';
 import 'package:flutter_portfolio/core/animations/aos_wrapper.dart';
 import 'package:flutter_portfolio/features/portfolio/data/models/profile_model.dart';
+import 'package:flutter_portfolio/core/widgets/common/glass_panel.dart';
 
 class HeroSection extends StatelessWidget {
   const HeroSection({super.key});
@@ -145,6 +146,7 @@ class HeroSection extends StatelessWidget {
               Color(0xFF2C5364),
             ],
           ),
+          useGlass: true,
           mobileChild: _buildVerticalLayout(
             context,
             profile,
@@ -272,7 +274,7 @@ class HeroSection extends StatelessWidget {
         ),
         child: IntrinsicHeight(
           child: Center(
-            child: _GlassContainer(child: glassChild),
+            child: GlassPanel(child: glassChild),
           ),
         ),
       ),
@@ -342,7 +344,7 @@ class HeroSection extends StatelessWidget {
     );
 
     return Center(
-      child: _GlassContainer(child: glassChild),
+      child: GlassPanel(child: glassChild),
     );
   }
 
@@ -485,43 +487,3 @@ class _AnimatedLetterBlock extends StatelessWidget {
     );
   }
 }
-
-class _GlassContainer extends StatelessWidget {
-  final Widget child;
-
-  const _GlassContainer({required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(maxWidth: 1100),
-      padding: const EdgeInsets.all(32),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(32),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.08),
-              borderRadius: BorderRadius.circular(32),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.2),
-                width: 1.2,
-              ),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Colors.white.withOpacity(0.20),
-                  Colors.white.withOpacity(0.05),
-                ],
-              ),
-            ),
-            child: child,
-          ),
-        ),
-      ),
-    );
-  }
-}
-

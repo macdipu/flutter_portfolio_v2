@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/responsive/responsive_framework.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/common/glass_panel.dart';
 import '../../../../core/widgets/common/responsive_image.dart';
 import '../../../../core/widgets/common/section_wrapper.dart';
 import '../../data/models/profile_model.dart';
@@ -36,6 +37,12 @@ class TechStackSection extends StatelessWidget {
           subtitle: 'My Technical Skills',
           addTopPadding: true,
           addBottomPadding: true,
+          backgroundGradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF0F2027), Color(0xFF203A43), Color(0xFF2C5364)],
+          ),
+          useGlass: true,
           mobileChild: _buildLayout(context, state.filteredTechStacks,
               state.selectedTechStacksCategory),
           tabletChild: _buildLayout(context, state.filteredTechStacks,
@@ -217,55 +224,52 @@ class _TechStackCard extends StatelessWidget {
           ),
         );
 
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacing8),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            iconUrl.isNotEmpty
-                ? ResponsiveImage(
-                    imageUrl: iconUrl,
-                    width: 32,
-                    height: 32,
-                    fit: BoxFit.contain,
-                    enableHoverEffect: false,
-                    backgroundColor:
-                        theme.colorScheme.primary.withOpacity(0.1),
-                    padding: const EdgeInsets.all(AppTheme.spacing4),
+    return GlassPanel(
+      padding: const EdgeInsets.all(16),
+      borderRadius: 20,
+      maxWidth: double.infinity,
+      opacity: 0.05,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          iconUrl.isNotEmpty
+              ? ResponsiveImage(
+                  imageUrl: iconUrl,
+                  width: 48,
+                  height: 48,
+                  fit: BoxFit.contain,
+                  enableHoverEffect: false,
+                  backgroundColor:
+                      theme.colorScheme.primary.withOpacity(0.08),
+                  padding: const EdgeInsets.all(8),
+                  borderRadius:
+                      BorderRadius.circular(16),
+                )
+              : Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary.withOpacity(0.08),
                     borderRadius:
-                        BorderRadius.circular(AppTheme.borderRadius4),
-                  )
-                : Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.1),
-                      borderRadius:
-                          BorderRadius.circular(AppTheme.borderRadius4),
-                    ),
-                    child: Icon(
-                      Icons.code,
-                      color: theme.colorScheme.primary,
-                      size: 16,
-                    ),
+                        BorderRadius.circular(16),
                   ),
-            const SizedBox(height: AppTheme.spacing4),
-            SelectableText(
-              name,
-              style: nameStyle,
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
+                  child: Icon(
+                    Icons.code,
+                    color: theme.colorScheme.primary,
+                    size: 24,
+                  ),
+                ),
+          const SizedBox(height: AppTheme.spacing8),
+          SelectableText(
+            name,
+            style: nameStyle,
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     )
         .animate()
-        .fade(duration: 600.ms, delay: Duration(milliseconds: 100 * index))
-        .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1));
+        .fadeIn(duration: 300.ms, delay: (index * 50).ms)
+        .scale(begin: const Offset(0.9, 0.9));
   }
 }

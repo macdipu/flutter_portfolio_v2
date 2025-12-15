@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/responsive/responsive_framework.dart';
+import '../../../../core/widgets/common/glass_panel.dart';
 import '../../../../core/widgets/common/responsive_image.dart';
 import '../../../../core/widgets/common/section_wrapper.dart';
 import '../../data/models/profile_model.dart';
@@ -35,6 +36,12 @@ class ServicesSection extends StatelessWidget {
           subtitle: 'What I Offer',
           addTopPadding: true,
           addBottomPadding: true,
+          backgroundGradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF0F2027), Color(0xFF203A43), Color(0xFF2C5364)],
+          ),
+          useGlass: true,
           mobileChild: _buildLayout(context, profile),
           tabletChild: _buildLayout(context, profile),
           smallLaptopChild: _buildLayout(context, profile),
@@ -48,9 +55,7 @@ class ServicesSection extends StatelessWidget {
   Widget _buildLayout(BuildContext context, ProfileModel profile) {
     final contentWidth = context.contentWidth;
 
-    return Container(
-      width: contentWidth,
-      padding: context.defaultPadding,
+    return GlassPanel(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -154,62 +159,58 @@ class _ServiceCard extends StatelessWidget {
           ),
         );
 
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            iconUrl.isNotEmpty
-                ? ResponsiveImage(
-                    imageUrl: iconUrl,
-                    width: 48,
-                    height: 48,
-                    fit: BoxFit.contain,
-                    enableHoverEffect: false,
-                    backgroundColor:
-                        theme.colorScheme.primary.withOpacity(0.1),
-                    padding: const EdgeInsets.all(6),
-                    borderRadius: BorderRadius.circular(12),
-                  )
-                : Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      Icons.code,
-                      color: theme.colorScheme.primary,
-                      size: 24,
-                    ),
+    return GlassPanel(
+      padding: const EdgeInsets.all(20),
+      borderRadius: 24,
+      maxWidth: double.infinity,
+      opacity: 0.05,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          iconUrl.isNotEmpty
+              ? ResponsiveImage(
+                  imageUrl: iconUrl,
+                  width: 48,
+                  height: 48,
+                  fit: BoxFit.contain,
+                  enableHoverEffect: false,
+                  padding: const EdgeInsets.all(6),
+                  borderRadius: BorderRadius.circular(20),
+                  backgroundColor:
+                      theme.colorScheme.primary.withOpacity(0.08),
+                )
+              : Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(20),
                   ),
-            const SizedBox(height: 12),
-            SelectableText(
-              title,
-              style: titleStyle,
+                  child: Icon(
+                    Icons.code,
+                    color: theme.colorScheme.primary,
+                    size: 24,
+                  ),
+                ),
+          const SizedBox(height: 12),
+          SelectableText(
+            title,
+            style: titleStyle,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 6),
+          Expanded(
+            child: SelectableText(
+              description,
+              style: descriptionStyle,
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 6),
-            Expanded(
-              child: SelectableText(
-                description,
-                style: descriptionStyle,
-                textAlign: TextAlign.center,
-                maxLines: 4,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     )
         .animate()
-        .fade(duration: 600.ms, delay: Duration(milliseconds: 200 * index))
-        .scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1));
+        .fadeIn(duration: 350.ms, delay: (index * 100).ms)
+        .scale(begin: const Offset(0.95, 0.95));
   }
 }

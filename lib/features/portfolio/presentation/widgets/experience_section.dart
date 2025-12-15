@@ -4,9 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/responsive/responsive_framework.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/common/glass_panel.dart';
 import '../../../../core/widgets/common/responsive_image.dart';
 import '../../../../core/widgets/common/section_wrapper.dart';
 import '../../data/models/profile_model.dart';
+import '../bloc/portfolio_bloc.dart';
 import '../bloc/portfolio_bloc.dart';
 
 class ExperienceSection extends StatelessWidget {
@@ -305,52 +307,48 @@ class _GroupedTimelineCard extends StatelessWidget {
           ),
         );
 
-    return Card(
-      elevation: 2,
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.borderRadius16),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacing16),
-        child: ExpansionTile(
-          tilePadding: EdgeInsets.zero,
-          expandedCrossAxisAlignment: CrossAxisAlignment.start,
-          childrenPadding: const EdgeInsets.only(
-            left: AppTheme.spacing24,
-            bottom: AppTheme.spacing16,
-            right: AppTheme.spacing8,
-          ),
-          leading: _CompanyLogo(logoUrl: logoUrl),
-          title: SelectableText(
-            company,
-            style: companyStyle,
-          ),
-          children: [
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxHeight: 400),
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: roles.map((role) {
-                    return Padding(
-                      padding:
-                          const EdgeInsets.only(bottom: AppTheme.spacing16),
-                      child: _ExperienceRoleCard(
-                        role: role,
-                        positionStyle: positionStyle,
-                        periodStyle: periodStyle,
-                        descriptionStyle: descriptionStyle,
-                        theme: theme,
-                      ),
-                    );
-                  }).toList(),
-                ),
+    return GlassPanel(
+      padding: const EdgeInsets.all(AppTheme.spacing16),
+      borderRadius: AppTheme.borderRadius16,
+      maxWidth: double.infinity,
+      opacity: 0.05,
+      child: ExpansionTile(
+        tilePadding: EdgeInsets.zero,
+        expandedCrossAxisAlignment: CrossAxisAlignment.start,
+        childrenPadding: const EdgeInsets.only(
+          left: AppTheme.spacing24,
+          bottom: AppTheme.spacing16,
+          right: AppTheme.spacing8,
+        ),
+        leading: _CompanyLogo(logoUrl: logoUrl),
+        title: SelectableText(
+          company,
+          style: companyStyle,
+        ),
+        children: [
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: 400),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: roles.map((role) {
+                  return Padding(
+                    padding:
+                        const EdgeInsets.only(bottom: AppTheme.spacing16),
+                    child: _ExperienceRoleCard(
+                      role: role,
+                      positionStyle: positionStyle,
+                      periodStyle: periodStyle,
+                      descriptionStyle: descriptionStyle,
+                      theme: theme,
+                    ),
+                  );
+                }).toList(),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     )
         .animate()
@@ -547,66 +545,63 @@ class _TimelineCard extends StatelessWidget {
           ),
         );
 
-    return Card(
-      elevation: 2,
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.borderRadius16),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacing16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                logoUrl.isNotEmpty
-                    ? ResponsiveImage(
-                        imageUrl: logoUrl,
-                        width: 50,
-                        height: 50,
-                        maxWidth: 50,
-                        maxHeight: 50,
-                        enableHoverEffect: false,
+    return GlassPanel(
+      padding: const EdgeInsets.all(AppTheme.spacing16),
+      borderRadius: AppTheme.borderRadius16,
+      maxWidth: double.infinity,
+      opacity: 0.05,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              logoUrl.isNotEmpty
+                  ? ResponsiveImage(
+                      imageUrl: logoUrl,
+                      width: 50,
+                      height: 50,
+                      maxWidth: 50,
+                      maxHeight: 50,
+                      enableHoverEffect: false,
+                      borderRadius:
+                          BorderRadius.circular(AppTheme.borderRadius8),
+                      backgroundColor:
+                          theme.colorScheme.primary.withOpacity(0.1),
+                      fit: BoxFit.cover,
+                    )
+                  : Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary.withOpacity(0.1),
                         borderRadius:
                             BorderRadius.circular(AppTheme.borderRadius8),
-                        backgroundColor:
-                            theme.colorScheme.primary.withOpacity(0.1),
-                        fit: BoxFit.cover,
-                      )
-                    : Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.primary.withOpacity(0.1),
-                          borderRadius:
-                              BorderRadius.circular(AppTheme.borderRadius8),
-                        ),
-                        child: Icon(
-                          Icons.business,
-                          color: theme.colorScheme.primary,
-                        ),
                       ),
-                const SizedBox(width: AppTheme.spacing16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SelectableText(
-                        title,
-                        style: titleStyle,
+                      child: Icon(
+                        Icons.business,
+                        color: theme.colorScheme.primary,
                       ),
-                      const SizedBox(height: AppTheme.spacing4),
-                      SelectableText(
-                        subtitle,
-                        style: subtitleStyle,
-                      ),
-                    ],
-                  ),
+                    ),
+              const SizedBox(width: AppTheme.spacing16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SelectableText(
+                      title,
+                      style: titleStyle,
+                    ),
+                    const SizedBox(height: AppTheme.spacing4),
+                    SelectableText(
+                      subtitle,
+                      style: subtitleStyle,
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            const SizedBox(height: AppTheme.spacing16),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppTheme.spacing16),
             Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: AppTheme.spacing16,
@@ -628,10 +623,6 @@ class _TimelineCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    )
-        .animate()
-        .fade(duration: 600.ms, delay: Duration(milliseconds: 200 * index))
-        .slideY(begin: 0.1, end: 0);
+      );
   }
 }

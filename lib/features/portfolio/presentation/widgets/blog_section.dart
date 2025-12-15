@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_portfolio/core/widgets/common/glass_panel.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -18,18 +19,24 @@ class BlogSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<PortfolioBloc, PortfolioState>(
       builder: (context, state) {
-        return SectionWrapper(
-          sectionId: 'blog',
-          title: 'Blog',
-          subtitle: 'My Latest Posts',
-          addTopPadding: true,
-          addBottomPadding: true,
-          mobileChild: _buildLayout(context, state),
-          tabletChild: _buildLayout(context, state),
-          smallLaptopChild: _buildLayout(context, state),
-          desktopChild: _buildLayout(context, state),
-          largeDesktopChild: _buildLayout(context, state),
-        );
+    return SectionWrapper(
+      sectionId: 'blog',
+      title: 'Blog Posts',
+      subtitle: 'Latest Articles from Medium',
+      addTopPadding: true,
+      addBottomPadding: true,
+      backgroundGradient: const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xFF0F2027), Color(0xFF203A43), Color(0xFF2C5364)],
+      ),
+      useGlass: true,
+      mobileChild: _buildLayout(context, state),
+      tabletChild: _buildLayout(context, state),
+      smallLaptopChild: _buildLayout(context, state),
+      desktopChild: _buildLayout(context, state),
+      largeDesktopChild: _buildLayout(context, state),
+    );
       },
     );
   }
@@ -51,10 +58,11 @@ class BlogSection extends StatelessWidget {
           else if (state.blogPosts.isEmpty)
             _buildEmptyState(context)
           else ...[
-            ListView.builder(
+            ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: maxPosts,
+              separatorBuilder: (context, index) => const SizedBox(height: AppTheme.spacing24),
               itemBuilder: (context, index) {
                 return _BlogPostCard(
                   post: state.blogPosts[index],
@@ -178,8 +186,11 @@ class _BlogPostCard extends StatelessWidget {
       formattedDate = post.publishDate;
     }
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppTheme.spacing24),
+    return GlassPanel(
+      padding: const EdgeInsets.all(AppTheme.spacing16),
+      borderRadius: AppTheme.borderRadius16,
+      maxWidth: double.infinity,
+      opacity: 0.05,
       child: InkWell(
         onTap: () async {
           if (post.link.isNotEmpty) {
@@ -190,28 +201,27 @@ class _BlogPostCard extends StatelessWidget {
           }
         },
         borderRadius: BorderRadius.circular(AppTheme.borderRadius16),
-        child: Padding(
-          padding: const EdgeInsets.all(AppTheme.spacing16),
-          child: Flex(
-            direction: isSmallScreen ? Axis.vertical : Axis.horizontal,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Blog post image
-              _buildBlogImage(isSmallScreen),
-              SizedBox(
-                width: isSmallScreen ? 0 : AppTheme.spacing16,
-                height: isSmallScreen ? AppTheme.spacing16 : 0,
-              ),
-              // Blog post content
-              Expanded(child: _buildBlogContent(context, formattedDate)),
-            ],
-          ),
+        child: Flex(
+          direction: isSmallScreen ? Axis.vertical : Axis.horizontal,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Blog post image
+            _buildBlogImage(isSmallScreen),
+            SizedBox(
+              width: isSmallScreen ? 0 : AppTheme.spacing16,
+              height: isSmallScreen ? AppTheme.spacing16 : 0,
+            ),
+            // Blog post content
+            Expanded(child: _buildBlogContent(context, formattedDate)),
+          ],
         ),
       ),
     )
         .animate()
         .fade(duration: 600.ms, delay: Duration(milliseconds: 200 * index))
-        .slideY(begin: 0.1, end: 0);
+        .slideY(begin: 0.1, end: 0)
+        .then()
+        .shimmer(duration: 800.ms, color: Theme.of(context).colorScheme.primary.withOpacity(0.1));
   }
 
   Widget _buildBlogImage(bool isSmallScreen) {

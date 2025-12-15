@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/responsive/responsive_framework.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/common/glass_panel.dart';
 import '../../../../core/widgets/common/section_wrapper.dart';
 
 class ResumeSection extends StatelessWidget {
@@ -139,58 +140,55 @@ class ResumeSection extends StatelessWidget {
         children: [
           const SizedBox(height: AppTheme.spacing48),
           // Resume download section
-          Card(
-            elevation: 3,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppTheme.borderRadius16),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(AppTheme.spacing32),
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.description,
-                    size: 80,
-                    color: theme.colorScheme.primary,
-                  ),
-                  const SizedBox(height: AppTheme.spacing16),
-                  SelectableText(
-                    'My Resume',
-                    style: titleStyle,
-                  ),
-                  const SizedBox(height: AppTheme.spacing8),
-                  SelectableText(
-                    'Download my detailed resume to learn more about my skills, experience, and qualifications.',
-                    style: descriptionStyle,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: AppTheme.spacing32),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: SelectableText(
-                            'Resume download started',
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                          duration: const Duration(seconds: 2),
+          GlassPanel(
+            padding: const EdgeInsets.all(AppTheme.spacing32),
+            borderRadius: AppTheme.borderRadius16,
+            maxWidth: double.infinity,
+            opacity: 0.05,
+            child: Column(
+              children: [
+                Icon(
+                  Icons.description,
+                  size: 80,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(height: AppTheme.spacing16),
+                SelectableText(
+                  'My Resume',
+                  style: titleStyle,
+                ),
+                const SizedBox(height: AppTheme.spacing8),
+                SelectableText(
+                  'Download my detailed resume to learn more about my skills, experience, and qualifications.',
+                  style: descriptionStyle,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: AppTheme.spacing32),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: SelectableText(
+                          'Resume download started',
+                          style: theme.textTheme.bodyMedium,
                         ),
-                      );
-                    },
-                    icon: const Icon(Icons.download),
-                    label: Text(
-                      'Download Resume',
-                      style: buttonLabelStyle,
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppTheme.spacing32,
-                        vertical: AppTheme.spacing16,
+                        duration: const Duration(seconds: 2),
                       ),
+                    );
+                  },
+                  icon: const Icon(Icons.download),
+                  label: Text(
+                    'Download Resume',
+                    style: buttonLabelStyle,
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppTheme.spacing32,
+                      vertical: AppTheme.spacing16,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ).animate().fade(duration: 600.ms).scale(
                 begin: const Offset(0.9, 0.9),

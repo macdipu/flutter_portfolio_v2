@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_portfolio/core/navigation/scroll_controller.dart';
 import 'package:flutter_portfolio/core/responsive/responsive_framework.dart';
 import 'package:flutter_portfolio/core/widgets/common/section_wrapper.dart';
+import 'package:flutter_portfolio/core/widgets/common/glass_panel.dart';
 import 'package:flutter_portfolio/features/portfolio/presentation/bloc/portfolio_bloc.dart';
 
 class AboutSection extends StatelessWidget {
@@ -16,6 +17,12 @@ class AboutSection extends StatelessWidget {
       subtitle: 'A brief introduction',
       addTopPadding: true,
       addBottomPadding: true,
+      backgroundGradient: const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xFF0F2027), Color(0xFF203A43), Color(0xFF2C5364)],
+      ),
+      useGlass: true,
       mobileChild: _buildLayout(context),
       tabletChild: _buildLayout(context),
       smallLaptopChild: _buildLayout(context),
@@ -101,9 +108,7 @@ class AboutSection extends StatelessWidget {
             ),
           );
         }
-        return Container(
-          width: context.contentWidth,
-          padding: context.defaultPadding,
+        return GlassPanel(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

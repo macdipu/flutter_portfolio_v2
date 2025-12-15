@@ -4,10 +4,12 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_portfolio/core/responsive/responsive_framework.dart';
 import 'package:flutter_portfolio/core/theme/app_theme.dart';
+import 'package:flutter_portfolio/core/widgets/common/glass_panel.dart';
 import 'package:flutter_portfolio/core/widgets/common/responsive_image.dart';
 import 'package:flutter_portfolio/core/widgets/common/section_wrapper.dart';
 import 'package:flutter_portfolio/features/portfolio/data/models/profile_model.dart';
 import 'package:flutter_portfolio/features/portfolio/presentation/bloc/portfolio_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PortfolioSection extends StatelessWidget {
@@ -48,6 +50,12 @@ class PortfolioSection extends StatelessWidget {
           subtitle: 'My Recent Work',
           addTopPadding: true,
           addBottomPadding: true,
+          backgroundGradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF0F2027), Color(0xFF203A43), Color(0xFF2C5364)],
+          ),
+          useGlass: true,
           mobileChild: _buildLayout(
               context, filteredProjects, state.selectedProjectCategory!),
           tabletChild: _buildLayout(
@@ -147,10 +155,11 @@ class PortfolioSection extends StatelessWidget {
           ),
           const SizedBox(height: AppTheme.spacing32),
           // Project List
-          ListView.builder(
+          ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: projects.length,
+            separatorBuilder: (context, index) => const SizedBox(height: AppTheme.spacing32),
             itemBuilder: (context, index) {
               return _ProjectCard(
                 project: projects[index],
@@ -178,22 +187,20 @@ class _ProjectCard extends StatelessWidget {
     final theme = Theme.of(context);
     final isDesktop = context.isDesktop;
 
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.only(bottom: AppTheme.spacing32),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.borderRadius16),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacing24),
-        child: isDesktop
-            ? _buildDesktopLayout(context, theme)
-            : _buildMobileLayout(context, theme),
-      ),
+    return GlassPanel(
+      padding: const EdgeInsets.all(AppTheme.spacing24),
+      borderRadius: AppTheme.borderRadius16,
+      maxWidth: double.infinity,
+      opacity: 0.05,
+      child: isDesktop
+          ? _buildDesktopLayout(context, theme)
+          : _buildMobileLayout(context, theme),
     )
         .animate()
         .fade(duration: 600.ms, delay: Duration(milliseconds: 200 * index))
-        .slideY(begin: 0.1, end: 0);
+        .slideY(begin: 0.1, end: 0)
+        .then()
+        .shimmer(duration: 800.ms, color: theme.colorScheme.primary.withOpacity(0.1));
   }
 
   Widget _buildDesktopLayout(BuildContext context, ThemeData theme) {

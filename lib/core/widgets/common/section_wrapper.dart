@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_portfolio/core/responsive/responsive_framework.dart';
 import 'package:flutter_portfolio/core/widgets/common/section_header.dart';
+import 'package:flutter_portfolio/core/widgets/common/glass_panel.dart';
 
 class SectionWrapper extends StatelessWidget {
   final Widget? mobileChild;
@@ -23,6 +24,7 @@ class SectionWrapper extends StatelessWidget {
   final String? title;
   final String? subtitle;
   final TextAlign headerTextAlign;
+  final bool useGlass;
 
   const SectionWrapper({
     super.key,
@@ -46,6 +48,7 @@ class SectionWrapper extends StatelessWidget {
     this.title,
     this.subtitle,
     this.headerTextAlign = TextAlign.start,
+    this.useGlass = false,
   });
 
   @override
@@ -76,6 +79,10 @@ class SectionWrapper extends StatelessWidget {
         // Select the appropriate child based on device type
         Widget content =
             _getResponsiveChild(info.deviceType) ?? const SizedBox.shrink();
+
+        if (useGlass) {
+          content = GlassPanel(child: content);
+        }
 
         // Wrap content with constraints for better web layout
         if (centerContent) {
