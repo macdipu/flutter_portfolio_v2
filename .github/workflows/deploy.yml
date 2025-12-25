@@ -17,7 +17,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Cache Flutter SDK + Pub packages
       - name: Cache Flutter & Pub
         uses: actions/cache@v3
         with:
@@ -25,10 +24,8 @@ jobs:
             ~/.pub-cache
             ${{ runner.tool_cache }}/flutter
           key: ${{ runner.os }}-flutter-${{ hashFiles('pubspec.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-flutter-
+          restore-keys: ${{ runner.os }}-flutter-
 
-      # Restore or install Flutter
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
@@ -40,8 +37,8 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build web
-        run: flutter build web --release --base-href /flutter_portfolio_v2/
+      - name: Build for custom domain + redirect
+        run: flutter build web --release --base-href /
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -49,3 +46,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build/web
           publish_branch: gh-pages
+          cname: masadcd.online
