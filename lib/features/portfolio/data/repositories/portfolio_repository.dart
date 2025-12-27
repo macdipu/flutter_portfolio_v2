@@ -164,17 +164,35 @@ class PortfolioRepository {
       // Professional Projects
       const ProjectModel(
         category: 'Mobile',
+        title: 'Shell Agami App',
+        role: 'Developer at Polygon Technology',
+        description:
+            'Developed and maintained a consumer-facing mobile app with e-commerce functionality, product guides, MotoGP campaigns, geolocation-based mechanic/shop finder, and product authenticity verification.',
+        technologies: ['Flutter', 'BLoC', 'REST API'],
+        screenshots: [
+          'https://play-lh.googleusercontent.com/qNFTKTGpMYFD1vyB7ilBMsFOd9pUjDHsU8BwszQnNuAFbWYlLPmZeuWqErMzfZ-gpA=w2560-h1440-rw',
+          'https://play-lh.googleusercontent.com/hTuxlpIUqTV1nrd2MBbw9XldzWs3E56y3_9AfIcSqxzPXA02sPlWhjK6IC0pJPw4vQ=w2560-h1440-rw',
+          'https://play-lh.googleusercontent.com/QbEX2WZn1qd1XC9Il-MwL2skoLEXu0jAX89qtkZtRHtZREdH-HaZ2m9H_8DGtU6faQ=w2560-h1440-rw'
+        ],
+        appUrl:
+            'https://play.google.com/store/apps/details?id=com.shell.agami&pcampaignid=web_share',
+        sourceCodeUrl: '',
+        challenge: '',
+      ),
+      const ProjectModel(
+        category: 'Mobile',
         title: 'Shell Consumer App',
         role: 'Developer at Polygon Technology',
         description:
             'Developed and maintained a consumer-facing mobile app with e-commerce functionality, product guides, MotoGP campaigns, geolocation-based mechanic/shop finder, and product authenticity verification.',
         technologies: ['Flutter', 'BLoC', 'REST API'],
         screenshots: [
-          'https://images.pexels.com/photos/230544/pexels-photo-230544.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          'https://images.pexels.com/photos/6214476/pexels-photo-6214476.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+          'https://play-lh.googleusercontent.com/pS0NM82Eucvil55Sk_pIBJSuOduZQTmh3Z2lFMtqQlJi7g-6TaPHma3KrOa9BGA3E2Gi=w2560-h1440-rw',
+          'https://play-lh.googleusercontent.com/rqefnXiCFOZXStLW5qwAXlC6-dQaX9RSO-yR90hzzg4zw8_TJbmz7i82Ib920T8b91g=w2560-h1440-rw',
+          'https://play-lh.googleusercontent.com/rmZ594BAWCFn8lp6uEjMjFGuB2ntdYrD66ELMwW6VFnMTCdbmsFoir7x8uKfKdLiww0=w2560-h1440-rw'
         ],
         appUrl:
-            'https://play.google.com/store/apps/details?id=com.shell.consumer',
+            'https://play.google.com/store/apps/details?id=com.shell.consumer.shell_consumer&pcampaignid=web_share',
         sourceCodeUrl: '',
         challenge: '',
       ),
@@ -186,10 +204,9 @@ class PortfolioRepository {
             'Built a mobile app and merchant web portal for a Payment Service Provider (PSP) MVP, focusing on secure and inclusive digital payments, designed for regulatory compliance and scalability.',
         technologies: ['Flutter', 'GetX', 'REST API'],
         screenshots: [
-          'https://images.pexels.com/photos/7578926/pexels-photo-7578926.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          'https://images.pexels.com/photos/7579830/pexels-photo-7579830.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+          'https://shamadhan.com.bd/wp-content/uploads/2025/12/app.png'
         ],
-        appUrl: '',
+        appUrl: 'https://shamadhan.com.bd/',
         sourceCodeUrl: '',
         challenge: '',
       ),
@@ -216,8 +233,7 @@ class PortfolioRepository {
             'Created a marketplace app for Japanese users to buy and sell household plants, featuring localized UX and full e-commerce functionality.',
         technologies: ['Flutter', 'BLoC', 'REST API'],
         screenshots: [
-          'https://images.pexels.com/photos/5391486/pexels-photo-5391486.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          'https://images.pexels.com/photos/4482732/pexels-photo-4482732.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+          'https://polygontechnology.io/wp-content/uploads/2025/08/Agave.webp',
         ],
         appUrl: '',
         sourceCodeUrl: '',
@@ -286,163 +302,7 @@ class PortfolioRepository {
         sourceCodeUrl: 'https://github.com/TripMeter',
         challenge: '',
       ),
-      // Other Projects
-      const ProjectModel(
-        category: 'Mobile',
-        title: 'Address Book (Firebase)',
-        role: 'Independent Developer',
-        description:
-            'A single-page Android app for contact management with Firebase for real-time data and image storage, offering full CRUD functionality.',
-        technologies: ['Android', 'Java', 'Firebase', 'Camera/Gallery API'],
-        screenshots: [
-          'https://images.pexels.com/photos/5391486/pexels-photo-5391486.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          'https://images.pexels.com/photos/4482732/pexels-photo-4482732.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        ],
-        appUrl: '',
-        sourceCodeUrl:
-            'https://github.com/Address-Book-firebase-Android-Java-Application',
-        challenge: '',
-      ),
-      const ProjectModel(
-        category: 'Mobile',
-        title: 'Address Book (SQLite)',
-        role: 'Independent Developer',
-        description:
-            'A single-page Android app for contact management using SQLite for local storage, with efficient CRUD operations.',
-        technologies: ['Android', 'Java', 'SQLite', 'Camera/Gallery API'],
-        screenshots: [
-          'https://images.pexels.com/photos/6408282/pexels-photo-6408282.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          'https://images.pexels.com/photos/8867482/pexels-photo-8867482.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        ],
-        appUrl: '',
-        sourceCodeUrl:
-            'https://github.com/Address-Book-SQLite-Android-Java-Application',
-        challenge: '',
-      ),
-      const ProjectModel(
-        category: 'Backend',
-        title: 'AI Model for Predicting Price',
-        role: 'Independent Developer',
-        description:
-            'An AI model for price prediction using machine learning techniques for data analysis and forecasting.',
-        technologies: ['Python', 'Machine Learning'],
-        screenshots: [
-          'https://images.pexels.com/photos/2422588/pexels-photo-2422588.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          'https://images.pexels.com/photos/1118873/pexels-photo-1118873.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        ],
-        appUrl: '',
-        sourceCodeUrl: 'https://github.com/AI-model-for-predicting-price',
-        challenge: '',
-      ),
-      const ProjectModel(
-        category: 'Backend',
-        title: 'AI Model of Fashion Project',
-        role: 'Independent Developer',
-        description:
-            'An AI-based solution for fashion-related applications, processing and analyzing fashion data with machine learning.',
-        technologies: ['Python', 'Machine Learning', 'Computer Vision'],
-        screenshots: [
-          'https://images.pexels.com/photos/230544/pexels-photo-230544.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          'https://images.pexels.com/photos/6214476/pexels-photo-6214476.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        ],
-        appUrl: '',
-        sourceCodeUrl: 'https://github.com/AI-Model-of-Fashion-Project',
-        challenge: '',
-      ),
-      const ProjectModel(
-        category: 'Mobile',
-        title: 'BMI and BMR Calculator (Android)',
-        role: 'Independent Developer',
-        description:
-            'An Android app for calculating BMI and BMR based on user inputs like weight, height, age, and gender.',
-        technologies: ['Android', 'Java'],
-        screenshots: [
-          'https://images.pexels.com/photos/7578926/pexels-photo-7578926.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          'https://images.pexels.com/photos/7579830/pexels-photo-7579830.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        ],
-        appUrl: '',
-        sourceCodeUrl:
-            'https://github.com/BMI-and-BMR-Calculator-Android-Java-Application',
-        challenge: '',
-      ),
-      const ProjectModel(
-        category: 'Backend',
-        title: 'Classification Problem of Supervised Learning with Iris Flower',
-        role: 'Independent Developer',
-        description:
-            'A supervised learning model for classifying Iris flower species using the Iris dataset and machine learning algorithms.',
-        technologies: ['Python', 'Scikit-learn', 'Machine Learning'],
-        screenshots: [
-          'https://images.pexels.com/photos/5391486/pexels-photo-5391486.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          'https://images.pexels.com/photos/4482732/pexels-photo-4482732.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        ],
-        appUrl: '',
-        sourceCodeUrl:
-            'https://github.com/Classification-Problem-of-Supervised-Learning-with-irish-flower',
-        challenge: '',
-      ),
-      const ProjectModel(
-        category: 'Mobile',
-        title: 'Contact Info (SharedPreferences)',
-        role: 'Independent Developer',
-        description:
-            'A single-page Android app for storing user data and images using SharedPreferences with Base64 encoding.',
-        technologies: ['Android', 'Java', 'SharedPreferences', 'Base64'],
-        screenshots: [
-          'https://images.pexels.com/photos/6408282/pexels-photo-6408282.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          'https://images.pexels.com/photos/8867482/pexels-photo-8867482.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        ],
-        appUrl: '',
-        sourceCodeUrl:
-            'https://github.com/Contact-Info-SharedPreferences-Android-Java-Application',
-        challenge: '',
-      ),
-      const ProjectModel(
-        category: 'Mobile',
-        title: 'E-Commerce Flutter App',
-        role: 'Independent Developer',
-        description:
-            'A Flutter-based e-commerce app with Appium testing for a robust mobile shopping experience.',
-        technologies: ['Flutter', 'Dart', 'Appium'],
-        screenshots: [
-          'https://images.pexels.com/photos/2422588/pexels-photo-2422588.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          'https://images.pexels.com/photos/1118873/pexels-photo-1118873.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        ],
-        appUrl: '',
-        sourceCodeUrl: 'https://github.com/ecommerce-flutter-app',
-        challenge: '',
-      ),
-      const ProjectModel(
-        category: 'Mobile',
-        title: 'Event Management',
-        role: 'Independent Developer',
-        description:
-            'An Android app for creating, tracking, and organizing events efficiently.',
-        technologies: ['Android', 'Java'],
-        screenshots: [
-          'https://images.pexels.com/photos/230544/pexels-photo-230544.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          'https://images.pexels.com/photos/6214476/pexels-photo-6214476.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        ],
-        appUrl: '',
-        sourceCodeUrl:
-            'https://github.com/Event-Management-Android-Java-Application',
-        challenge: '',
-      ),
-      const ProjectModel(
-        category: 'Mobile',
-        title: 'Flutter Clean Architecture BLoC',
-        role: 'Independent Developer',
-        description:
-            'A Flutter app built with clean architecture and BLoC for scalable and maintainable state management.',
-        technologies: ['Flutter', 'Dart', 'BLoC', 'Clean Architecture'],
-        screenshots: [
-          'https://images.pexels.com/photos/7578926/pexels-photo-7578926.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          'https://images.pexels.com/photos/7579830/pexels-photo-7579830.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        ],
-        appUrl: '',
-        sourceCodeUrl: 'https://github.com/Flutter-Clean-Architecture-Bloc',
-        challenge: '',
-      ),
+
       const ProjectModel(
         category: 'Mobile',
         title: 'Flutter Portfolio Landing Page',
@@ -474,37 +334,7 @@ class PortfolioRepository {
             'https://github.com/Greeneries-E-Gardening-Android-Java-Application',
         challenge: '',
       ),
-      const ProjectModel(
-        category: 'Backend',
-        title: 'Ice Cream Sell Number',
-        role: 'Independent Developer',
-        description:
-            'Analyzed ice cream sales data to identify trends or predict sales using data science techniques.',
-        technologies: ['Python', 'Data Analysis'],
-        screenshots: [
-          'https://images.pexels.com/photos/2422588/pexels-photo-2422588.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          'https://images.pexels.com/photos/1118873/pexels-photo-1118873.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        ],
-        appUrl: '',
-        sourceCodeUrl: 'https://github.com/ice-cream-sell-number',
-        challenge: '',
-      ),
-      const ProjectModel(
-        category: 'Others',
-        title: 'Microcontroller-Based Water Level Controller',
-        role: 'Independent Developer',
-        description:
-            'A smart device to automate water pump control, preventing overflow and conserving energy.',
-        technologies: ['Microcontrollers', 'Arduino', 'C'],
-        screenshots: [
-          'https://images.pexels.com/photos/230544/pexels-photo-230544.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          'https://images.pexels.com/photos/6214476/pexels-photo-6214476.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        ],
-        appUrl: '',
-        sourceCodeUrl:
-            'https://github.com/microcontroller-based-water-level-controller-in-domestic',
-        challenge: '',
-      ),
+
       const ProjectModel(
         category: 'Full System',
         title: 'My 2nd Home - Django Web Application',
@@ -521,73 +351,6 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Mobile',
-        title: 'Roadbuddy Capstone Project',
-        role: 'Independent Developer',
-        description:
-            'A travel or navigation-based Android app developed as a capstone project for enhanced user experience.',
-        technologies: ['Android', 'Java'],
-        screenshots: [
-          'https://images.pexels.com/photos/5391486/pexels-photo-5391486.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          'https://images.pexels.com/photos/4482732/pexels-photo-4482732.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        ],
-        appUrl: '',
-        sourceCodeUrl:
-            'https://github.com/Roadbuddy-Capstone-Project-Android-Java-Application',
-        challenge: '',
-      ),
-      const ProjectModel(
-        category: 'Mobile',
-        title: 'Simple Calculator',
-        role: 'Independent Developer',
-        description:
-            'A calculator app with infix-to-postfix conversion for efficient arithmetic operations.',
-        technologies: ['Android', 'Java'],
-        screenshots: [
-          'https://images.pexels.com/photos/6408282/pexels-photo-6408282.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          'https://images.pexels.com/photos/8867482/pexels-photo-8867482.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        ],
-        appUrl: '',
-        sourceCodeUrl:
-            'https://github.com/Simple-Calculator-Android-Java-Application',
-        challenge: '',
-      ),
-      const ProjectModel(
-        category: 'Mobile',
-        title: 'Simple Calculator Flutter App',
-        role: 'Independent Developer',
-        description:
-            'A cross-platform calculator app for basic arithmetic operations.',
-        technologies: ['Flutter', 'Dart'],
-        screenshots: [
-          'https://images.pexels.com/photos/2422588/pexels-photo-2422588.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          'https://images.pexels.com/photos/1118873/pexels-photo-1118873.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        ],
-        appUrl: '',
-        sourceCodeUrl: 'https://github.com/simple_calculator-flutter-app',
-        challenge: '',
-      ),
-      const ProjectModel(
-        category: 'Mobile',
-        title: 'Stopwatch',
-        role: 'Independent Developer',
-        description:
-            'A responsive stopwatch and timer app with background time tracking using Android services.',
-        technologies: [
-          'Android',
-          'Java',
-          'Service Class',
-          'Broadcast Receiver'
-        ],
-        screenshots: [
-          'https://images.pexels.com/photos/230544/pexels-photo-230544.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          'https://images.pexels.com/photos/6214476/pexels-photo-6214476.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        ],
-        appUrl: '',
-        sourceCodeUrl: 'https://github.com/Stopwatch-Android-Java-Application',
-        challenge: '',
-      ),
-      const ProjectModel(
         category: 'Full System',
         title: 'Todo App (Django + Flutter)',
         role: 'Independent Developer',
@@ -600,22 +363,6 @@ class PortfolioRepository {
         ],
         appUrl: '',
         sourceCodeUrl: 'https://github.com/todo-django-flutter',
-        challenge: '',
-      ),
-      const ProjectModel(
-        category: 'Mobile',
-        title: 'Travel Reservation Management System',
-        role: 'Independent Developer',
-        description:
-            'An Android app for managing travel reservations, streamlining booking and tracking processes.',
-        technologies: ['Android', 'Java'],
-        screenshots: [
-          'https://images.pexels.com/photos/5391486/pexels-photo-5391486.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          'https://images.pexels.com/photos/4482732/pexels-photo-4482732.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        ],
-        appUrl: '',
-        sourceCodeUrl:
-            'https://github.com/Travel-Reservation-Management-System-Android-Java-Application',
         challenge: '',
       ),
     ];
