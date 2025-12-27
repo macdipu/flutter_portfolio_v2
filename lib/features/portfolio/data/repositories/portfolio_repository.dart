@@ -248,58 +248,93 @@ class PortfolioRepository {
             'A health-focused app for calculating BMI and BMR with a clean interface. Originally developed in Java and later migrated to Flutter.',
         technologies: ['Android', 'Java', 'Flutter', 'BLoC'],
         screenshots: [
-          'https://images.pexels.com/photos/6408282/pexels-photo-6408282.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          'https://images.pexels.com/photos/8867482/pexels-photo-8867482.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+          'https://play-lh.googleusercontent.com/4tW_1Uqjdyxu-qhviCfys_RnLZP-872A3A-LkqgXcnizMlW7cJT77HyK_EZEZLrxXP0=w2560-h1440-rw',
+          'https://play-lh.googleusercontent.com/EA-TBb6YxeHqjhyos1kBUE4wsRw5GwpHxPGfzv9YgXXByQT4nUlaQ5WqO5jWXJYcgx2D=w2560-h1440-rw',
+          'https://play-lh.googleusercontent.com/DLD-aUKFEZFGiSYWZCoWCRMZp_3fVMij106Y7luKyZibHHDXDvbzsApUFMEaim4-1Ds=w2560-h1440-rw'
         ],
         appUrl:
-            'https://play.google.com/store/apps/details?id=com.chowdhuryelab.copacalculator',
-        sourceCodeUrl: 'https://github.com/BMI-and-BMR-Calculator',
+            'https://play.google.com/store/apps/details?id=com.chowdhuryelab.bmiandbmrcalculator',
+        sourceCodeUrl: '',
         challenge: '',
       ),
+
       const ProjectModel(
         category: 'Mobile',
         title: 'CGPA Calculator',
         role: 'Independent Developer',
         description:
-            'An academic tool for GPA/CGPA calculations, supporting both predefined and customizable grading systems.',
+        'An academic tool for GPA/CGPA calculations, supporting both predefined and customizable grading systems.',
         technologies: ['Flutter'],
         screenshots: [
-          'https://images.pexels.com/photos/2422588/pexels-photo-2422588.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          'https://images.pexels.com/photos/1118873/pexels-photo-1118873.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+          'https://play-lh.googleusercontent.com/7DkY7ksLnYOq4xSuqWAZ47HzzHuYOcZo7ZzV9YjzKHRnkkZ8-6ba4sdm35t3Fu4X89M=w2560-h1440-rw',
+          'https://play-lh.googleusercontent.com/6yp617LYNCjkaISGmdl02xMc6_IANLM-l4YsDkGQH1F6TWEefJqGb7Q5tpMJfpUikaI=w2560-h1440-rw',
+          'https://play-lh.googleusercontent.com/M3rwsN2bhXKt6Z1yyqEItpYCEF2X177r1Uve2oebx4G34Tow3yf5ucEh0nlLxD5OyRM=w2560-h1440-rw'
         ],
-        appUrl:
-            'https://play.google.com/store/apps/details?id=com.chowdhuryelab.copacalculater',
+        appUrl: 'https://play.google.com/store/apps/details?id=com.chowdhuryelab.cgpacalculator',
         sourceCodeUrl: '',
         challenge: '',
       ),
+
+      const ProjectModel(
+        category: 'Mobile',
+        title: 'QrXpert',
+        role: 'Independent Developer',
+        description:
+        'A QR code scanner & generator app with fast scanning and export features.',
+        technologies: ['Flutter'],
+        screenshots: [
+          'https://play-lh.googleusercontent.com/0CPsnGiyR9gq4sbY373UBSCW-zyJpg45S3PJrybsK4q4fUuhyCnd4xCEwmDw3j20vX4fBLw4Xs0BjuEY1JDnIAs=w2560-h1440-rw',
+        ],
+        appUrl: 'https://play.google.com/store/apps/details?id=com.chowdhuryelab.qrxpert',
+        sourceCodeUrl: '',
+        challenge: '',
+      ),
+
+      const ProjectModel(
+        category: 'Mobile',
+        title: 'Money Track',
+        role: 'Independent Developer',
+        description:
+        'A personal finance tracker to record expenses and incomes with intuitive UX.',
+        technologies: ['Flutter'],
+        screenshots: [
+          'https://play-lh.googleusercontent.com/1eDpRs1c1J0dTKmq4Xh6p4xgC_dZ8I9kCny6sXs3MLWl6-zhrEtPgIX5zeVhA5H-9SIxDnvii0OE9q_YpAfQ=w2560-h1440-rw',
+        ],
+        appUrl: 'https://play.google.com/store/apps/details?id=com.chowdhuryelab.moneytrack',
+        sourceCodeUrl: '',
+        challenge: '',
+      ),
+
+      const ProjectModel(
+        category: 'Mobile',
+        title: 'Weight Tracker',
+        role: 'Independent Developer',
+        description:
+        'An app to track weight over time with charts and progress insights.',
+        technologies: ['Flutter'],
+        screenshots: [
+'https://play-lh.googleusercontent.com/PKDE_y0bhpmcnBNCn8FaQecGvLu5JrZg7PR9P3WVrFPFnfL_6DtTa7JDQR4rdQrcmDiCTxinNvZyoJzItIJE=w2560-h1440-rw',
+          'https://play-lh.googleusercontent.com/5WCyC5htloE4CJhynChige0rzRtSAxSkunmwjEqF2v6_7Lf_fcSVWrOKnBpdD8ol-Hsg3VREqXXTEXvu_Iier6U=w2560-h1440-rw',
+          'https://play-lh.googleusercontent.com/_6NIvfBolO8iM6GOqOZAHLW-egt2zeG4IDMgkfDfTgP8pOz4sxUBlDloAzoRwj4sq6pvW9n6yMRxs4cccjsQ=w2560-h1440-rw'
+
+        ],
+        appUrl: 'https://play.google.com/store/apps/details?id=com.chowdhuryelab.weighttracker',
+        sourceCodeUrl: '',
+        challenge: '',
+      ),
+
       const ProjectModel(
         category: 'Mobile',
         title: 'FlashFy',
         role: 'Independent Developer',
         description:
-            'A mobile application for [description not provided in PDF].',
+        'A utility app (details based on Play Store listing).',
         technologies: ['Flutter'],
         screenshots: [
-          'https://images.pexels.com/photos/230544/pexels-photo-230544.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          'https://images.pexels.com/photos/6214476/pexels-photo-6214476.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+          'https://play-lh.googleusercontent.com/d-bj_BvhKTkTKTrxm5bl4xu_yLHBdFP4XO18nCywqqGlTDalZXkstWm5UUJAD6CXuN8=w2560-h1440-rw',
         ],
-        appUrl: 'https://play.google.com/store/apps/details?id=com.flashfy',
+        appUrl: 'https://play.google.com/store/apps/details?id=com.chowdhuryelab.flashfy',
         sourceCodeUrl: '',
-        challenge: '',
-      ),
-      const ProjectModel(
-        category: 'Mobile',
-        title: 'TripMeter - Bike Mileage & Maintenance Tracker',
-        role: 'Independent Developer',
-        description:
-            'A motorcycle tracking app for mileage, fuel logs, and service history, with real-time sync, offline mode, and Supabase backend.',
-        technologies: ['Flutter', 'GetX', 'SpringBoot'],
-        screenshots: [
-          'https://images.pexels.com/photos/7578926/pexels-photo-7578926.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          'https://images.pexels.com/photos/7579830/pexels-photo-7579830.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        ],
-        appUrl: '',
-        sourceCodeUrl: 'https://github.com/TripMeter',
         challenge: '',
       ),
 
@@ -318,6 +353,23 @@ class PortfolioRepository {
         sourceCodeUrl: 'https://github.com/flutter-portfolio-v2',
         challenge: '',
       ),
+
+      const ProjectModel(
+        category: 'Mobile',
+        title: 'TripMeter - Bike Mileage & Maintenance Tracker',
+        role: 'Independent Developer',
+        description:
+        'A motorcycle tracking app for mileage, fuel logs, and service history, with real-time sync, offline mode, and Supabase backend.',
+        technologies: ['Flutter', 'GetX', 'Supabase'],
+        screenshots: [
+          'https://images.pexels.com/photos/7578926/pexels-photo-7578926.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+          'https://images.pexels.com/photos/7579830/pexels-photo-7579830.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+        ],
+        appUrl: '',
+        sourceCodeUrl: 'https://github.com/TripMeter',
+        challenge: '',
+      ),
+
       const ProjectModel(
         category: 'Mobile',
         title: 'Greeneries E-Gardening',
