@@ -105,7 +105,7 @@ class ProjectModel extends Equatable {
   final String appUrl;
   final String sourceCodeUrl;
   final String challenge;
-  final String appIconUrl;
+  final String? appIconUrl;
 
   const ProjectModel({
     required this.category,
@@ -117,11 +117,11 @@ class ProjectModel extends Equatable {
     required this.appUrl,
     required this.sourceCodeUrl,
     required this.challenge,
-    required this.appIconUrl,
+    this.appIconUrl,
   });
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         category,
         title,
         role,
