@@ -1,3 +1,4 @@
+import 'package:any_image_view/any_image_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_portfolio/core/responsive/responsive_framework.dart';
@@ -217,12 +218,14 @@ class Portfolios extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // App icon
-        if (project.appIconUrl.isNotEmpty)
+        if (project.appIconUrl?.isNotEmpty ?? false)
           Padding(
             padding: const EdgeInsets.only(bottom: 16.0),
-            child: project.appIconUrl.startsWith('http')
-                ? Image.network(project.appIconUrl, width: 64, height: 64)
-                : Image.asset(project.appIconUrl, width: 64, height: 64),
+            child: AnyImageView(
+              imagePath: project.appIconUrl!,
+              width: 64,
+              height: 64,
+            ),
           ),
         // App name
         SelectableText(
@@ -236,6 +239,20 @@ class Portfolios extends StatelessWidget {
           style: descriptionStyle,
         ),
         const SizedBox(height: 16),
+        // Technologies
+        if (project.technologies.isNotEmpty)
+          Wrap(
+            spacing: 8.0,
+            runSpacing: 8.0,
+            children: project.technologies
+                .map((tech) => Chip(
+                      label: Text(tech),
+                      backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                      labelStyle: TextStyle(color: theme.colorScheme.onSurface),
+                    ))
+                .toList(),
+          ),
+        if (project.technologies.isNotEmpty) const SizedBox(height: 16),
         // App Store / Play Store buttons
         if (project.appUrl.isNotEmpty)
           ElevatedButton.icon(
@@ -254,7 +271,7 @@ class Portfolios extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: AppTheme.spacing32),
       decoration: BoxDecoration(
-        color: const Color(0xFF12141D),
+        color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(16),
       ),
       padding: const EdgeInsets.all(32),
