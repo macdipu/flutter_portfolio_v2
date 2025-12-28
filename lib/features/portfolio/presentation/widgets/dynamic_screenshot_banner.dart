@@ -1,3 +1,4 @@
+import 'package:any_image_view/any_image_view.dart';
 import 'package:flutter/material.dart';
 
 class DynamicScreenshotBanner extends StatelessWidget {
@@ -7,12 +8,12 @@ class DynamicScreenshotBanner extends StatelessWidget {
   final EdgeInsets? padding;
 
   const DynamicScreenshotBanner({
-    Key? key,
+    super.key,
     required this.screenshots,
     required this.details,
     this.bannerRatio = 16 / 9,
     this.padding,
-  }) : super(key: key);
+  });
 
   Widget _buildImage(String screenshot) {
     return Container(
@@ -28,9 +29,11 @@ class DynamicScreenshotBanner extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
-        child: screenshot.startsWith('http')
-            ? Image.network(screenshot, fit: BoxFit.cover)
-            : Image.asset(screenshot, fit: BoxFit.cover),
+        child: AnyImageView(
+          imagePath: screenshot,
+          useMemoryCache: true,
+          fit: BoxFit.cover,
+        )
       ),
     );
   }
@@ -74,7 +77,7 @@ class DynamicScreenshotBanner extends StatelessWidget {
                     .map((s) => Padding(
                           padding: const EdgeInsets.only(right: 16.0),
                           child: SizedBox(
-                            width: 200, // Fixed width for scroll
+                            width: 200,
                             child: AspectRatio(
                               aspectRatio: 9 / 16,
                               child: _buildImage(s),
@@ -128,23 +131,3 @@ class DynamicScreenshotBanner extends StatelessWidget {
     );
   }
 }
-
-// Example usage:
-/*
-DynamicScreenshotBanner(
-  screenshots: [
-    'https://example.com/screenshot1.png',
-    'assets/images/screenshot2.png',
-    'https://example.com/screenshot3.png',
-  ],
-  details: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text('Project Title', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-      SizedBox(height: 16),
-      Text('Description of the project...'),
-    ],
-  ),
-  bannerRatio: 16 / 9,
-)
-*/
