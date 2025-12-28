@@ -178,6 +178,7 @@ class PortfolioRepository {
             'https://play.google.com/store/apps/details?id=com.shell.agami&pcampaignid=web_share',
         sourceCodeUrl: '',
         challenge: '',
+        appIconUrl: 'https://play-lh.googleusercontent.com/qNFTKTGpMYFD1vyB7ilBMsFOd9pUjDHsU8BwszQnNuAFbWYlLPmZeuWqErMzfZ-gpA=w100',
       ),
       const ProjectModel(
         category: 'Mobile',
@@ -195,6 +196,7 @@ class PortfolioRepository {
             'https://play.google.com/store/apps/details?id=com.shell.consumer.shell_consumer&pcampaignid=web_share',
         sourceCodeUrl: '',
         challenge: '',
+        appIconUrl: 'https://play-lh.googleusercontent.com/pS0NM82Eucvil55Sk_pIBJSuOduZQTmh3Z2lFMtqQlJi7g-6TaPHma3KrOa9BGA3E2Gi=w100',
       ),
       const ProjectModel(
         category: 'Mobile',
@@ -209,6 +211,7 @@ class PortfolioRepository {
         appUrl: 'https://shamadhan.com.bd/',
         sourceCodeUrl: '',
         challenge: '',
+        appIconUrl: 'https://shamadhan.com.bd/wp-content/uploads/2025/12/app.png',
       ),
       const ProjectModel(
         category: 'Web',
@@ -224,6 +227,7 @@ class PortfolioRepository {
         appUrl: '',
         sourceCodeUrl: '',
         challenge: '',
+          appIconUrl: ''
       ),
       const ProjectModel(
         category: 'Mobile',
@@ -238,6 +242,7 @@ class PortfolioRepository {
         appUrl: '',
         sourceCodeUrl: '',
         challenge: '',
+          appIconUrl: ''
       ),
       // Personal Apps (Published)
       const ProjectModel(
@@ -256,6 +261,7 @@ class PortfolioRepository {
             'https://play.google.com/store/apps/details?id=com.chowdhuryelab.bmiandbmrcalculator',
         sourceCodeUrl: '',
         challenge: '',
+        appIconUrl: ''
       ),
 
       const ProjectModel(
@@ -273,6 +279,7 @@ class PortfolioRepository {
         appUrl: 'https://play.google.com/store/apps/details?id=com.chowdhuryelab.cgpacalculator',
         sourceCodeUrl: '',
         challenge: '',
+          appIconUrl: ''
       ),
 
       const ProjectModel(
@@ -288,6 +295,7 @@ class PortfolioRepository {
         appUrl: 'https://play.google.com/store/apps/details?id=com.chowdhuryelab.qrxpert',
         sourceCodeUrl: '',
         challenge: '',
+          appIconUrl: ''
       ),
 
       const ProjectModel(
@@ -303,6 +311,7 @@ class PortfolioRepository {
         appUrl: 'https://play.google.com/store/apps/details?id=com.chowdhuryelab.moneytrack',
         sourceCodeUrl: '',
         challenge: '',
+          appIconUrl: ''
       ),
 
       const ProjectModel(
@@ -321,6 +330,7 @@ class PortfolioRepository {
         appUrl: 'https://play.google.com/store/apps/details?id=com.chowdhuryelab.weighttracker',
         sourceCodeUrl: '',
         challenge: '',
+          appIconUrl: ''
       ),
 
       const ProjectModel(
@@ -336,6 +346,7 @@ class PortfolioRepository {
         appUrl: 'https://play.google.com/store/apps/details?id=com.chowdhuryelab.flashfy',
         sourceCodeUrl: '',
         challenge: '',
+          appIconUrl: ''
       ),
 
       const ProjectModel(
@@ -352,6 +363,7 @@ class PortfolioRepository {
         appUrl: '',
         sourceCodeUrl: 'https://github.com/flutter-portfolio-v2',
         challenge: '',
+          appIconUrl: ''
       ),
 
       const ProjectModel(
@@ -368,6 +380,7 @@ class PortfolioRepository {
         appUrl: '',
         sourceCodeUrl: 'https://github.com/TripMeter',
         challenge: '',
+          appIconUrl: ''
       ),
 
       const ProjectModel(
@@ -385,6 +398,7 @@ class PortfolioRepository {
         sourceCodeUrl:
             'https://github.com/Greeneries-E-Gardening-Android-Java-Application',
         challenge: '',
+          appIconUrl: ''
       ),
 
       const ProjectModel(
@@ -401,6 +415,7 @@ class PortfolioRepository {
         appUrl: '',
         sourceCodeUrl: 'https://github.com/my_2nd-home-django',
         challenge: '',
+          appIconUrl: ''
       ),
       const ProjectModel(
         category: 'Full System',
@@ -416,6 +431,7 @@ class PortfolioRepository {
         appUrl: '',
         sourceCodeUrl: 'https://github.com/todo-django-flutter',
         challenge: '',
+          appIconUrl: ''
       ),
     ];
   }
