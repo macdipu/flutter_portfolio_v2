@@ -5,10 +5,10 @@ packages:
     dependency: "direct main"
     description:
       name: any_image_view
-      sha256: "5150fc0bda1f526fc47062afd6380164f0c4657106a4f6a5772137d8fe5ffcb5"
+      sha256: "1499709f390304d8aad5ac127dbcaeecbfe053caf7785ddabc4215814501d01a"
       url: "https://pub.dev"
     source: hosted
-    version: "1.8.0"
+    version: "1.9.0"
   archive:
     dependency: transitive
     description:
@@ -492,10 +492,10 @@ packages:
     dependency: "direct main"
     description:
       name: shared_preferences
-      sha256: "6e8bf70b7fef813df4e9a36f658ac46d107db4b4cfe1048b477d4e453a8159f5"
+      sha256: "2939ae520c9024cb197fc20dee269cd8cdbf564c8b5746374ec6cacdc5169e64"
       url: "https://pub.dev"
     source: hosted
-    version: "2.5.3"
+    version: "2.5.4"
   shared_preferences_android:
     dependency: transitive
     description:
