@@ -12,6 +12,18 @@ enum ProjectCategory {
   final String displayName;
 }
 
+enum TechStackCategory {
+  all('All'),
+  frameworks('Frameworks'),
+  programmingLanguages('Programming Languages'),
+  uiDesign('UI & Design'),
+  devTools('Dev Tools & Productivity'),
+  otherTechnologies('Other Technologies');
+
+  const TechStackCategory(this.displayName);
+  final String displayName;
+}
+
 class ProfileModel extends Equatable {
   final String name;
   final String title;
@@ -164,7 +176,7 @@ class ServiceModel extends Equatable {
 
 class TechStackModel extends Equatable {
   final String name;
-  final String category;
+  final TechStackCategory category;
   final String iconUrl;
 
   const TechStackModel({

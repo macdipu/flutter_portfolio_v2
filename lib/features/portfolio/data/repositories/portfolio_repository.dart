@@ -476,81 +476,81 @@ class PortfolioRepository {
       // Frameworks
       const TechStackModel(
         name: 'Flutter',
-        category: 'Frameworks',
+        category: TechStackCategory.frameworks,
         iconUrl: 'https://img.icons8.com/color/96/null/flutter.png',
       ),
       const TechStackModel(
         name: 'React Native',
-        category: 'Frameworks',
+        category: TechStackCategory.frameworks,
         iconUrl: 'https://img.icons8.com/color/96/null/react-native.png',
       ),
 
       // Programming Languages
       const TechStackModel(
         name: 'Dart',
-        category: 'Programming Languages',
+        category: TechStackCategory.programmingLanguages,
         iconUrl: 'https://img.icons8.com/color/96/null/dart.png',
       ),
       const TechStackModel(
         name: 'JavaScript',
-        category: 'Programming Languages',
+        category: TechStackCategory.programmingLanguages,
         iconUrl: 'https://img.icons8.com/color/96/null/javascript.png',
       ),
       const TechStackModel(
         name: 'TypeScript',
-        category: 'Programming Languages',
+        category: TechStackCategory.programmingLanguages,
         iconUrl: 'https://img.icons8.com/color/96/null/typescript.png',
       ),
 
       // UI & Design
       const TechStackModel(
         name: 'Material Design',
-        category: 'UI & Design',
+        category: TechStackCategory.uiDesign,
         iconUrl: 'https://img.icons8.com/color/96/null/material-ui.png',
       ),
       const TechStackModel(
         name: 'Cupertino',
-        category: 'UI & Design',
+        category: TechStackCategory.uiDesign,
         iconUrl: 'https://img.icons8.com/color/96/null/ios-logo.png',
       ),
       const TechStackModel(
         name: 'Figma',
-        category: 'UI & Design',
+        category: TechStackCategory.uiDesign,
         iconUrl: 'https://img.icons8.com/color/96/null/figma.png',
       ),
 
       // Dev Tools & Productivity
       const TechStackModel(
         name: 'Git',
-        category: 'Dev Tools & Productivity',
+        category: TechStackCategory.devTools,
         iconUrl: 'https://img.icons8.com/color/96/null/git.png',
       ),
       const TechStackModel(
         name: 'VS Code',
-        category: 'Dev Tools & Productivity',
+        category: TechStackCategory.devTools,
         iconUrl:
             'https://img.icons8.com/color/96/null/visual-studio-code-2019.png',
       ),
       const TechStackModel(
         name: 'Android Studio',
-        category: 'Dev Tools & Productivity',
+        category: TechStackCategory.devTools,
         iconUrl: 'https://img.icons8.com/color/96/null/android-studio--v3.png',
       ),
 
       // Other Technologies
       const TechStackModel(
         name: 'Firebase',
-        category: 'Other Technologies',
+        category: TechStackCategory.otherTechnologies,
         iconUrl: 'https://img.icons8.com/color/96/null/firebase.png',
       ),
       const TechStackModel(
         name: 'RESTful APIs',
-        category: 'Other Technologies',
+        category: TechStackCategory.otherTechnologies,
         iconUrl: 'https://img.icons8.com/color/96/null/api-settings.png',
       ),
       const TechStackModel(
         name: 'GraphQL',
-        category: 'Other Technologies',
+        category: TechStackCategory.otherTechnologies,
         iconUrl: 'https://img.icons8.com/color/96/null/graphql.png',
       ),
     ];
