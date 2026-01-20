@@ -163,7 +163,7 @@ class PortfolioRepository {
     return [
       // Professional Projects
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'Shell Agami App',
         role: 'Developer at Polygon Technology',
         description:
@@ -181,7 +181,7 @@ class PortfolioRepository {
         appIconUrl: 'https://play-lh.googleusercontent.com/qNFTKTGpMYFD1vyB7ilBMsFOd9pUjDHsU8BwszQnNuAFbWYlLPmZeuWqErMzfZ-gpA=w100',
       ),
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'Shell Consumer App',
         role: 'Developer at Polygon Technology',
         description:
@@ -199,7 +199,7 @@ class PortfolioRepository {
         appIconUrl: 'https://play-lh.googleusercontent.com/pS0NM82Eucvil55Sk_pIBJSuOduZQTmh3Z2lFMtqQlJi7g-6TaPHma3KrOa9BGA3E2Gi=w100',
       ),
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'Shamadhan Pay - User App',
         role: 'Developer at Polygon Technology',
         description:
@@ -214,7 +214,7 @@ class PortfolioRepository {
         appIconUrl: 'https://shamadhan.com.bd/wp-content/uploads/2025/12/app.png',
       ),
       const ProjectModel(
-        category: 'Web',
+        category: ProjectCategory.web,
         title: 'Shamadhan Pay - Merchant Portal',
         role: 'Developer at Polygon Technology',
         description:
@@ -230,7 +230,7 @@ class PortfolioRepository {
           appIconUrl: ''
       ),
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'Agave',
         role: 'Developer at Polygon Technology',
         description:
@@ -246,7 +246,7 @@ class PortfolioRepository {
       ),
       // Personal Apps (Published)
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'BMI & BMR Calculator',
         role: 'Independent Developer',
         description:
@@ -265,7 +265,7 @@ class PortfolioRepository {
       ),
 
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'CGPA Calculator',
         role: 'Independent Developer',
         description:
@@ -283,7 +283,7 @@ class PortfolioRepository {
       ),
 
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'QrXpert',
         role: 'Independent Developer',
         description:
@@ -299,7 +299,7 @@ class PortfolioRepository {
       ),
 
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'Money Track',
         role: 'Independent Developer',
         description:
@@ -315,7 +315,7 @@ class PortfolioRepository {
       ),
 
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'Weight Tracker',
         role: 'Independent Developer',
         description:
@@ -334,7 +334,7 @@ class PortfolioRepository {
       ),
 
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'FlashFy',
         role: 'Independent Developer',
         description:
@@ -350,7 +350,7 @@ class PortfolioRepository {
       ),
 
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'Flutter Portfolio Landing Page',
         role: 'Independent Developer',
         description:
@@ -367,7 +367,7 @@ class PortfolioRepository {
       ),
 
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'TripMeter - Bike Mileage & Maintenance Tracker',
         role: 'Independent Developer',
         description:
@@ -384,7 +384,7 @@ class PortfolioRepository {
       ),
 
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'Greeneries E-Gardening',
         role: 'Independent Developer',
         description:
@@ -402,7 +402,7 @@ class PortfolioRepository {
       ),
 
       const ProjectModel(
-        category: 'Full System',
+        category: ProjectCategory.fullSystem,
         title: 'My 2nd Home - Django Web Application',
         role: 'Independent Developer',
         description:
@@ -418,7 +418,7 @@ class PortfolioRepository {
           appIconUrl: ''
       ),
       const ProjectModel(
-        category: 'Full System',
+        category: ProjectCategory.fullSystem,
         title: 'Todo App (Django + Flutter)',
         role: 'Independent Developer',
         description:
