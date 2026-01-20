@@ -12,15 +12,6 @@ import 'package:url_launcher/url_launcher.dart';
 class PortfolioSection extends StatelessWidget {
   const PortfolioSection({super.key});
 
-  final categories = const [
-    'All',
-    'Full System',
-    'Mobile',
-    'Web',
-    'Backend',
-    'Others',
-  ];
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PortfolioBloc, PortfolioState>(
@@ -40,6 +31,7 @@ class PortfolioSection extends StatelessWidget {
         }
 
         final filteredProjects = state.filteredProjects;
+        final categories = ProjectCategory.values.where((c) => c == ProjectCategory.all || profile.projects.any((p) => p.category == c)).toList();
 
         return SectionWrapper(
           sectionId: 'portfolio',
@@ -48,22 +40,22 @@ class PortfolioSection extends StatelessWidget {
           addTopPadding: true,
           addBottomPadding: true,
           mobileChild: _buildLayout(
-              context, filteredProjects, state.selectedProjectCategory!),
+              context, filteredProjects, state.selectedProjectCategory!, categories),
           tabletChild: _buildLayout(
-              context, filteredProjects, state.selectedProjectCategory!),
+              context, filteredProjects, state.selectedProjectCategory!, categories),
           smallLaptopChild: _buildLayout(
-              context, filteredProjects, state.selectedProjectCategory!),
+              context, filteredProjects, state.selectedProjectCategory!, categories),
           desktopChild: _buildLayout(
-              context, filteredProjects, state.selectedProjectCategory!),
+              context, filteredProjects, state.selectedProjectCategory!, categories),
           largeDesktopChild: _buildLayout(
-              context, filteredProjects, state.selectedProjectCategory!),
+              context, filteredProjects, state.selectedProjectCategory!, categories),
         );
       },
     );
   }
 
   Widget _buildLayout(BuildContext context, List<ProjectModel> projects,
-      String selectedCategory) {
+      ProjectCategory selectedCategory, List<ProjectCategory> categories) {
     final theme = Theme.of(context);
     final contentWidth = context.contentWidth;
 
@@ -105,8 +97,8 @@ class PortfolioSection extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.only(right: AppTheme.spacing8),
                   child: ChoiceChip(
-                    label: SelectableText(
-                      category,
+                    label: Text(
+                      category.displayName,
                       style: chipLabelStyle.copyWith(
                         color: selectedCategory == category
                             ? theme.colorScheme.primary

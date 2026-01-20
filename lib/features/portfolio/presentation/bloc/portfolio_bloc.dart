@@ -90,6 +90,7 @@ class PortfolioBloc extends Bloc<PortfolioEvent, PortfolioState> {
 
   void _onUpdateProjectCategory(
       UpdateProjectCategory event, Emitter<PortfolioState> emit) {
+    if (event.category == state.selectedProjectCategory) return;
     final filtered = event.category == ProjectCategory.all
         ? state.profile!.projects
         : state.profile!.projects
