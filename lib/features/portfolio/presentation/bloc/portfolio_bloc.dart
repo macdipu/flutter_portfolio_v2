@@ -31,7 +31,7 @@ class PortfolioBloc extends Bloc<PortfolioEvent, PortfolioState> {
         profile: profile,
         selectedTechStacksCategory: 'All',
         filteredTechStacks: profile.techStacks,
-        selectedProjectCategory: 'All',
+        selectedProjectCategory: ProjectCategory.all,
         filteredProjects: profile.projects,
       ));
     } catch (e) {
@@ -90,7 +90,7 @@ class PortfolioBloc extends Bloc<PortfolioEvent, PortfolioState> {
 
   void _onUpdateProjectCategory(
       UpdateProjectCategory event, Emitter<PortfolioState> emit) {
-    final filtered = event.category == 'All'
+    final filtered = event.category == ProjectCategory.all
         ? state.profile!.projects
         : state.profile!.projects
             .where((p) => p.category == event.category)

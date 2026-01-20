@@ -1,5 +1,17 @@
 import 'package:equatable/equatable.dart';
 
+enum ProjectCategory {
+  all('All'),
+  fullSystem('Full System'),
+  mobile('Mobile'),
+  web('Web'),
+  backend('Backend'),
+  others('Others');
+
+  const ProjectCategory(this.displayName);
+  final String displayName;
+}
+
 class ProfileModel extends Equatable {
   final String name;
   final String title;
@@ -96,7 +108,7 @@ class EducationModel extends Equatable {
 }
 
 class ProjectModel extends Equatable {
-  final String category;
+  final ProjectCategory category;
   final String title;
   final String role;
   final String description;
