@@ -27,7 +27,7 @@ class SubmitContactForm extends PortfolioEvent {
 }
 
 class UpdateTechStackCategory extends PortfolioEvent {
-  final String category;
+  final TechStackCategory category;
 
   const UpdateTechStackCategory(this.category);
 

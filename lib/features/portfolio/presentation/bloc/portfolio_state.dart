@@ -8,7 +8,7 @@ class PortfolioState extends Equatable {
   final bool isContactFormSubmitting;
   final bool isContactFormSubmitted;
   final String? contactFormStatus;
-  final String selectedTechStacksCategory;
+  final TechStackCategory selectedTechStacksCategory;
   final List<TechStackModel> filteredTechStacks;
   final int visibleBlogPostCount;
   final ProjectCategory? selectedProjectCategory;
@@ -22,7 +22,7 @@ class PortfolioState extends Equatable {
     this.isContactFormSubmitting = false,
     this.isContactFormSubmitted = false,
     this.contactFormStatus,
-    this.selectedTechStacksCategory = 'All',
+    this.selectedTechStacksCategory = TechStackCategory.all,
     this.filteredTechStacks = const [],
     this.visibleBlogPostCount = 6,
     this.selectedProjectCategory,
@@ -37,7 +37,7 @@ class PortfolioState extends Equatable {
     bool? isContactFormSubmitting,
     bool? isContactFormSubmitted,
     String? contactFormStatus,
-    String? selectedTechStacksCategory,
+    TechStackCategory? selectedTechStacksCategory,
     List<TechStackModel>? filteredTechStacks,
     int? visibleBlogPostCount,
     ProjectCategory? selectedProjectCategory,

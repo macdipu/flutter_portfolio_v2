@@ -29,7 +29,7 @@ class PortfolioBloc extends Bloc<PortfolioEvent, PortfolioState> {
       emit(state.copyWith(
         isLoading: false,
         profile: profile,
-        selectedTechStacksCategory: 'All',
+        selectedTechStacksCategory: TechStackCategory.all,
         filteredTechStacks: profile.techStacks,
         selectedProjectCategory: ProjectCategory.all,
         filteredProjects: profile.projects,
@@ -77,7 +77,8 @@ class PortfolioBloc extends Bloc<PortfolioEvent, PortfolioState> {
   void _onUpdateTechStackCategory(
       UpdateTechStackCategory event, Emitter<PortfolioState> emit) {
     if (state.profile == null) return;
-    final filteredTechStacks = event.category == 'All'
+    if (event.category == state.selectedTechStacksCategory) return;
+    final filteredTechStacks = event.category == TechStackCategory.all
         ? state.profile!.techStacks
         : state.profile!.techStacks
             .where((tech) => tech.category == event.category)

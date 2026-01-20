@@ -37,32 +37,25 @@ class TechStackSection extends StatelessWidget {
           addTopPadding: true,
           addBottomPadding: true,
           mobileChild: _buildLayout(context, state.filteredTechStacks,
-              state.selectedTechStacksCategory),
+              state.selectedTechStacksCategory, profile),
           tabletChild: _buildLayout(context, state.filteredTechStacks,
-              state.selectedTechStacksCategory),
+              state.selectedTechStacksCategory, profile),
           smallLaptopChild: _buildLayout(context, state.filteredTechStacks,
-              state.selectedTechStacksCategory),
+              state.selectedTechStacksCategory, profile),
           desktopChild: _buildLayout(context, state.filteredTechStacks,
-              state.selectedTechStacksCategory),
+              state.selectedTechStacksCategory, profile),
           largeDesktopChild: _buildLayout(context, state.filteredTechStacks,
-              state.selectedTechStacksCategory),
+              state.selectedTechStacksCategory, profile),
         );
       },
     );
   }
 
   Widget _buildLayout(BuildContext context,
-      List<TechStackModel> filteredTechStacks, selectedCategory) {
+      List<TechStackModel> filteredTechStacks, TechStackCategory selectedCategory, ProfileModel profile) {
     final theme = Theme.of(context);
     final contentWidth = context.contentWidth;
-    final categories = [
-      'All',
-      'Frameworks',
-      'Programming Languages',
-      'UI & Design',
-      'Dev Tools & Productivity',
-      'Other Technologies',
-    ];
+    final categories = TechStackCategory.values.where((c) => c == TechStackCategory.all || profile.techStacks.any((t) => t.category == c)).toList();
 
     // Define responsive text style for category chip
     final chipLabelStyle = theme.textTheme.bodyMedium?.copyWith(
@@ -104,7 +97,7 @@ class TechStackSection extends StatelessWidget {
                   padding: const EdgeInsets.only(right: AppTheme.spacing8),
                   child: ChoiceChip(
                     label: Text(
-                      category,
+                      category.displayName,
                       style: chipLabelStyle.copyWith(
                         color: selectedCategory == category
                             ? theme.colorScheme.primary
