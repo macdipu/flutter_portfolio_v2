@@ -163,7 +163,7 @@ class PortfolioRepository {
     return [
       // Professional Projects
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'Shell Consumer App',
         role: 'Developer at Polygon Technology',
         description:
@@ -179,7 +179,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'Shamadhan Pay - User App',
         role: 'Developer at Polygon Technology',
         description:
@@ -194,7 +194,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Web',
+        category: ProjectCategory.web,
         title: 'Shamadhan Pay - Merchant Portal',
         role: 'Developer at Polygon Technology',
         description:
@@ -209,7 +209,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'Agave',
         role: 'Developer at Polygon Technology',
         description:
@@ -225,7 +225,7 @@ class PortfolioRepository {
       ),
       // Personal Apps (Published)
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'BMI & BMR Calculator',
         role: 'Independent Developer',
         description:
@@ -241,7 +241,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'CGPA Calculator',
         role: 'Independent Developer',
         description:
@@ -257,7 +257,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'FlashFy',
         role: 'Independent Developer',
         description:
@@ -272,7 +272,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'TripMeter - Bike Mileage & Maintenance Tracker',
         role: 'Independent Developer',
         description:
@@ -288,7 +288,7 @@ class PortfolioRepository {
       ),
       // Other Projects
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'Address Book (Firebase)',
         role: 'Independent Developer',
         description:
@@ -304,7 +304,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'Address Book (SQLite)',
         role: 'Independent Developer',
         description:
@@ -320,7 +320,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Backend',
+        category: ProjectCategory.backend,
         title: 'AI Model for Predicting Price',
         role: 'Independent Developer',
         description:
@@ -335,7 +335,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Backend',
+        category: ProjectCategory.backend,
         title: 'AI Model of Fashion Project',
         role: 'Independent Developer',
         description:
@@ -350,7 +350,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'BMI and BMR Calculator (Android)',
         role: 'Independent Developer',
         description:
@@ -366,7 +366,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Backend',
+        category: ProjectCategory.backend,
         title: 'Classification Problem of Supervised Learning with Iris Flower',
         role: 'Independent Developer',
         description:
@@ -382,7 +382,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'Contact Info (SharedPreferences)',
         role: 'Independent Developer',
         description:
@@ -398,7 +398,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'E-Commerce Flutter App',
         role: 'Independent Developer',
         description:
@@ -413,7 +413,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'Event Management',
         role: 'Independent Developer',
         description:
@@ -429,7 +429,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'Flutter Clean Architecture BLoC',
         role: 'Independent Developer',
         description:
@@ -444,7 +444,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'Flutter Portfolio Landing Page',
         role: 'Independent Developer',
         description:
@@ -459,7 +459,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'Greeneries E-Gardening',
         role: 'Independent Developer',
         description:
@@ -475,7 +475,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Backend',
+        category: ProjectCategory.backend,
         title: 'Ice Cream Sell Number',
         role: 'Independent Developer',
         description:
@@ -490,7 +490,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Others',
+        category: ProjectCategory.others,
         title: 'Microcontroller-Based Water Level Controller',
         role: 'Independent Developer',
         description:
@@ -506,7 +506,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Full System',
+        category: ProjectCategory.fullSystem,
         title: 'My 2nd Home - Django Web Application',
         role: 'Independent Developer',
         description:
@@ -521,7 +521,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'Roadbuddy Capstone Project',
         role: 'Independent Developer',
         description:
@@ -537,7 +537,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'Simple Calculator',
         role: 'Independent Developer',
         description:
@@ -553,7 +553,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'Simple Calculator Flutter App',
         role: 'Independent Developer',
         description:
@@ -568,7 +568,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'Stopwatch',
         role: 'Independent Developer',
         description:
@@ -588,7 +588,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Full System',
+        category: ProjectCategory.fullSystem,
         title: 'Todo App (Django + Flutter)',
         role: 'Independent Developer',
         description:
@@ -603,7 +603,7 @@ class PortfolioRepository {
         challenge: '',
       ),
       const ProjectModel(
-        category: 'Mobile',
+        category: ProjectCategory.mobile,
         title: 'Travel Reservation Management System',
         role: 'Independent Developer',
         description:

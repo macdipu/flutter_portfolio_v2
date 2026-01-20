@@ -36,6 +36,6 @@ class UpdateTechStackCategory extends PortfolioEvent {
 }
 
 class UpdateProjectCategory extends PortfolioEvent {
-  final String category;
+  final ProjectCategory category;
   const UpdateProjectCategory(this.category);
 }

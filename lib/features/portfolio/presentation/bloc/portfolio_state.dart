@@ -11,7 +11,7 @@ class PortfolioState extends Equatable {
   final String selectedTechStacksCategory;
   final List<TechStackModel> filteredTechStacks;
   final int visibleBlogPostCount;
-  final String? selectedProjectCategory;
+  final ProjectCategory? selectedProjectCategory;
   final List<ProjectModel> filteredProjects;
 
   const PortfolioState({
@@ -40,7 +40,7 @@ class PortfolioState extends Equatable {
     String? selectedTechStacksCategory,
     List<TechStackModel>? filteredTechStacks,
     int? visibleBlogPostCount,
-    String? selectedProjectCategory,
+    ProjectCategory? selectedProjectCategory,
     List<ProjectModel>? filteredProjects,
   }) {
     return PortfolioState(
