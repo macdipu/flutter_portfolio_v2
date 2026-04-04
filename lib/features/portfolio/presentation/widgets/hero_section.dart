@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -167,8 +169,10 @@ class HeroSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Flexible(child: SizedBox(height: 20)),
-              _buildHeroImage(profile.avatarUrl, imageSize),
+              _buildHeroImage(context, profile.avatarUrl, imageSize),
               const SizedBox(height: 24),
+              _buildAvailableBadge(context, isCentered: true),
+              const SizedBox(height: 12),
               SelectableText(
                 'Hello, I\'m',
                 style: greetingStyle,
@@ -231,6 +235,8 @@ class HeroSection extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              _buildAvailableBadge(context),
+              const SizedBox(height: 16),
               SelectableText(
                 'Hello, I\'m',
                 style: greetingStyle,
@@ -267,22 +273,250 @@ class HeroSection extends StatelessWidget {
             ],
           ),
         ),
-        _buildHeroImage(profile.avatarUrl, imageSize),
+        _buildHeroImage(context, profile.avatarUrl, imageSize),
       ],
     );
   }
 
-  Widget _buildHeroImage(String avatarUrl, double size) {
-    return ResponsiveImage(
-      imageUrl: avatarUrl,
-      width: size,
-      height: size,
-      borderRadius: BorderRadius.circular(size / 2),
-      fit: BoxFit.cover,
+  Widget _buildHeroImage(BuildContext context, String avatarUrl, double size) {
+    final orbitSize = size * 1.45;
+
+    // Tag sizes / padding (responsive)
+    final tagFontSize = context.responsiveValue<double>(
+      mobile: 14,
+      tablet: 15,
+      smallLaptop: 16,
+      desktop: 16,
+      largeDesktop: 18,
+    );
+
+    final tagIconSize = context.responsiveValue<double>(
+      mobile: 14,
+      tablet: 15,
+      smallLaptop: 16,
+      desktop: 16,
+      largeDesktop: 18,
+    );
+
+    final tagPadding = context.responsiveValue<EdgeInsets>(
+      mobile: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      tablet: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+      smallLaptop: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
+      desktop: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      largeDesktop: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+    );
+
+    // Build the portrait area mirroring the ProfileCard composition
+    return _HoverFloat(
+      child: SizedBox(
+        width: orbitSize,
+        height: orbitSize,
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.center,
+          children: [
+            // Larger orbit ring (subtle pulsing)
+            Container(
+              width: orbitSize,
+              height: orbitSize,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Theme.of(context).dividerColor.withValues(alpha: 0.08),
+                  width: 1,
+                ),
+              ),
+            ).animate(onPlay: (controller) => controller.repeat(reverse: true)).scale(
+                  begin: const Offset(0.995, 0.995),
+                  end: const Offset(1.005, 1.005),
+                  duration: 3000.ms,
+                ),
+
+            // Slightly-smaller orbit ring with a faint border (slower subtle motion)
+            Container(
+              width: size * 1.2,
+              height: size * 1.2,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Theme.of(context).dividerColor.withValues(alpha: 0.14),
+                  width: 1,
+                ),
+              ),
+            ).animate(onPlay: (controller) => controller.repeat()).rotate(
+                  // one full turn every 20s
+                  begin: 0.0,
+                  end: math.pi * 2,
+                  duration: 20000.ms,
+                ),
+
+            // Main profile image container (border + shadow)
+            Container(
+              width: size,
+              height: size,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
+                  width: 2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
+                    blurRadius: 30,
+                    spreadRadius: 6,
+                  )
+                ],
+              ),
+              child: ClipOval(
+                child: ResponsiveImage(
+                  imageUrl: avatarUrl,
+                  width: size,
+                  height: size,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ).animate().fade(duration: 800.ms, delay: 300.ms).scale(begin: const Offset(0.96, 0.96)),
+
+            // Floating tech badges converted to orbiting badges centered in the stack
+            // Each _OrbitBadge translates its child around the center using a controller
+            _OrbitBadge(
+              radius: size * 0.62,
+              initialAngle: -math.pi / 4, // top-right
+              duration: const Duration(seconds: 11),
+              clockwise: true,
+              child: _buildFloatingTag(
+                label: 'Flutter',
+                icon: Icons.flutter_dash,
+                delayMs: 300,
+                iconSize: tagIconSize,
+                fontSize: tagFontSize,
+                padding: tagPadding,
+              ),
+            ),
+
+            _OrbitBadge(
+              radius: size * 0.68,
+              initialAngle: math.pi, // left
+              duration: const Duration(seconds: 13),
+              clockwise: false,
+              child: _buildFloatingTag(
+                label: 'Mobile',
+                icon: Icons.phone_android,
+                delayMs: 500,
+                iconSize: tagIconSize,
+                fontSize: tagFontSize,
+                padding: tagPadding,
+              ),
+            ),
+
+            _OrbitBadge(
+              radius: size * 0.64,
+              initialAngle: math.pi / 6, // upper-right-ish
+              duration: const Duration(seconds: 9),
+              clockwise: true,
+              child: _buildFloatingTag(
+                label: 'Web',
+                icon: Icons.web,
+                delayMs: 700,
+                iconSize: tagIconSize,
+                fontSize: tagFontSize,
+                padding: tagPadding,
+              ),
+            ),
+
+            _OrbitBadge(
+              radius: size * 0.5,
+              initialAngle: math.pi * 0.6, // bottom-right-ish
+              duration: const Duration(seconds: 14),
+              clockwise: false,
+              child: _buildFloatingTag(
+                label: 'Desktop',
+                icon: Icons.desktop_windows,
+                delayMs: 900,
+                iconSize: tagIconSize,
+                fontSize: tagFontSize,
+                padding: tagPadding,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFloatingTag({
+    required String label,
+    required IconData icon,
+    required int delayMs,
+    required double iconSize,
+    required double fontSize,
+    required EdgeInsets padding,
+  }) {
+    return Container(
+      padding: padding,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.black.withValues(alpha: 0.2),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.15),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: iconSize),
+          const SizedBox(width: 8),
+          Text(
+            label,
+            style: TextStyle(fontSize: fontSize),
+          ),
+        ],
+      ),
     )
         .animate()
-        .fade(duration: 800.ms, delay: 400.ms)
-        .scale(begin: const Offset(0.8, 0.8));
+        .fadeIn(delay: delayMs.ms, duration: 600.ms)
+        .slideY(begin: 0.2, end: 0.0, delay: delayMs.ms, duration: 600.ms);
+  }
+
+  Widget _buildAvailableBadge(BuildContext context, {bool isCentered = false}) {
+    final badgeTextStyle = Theme.of(context).textTheme.labelMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ) ??
+        const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+        );
+
+    return Align(
+      alignment: isCentered ? Alignment.center : Alignment.centerLeft,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(
+            color: Theme.of(context).dividerColor,
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.circle,
+              size: 8,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            const SizedBox(width: 8),
+            Text('Available for work', style: badgeTextStyle),
+          ],
+        ),
+      )
+          .animate()
+          .fade(duration: 450.ms)
+          .slideY(begin: -0.2, end: 0, duration: 450.ms),
+    );
   }
 
   Widget _buildButtons(BuildContext context, {bool isVertical = false}) {
@@ -354,6 +588,98 @@ class HeroSection extends StatelessWidget {
       mainAxisAlignment:
           isVertical ? MainAxisAlignment.center : MainAxisAlignment.start,
       children: children,
+    );
+  }
+}
+
+class _HoverFloat extends StatefulWidget {
+  const _HoverFloat({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_HoverFloat> createState() => _HoverFloatState();
+}
+
+class _HoverFloatState extends State<_HoverFloat> {
+  bool _isHovering = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovering = true),
+      onExit: (_) => setState(() => _isHovering = false),
+      cursor: SystemMouseCursors.click,
+      child: AnimatedScale(
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOut,
+        scale: _isHovering ? 1.03 : 1.0,
+        child: widget.child
+            .animate(onPlay: (controller) => controller.repeat(reverse: true))
+            .moveY(
+              begin: -5,
+              end: 5,
+              duration: 3200.ms,
+              curve: Curves.easeInOut,
+            ),
+      ),
+    );
+  }
+}
+
+class _OrbitBadge extends StatefulWidget {
+  const _OrbitBadge({
+    required this.child,
+    required this.radius,
+    required this.initialAngle,
+    required this.duration,
+    this.clockwise = true,
+  });
+
+  final Widget child;
+  final double radius;
+  final double initialAngle;
+  final Duration duration;
+  final bool clockwise;
+
+  @override
+  State<_OrbitBadge> createState() => _OrbitBadgeState();
+}
+
+class _OrbitBadgeState extends State<_OrbitBadge>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: widget.duration,
+    )..repeat();
+
+    _animation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.linear,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final angle = widget.clockwise ? -math.pi * 2 * _animation.value : math.pi * 2 * _animation.value;
+    return Transform.translate(
+      offset: Offset.fromDirection(angle + widget.initialAngle, widget.radius),
+      child: widget.child,
     );
   }
 }
