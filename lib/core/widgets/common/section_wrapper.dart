@@ -3,11 +3,17 @@ import 'package:flutter_portfolio/core/responsive/responsive_framework.dart';
 import 'package:flutter_portfolio/core/widgets/common/section_header.dart';
 
 class SectionWrapper extends StatelessWidget {
+  /// Single adaptive child — use this when the section handles its own layout.
+  /// When provided, device-specific children are ignored.
+  final Widget? child;
+
+  // Device-specific children (cascade fallback: largeDesktop→desktop→…→mobile)
   final Widget? mobileChild;
   final Widget? tabletChild;
   final Widget? smallLaptopChild;
   final Widget? desktopChild;
   final Widget? largeDesktopChild;
+
   final String? sectionId;
   final Color? backgroundColor;
   final Gradient? backgroundGradient;
@@ -26,6 +32,7 @@ class SectionWrapper extends StatelessWidget {
 
   const SectionWrapper({
     super.key,
+    this.child,
     this.mobileChild,
     this.tabletChild,
     this.smallLaptopChild,
@@ -51,16 +58,11 @@ class SectionWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
 
-    // Get responsive padding based on device type
-    final defaultPadding = _getDefaultPadding(context);
-    final effectivePadding = padding ?? defaultPadding;
-
-    // Determine content max width for better readability on large screens
+    final defaultPad = _getDefaultPadding(context);
+    final effectivePadding = padding ?? defaultPad;
     final contentMaxWidth = maxWidth ?? _getContentMaxWidth(context);
 
-    // Build the header if title or subtitle is provided
     Widget? header;
     if (title != null || subtitle != null) {
       header = SectionHeader(
@@ -73,27 +75,20 @@ class SectionWrapper extends StatelessWidget {
 
     return ResponsiveBuilder(
       builder: (context, info) {
-        // Select the appropriate child based on device type
-        Widget content =
-            _getResponsiveChild(info.deviceType) ?? const SizedBox.shrink();
+        Widget content = child ?? _getResponsiveChild(info.deviceType) ?? const SizedBox.shrink();
 
-        // Wrap content with constraints for better web layout
         if (centerContent) {
           content = Center(
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 maxWidth: contentMaxWidth,
-                minHeight:
-                fullHeight ? screenHeight - effectivePadding.vertical : 0,
+                minHeight: fullHeight ? screenHeight - effectivePadding.vertical : 0,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (header != null) ...[
-                    header,
-                    const SizedBox(height: 16.0),
-                  ],
+                  if (header != null) ...[header, const SizedBox(height: 16)],
                   content,
                 ],
               ),
@@ -104,29 +99,23 @@ class SectionWrapper extends StatelessWidget {
             width: double.infinity,
             constraints: BoxConstraints(
               maxWidth: contentMaxWidth,
-              minHeight:
-              fullHeight ? screenHeight - effectivePadding.vertical : 0,
+              minHeight: fullHeight ? screenHeight - effectivePadding.vertical : 0,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (header != null) ...[
-                  header,
-                  const SizedBox(height: 16.0),
-                ],
+                if (header != null) ...[header, const SizedBox(height: 16)],
                 content,
               ],
             ),
           );
         }
 
-        // Add responsive column layout for better web experience
-        if (centerContent && screenWidth > ResponsiveBreakpoints.tablet) {
+        if (centerContent && !info.isMobileOrTablet) {
           content = Column(
             crossAxisAlignment: crossAxisAlignment,
-            mainAxisAlignment:
-            fullHeight ? mainAxisAlignment : MainAxisAlignment.start,
+            mainAxisAlignment: fullHeight ? mainAxisAlignment : MainAxisAlignment.start,
             mainAxisSize: fullHeight ? MainAxisSize.max : MainAxisSize.min,
             children: [content],
           );
@@ -141,9 +130,7 @@ class SectionWrapper extends StatelessWidget {
             gradient: backgroundGradient,
           ),
           padding: effectivePadding,
-          child: centerContent && screenWidth > ResponsiveBreakpoints.tablet
-              ? Center(child: content)
-              : content,
+          child: centerContent && !info.isMobileOrTablet ? Center(child: content) : content,
         );
       },
     );
@@ -160,46 +147,25 @@ class SectionWrapper extends StatelessWidget {
       case DeviceType.desktop:
         return desktopChild ?? smallLaptopChild ?? tabletChild ?? mobileChild;
       case DeviceType.largeDesktop:
-        return largeDesktopChild ??
-            desktopChild ??
-            smallLaptopChild ??
-            tabletChild ??
-            mobileChild;
+        return largeDesktopChild ?? desktopChild ?? smallLaptopChild ?? tabletChild ?? mobileChild;
     }
   }
 
   EdgeInsets _getDefaultPadding(BuildContext context) {
-    final baseVerticalPadding = context.responsiveValue<double>(
-      mobile: addTopPadding || addBottomPadding ? 32.0 : 0.0,
-      tablet: addTopPadding || addBottomPadding ? 48.0 : 0.0,
-      smallLaptop: addTopPadding || addBottomPadding ? 64.0 : 0.0,
-      desktop: addTopPadding || addBottomPadding ? 80.0 : 0.0,
-      largeDesktop: addTopPadding || addBottomPadding ? 96.0 : 0.0,
-    );
-
-    final horizontalPadding = context.responsiveValue<double>(
-      mobile: 16.0,
-      tablet: 32.0,
-      smallLaptop: 48.0,
-      desktop: 64.0,
-      largeDesktop: 80.0,
-    );
-
+    final r = context.responsive;
+    final baseV = (addTopPadding || addBottomPadding)
+        ? (r.isMobile ? 32.0 : r.isTablet ? 48.0 : r.isSmallLaptop ? 64.0 : r.isDesktop ? 80.0 : 96.0)
+        : 0.0;
+    final h = r.isMobile ? 16.0 : r.isTablet ? 32.0 : r.isSmallLaptop ? 48.0 : r.isDesktop ? 64.0 : 80.0;
     return EdgeInsets.only(
-      left: horizontalPadding,
-      right: horizontalPadding,
-      top: addTopPadding ? baseVerticalPadding : 0.0,
-      bottom: addBottomPadding ? baseVerticalPadding : 0.0,
+      left: h, right: h,
+      top: addTopPadding ? baseV : 0,
+      bottom: addBottomPadding ? baseV : 0,
     );
   }
 
   double _getContentMaxWidth(BuildContext context) {
-    return context.responsiveValue<double>(
-      mobile: double.infinity,
-      tablet: 768.0,
-      smallLaptop: 1024.0,
-      desktop: 1200.0,
-      largeDesktop: 1400.0,
-    );
+    final r = context.responsive;
+    return r.isMobile ? double.infinity : r.isTablet ? 768 : r.isSmallLaptop ? 1024 : r.isDesktop ? 1200 : 1400;
   }
 }

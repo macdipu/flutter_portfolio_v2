@@ -15,6 +15,11 @@ class PortfolioSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PortfolioBloc, PortfolioState>(
+      buildWhen: (prev, curr) =>
+          prev.isLoading != curr.isLoading ||
+          prev.profile != curr.profile ||
+          prev.filteredProjects != curr.filteredProjects ||
+          prev.selectedProjectCategory != curr.selectedProjectCategory,
       builder: (context, state) {
         if (state.isLoading && state.profile == null) {
           return const Center(child: CircularProgressIndicator());
@@ -23,7 +28,7 @@ class PortfolioSection extends StatelessWidget {
         final profile = state.profile;
         if (profile == null) {
           return Center(
-            child: SelectableText(
+            child: Text(
               'No profile data available',
               style: Theme.of(context).textTheme.bodyLarge,
             ),
@@ -31,7 +36,9 @@ class PortfolioSection extends StatelessWidget {
         }
 
         final filteredProjects = state.filteredProjects;
-        final categories = ProjectCategory.values.where((c) => c == ProjectCategory.all || profile.projects.any((p) => p.category == c)).toList();
+        final categories = ProjectCategory.values
+            .where((c) => c == ProjectCategory.all || profile.projects.any((p) => p.category == c))
+            .toList();
 
         return SectionWrapper(
           sectionId: 'portfolio',
@@ -41,14 +48,6 @@ class PortfolioSection extends StatelessWidget {
           addBottomPadding: true,
           mobileChild: _buildLayout(
               context, filteredProjects, state.selectedProjectCategory!, categories),
-          tabletChild: _buildLayout(
-              context, filteredProjects, state.selectedProjectCategory!, categories),
-          smallLaptopChild: _buildLayout(
-              context, filteredProjects, state.selectedProjectCategory!, categories),
-          desktopChild: _buildLayout(
-              context, filteredProjects, state.selectedProjectCategory!, categories),
-          largeDesktopChild: _buildLayout(
-              context, filteredProjects, state.selectedProjectCategory!, categories),
         );
       },
     );
@@ -57,27 +56,11 @@ class PortfolioSection extends StatelessWidget {
   Widget _buildLayout(BuildContext context, List<ProjectModel> projects,
       ProjectCategory selectedCategory, List<ProjectCategory> categories) {
     final theme = Theme.of(context);
+    final r = context.responsive;
     final contentWidth = context.contentWidth;
 
-    // Define responsive text style for category chip
-    final chipLabelStyle = theme.textTheme.bodyMedium?.copyWith(
-          fontSize: context.responsiveValue(
-            mobile: 14.0,
-            tablet: 15.0,
-            smallLaptop: 16.0,
-            desktop: 17.0,
-            largeDesktop: 18.0,
-          ),
-        ) ??
-        TextStyle(
-          fontSize: context.responsiveValue(
-            mobile: 14.0,
-            tablet: 15.0,
-            smallLaptop: 16.0,
-            desktop: 17.0,
-            largeDesktop: 18.0,
-          ),
-        );
+    final chipFontSize = r.isMobile ? 14.0 : r.isTablet ? 15.0 : r.isSmallLaptop ? 16.0 : r.isDesktop ? 17.0 : 18.0;
+    final chipLabelStyle = (theme.textTheme.bodyMedium ?? const TextStyle()).copyWith(fontSize: chipFontSize);
 
     return Container(
       width: contentWidth,
@@ -94,37 +77,29 @@ class PortfolioSection extends StatelessWidget {
               itemCount: categories.length,
               itemBuilder: (context, index) {
                 final category = categories[index];
+                final isSelected = selectedCategory == category;
                 return Padding(
                   padding: const EdgeInsets.only(right: AppTheme.spacing8),
                   child: ChoiceChip(
                     label: Text(
                       category.displayName,
                       style: chipLabelStyle.copyWith(
-                        color: selectedCategory == category
-                            ? theme.colorScheme.primary
-                            : theme.textTheme.bodyMedium?.color,
-                        fontWeight: selectedCategory == category
-                            ? FontWeight.bold
-                            : FontWeight.normal,
+                        color: isSelected ? theme.colorScheme.primary : theme.textTheme.bodyMedium?.color,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                       ),
                     ),
-                    selected: selectedCategory == category,
+                    selected: isSelected,
                     onSelected: (selected) {
                       if (selected) {
-                        context
-                            .read<PortfolioBloc>()
-                            .add(UpdateProjectCategory(category));
+                        context.read<PortfolioBloc>().add(UpdateProjectCategory(category));
                       }
                     },
-                    selectedColor: theme.colorScheme.primary.withAlpha((0.2 * 255).toInt()),
+                    selectedColor: theme.colorScheme.primary.withAlpha(51),
                     backgroundColor: theme.colorScheme.surface,
                     shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(AppTheme.borderRadius8),
+                      borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
                       side: BorderSide(
-                        color: selectedCategory == category
-                            ? theme.colorScheme.primary
-                            : Colors.transparent,
+                        color: isSelected ? theme.colorScheme.primary : Colors.transparent,
                       ),
                     ),
                     padding: const EdgeInsets.symmetric(
@@ -165,46 +140,18 @@ class Portfolios extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final r = context.responsive;
 
-    // Define responsive text styles
-    final titleStyle = theme.textTheme.headlineSmall?.copyWith(
-          fontSize: context.responsiveValue(
-            mobile: 20.0,
-            tablet: 22.0,
-            smallLaptop: 24.0,
-            desktop: 26.0,
-            largeDesktop: 28.0,
-          ),
-        ) ??
-        TextStyle(
-          fontSize: context.responsiveValue(
-            mobile: 20.0,
-            tablet: 22.0,
-            smallLaptop: 24.0,
-            desktop: 26.0,
-            largeDesktop: 28.0,
-          ),
-          fontWeight: FontWeight.bold,
-        );
+    final titleFontSize = r.isMobile ? 20.0 : r.isTablet ? 22.0 : r.isSmallLaptop ? 24.0 : r.isDesktop ? 26.0 : 28.0;
+    final descFontSize = r.isMobile ? 14.0 : r.isTablet ? 16.0 : r.isSmallLaptop ? 17.0 : r.isDesktop ? 18.0 : 20.0;
 
-    final descriptionStyle = theme.textTheme.bodyLarge?.copyWith(
-          fontSize: context.responsiveValue(
-            mobile: 14.0,
-            tablet: 16.0,
-            smallLaptop: 17.0,
-            desktop: 18.0,
-            largeDesktop: 20.0,
-          ),
-        ) ??
-        TextStyle(
-          fontSize: context.responsiveValue(
-            mobile: 14.0,
-            tablet: 16.0,
-            smallLaptop: 17.0,
-            desktop: 18.0,
-            largeDesktop: 20.0,
-          ),
-        );
+    final titleStyle = (theme.textTheme.headlineSmall ?? const TextStyle()).copyWith(
+      fontSize: titleFontSize,
+      fontWeight: FontWeight.bold,
+    );
+    final descriptionStyle = (theme.textTheme.bodyLarge ?? const TextStyle()).copyWith(
+      fontSize: descFontSize,
+    );
 
     Widget details = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
