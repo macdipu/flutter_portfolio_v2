@@ -235,9 +235,10 @@ abstract class BaseResponsiveImageState<T extends BaseResponsiveImage>
         : widget.borderRadius;
     final shape = widget.isCircular ? BoxShape.circle : BoxShape.rectangle;
 
+    final shadowColor = Theme.of(context).colorScheme.shadow;
     final defaultShadow = [
       BoxShadow(
-        color: Colors.black.withOpacity(0.1),
+        color: shadowColor.withAlpha(26),
         blurRadius: 8,
         offset: const Offset(0, 4),
         spreadRadius: 0,
@@ -271,20 +272,19 @@ abstract class BaseResponsiveImageState<T extends BaseResponsiveImage>
   @protected
   Widget buildLoadingPlaceholder(double width, double height) {
     final spinnerSize = _placeholderIconSize(width, fraction: 0.2);
+    final cs = Theme.of(context).colorScheme;
     return Container(
       width: width,
       height: height,
-      color: Colors.grey[100],
+      color: cs.surfaceVariant,
       child: Center(
         child: SizedBox(
           width: spinnerSize,
           height: spinnerSize,
           child: CircularProgressIndicator(
             strokeWidth: 2,
-            backgroundColor: Colors.grey[300],
-            valueColor: AlwaysStoppedAnimation<Color>(
-              Theme.of(context).primaryColor,
-            ),
+            backgroundColor: cs.outlineVariant,
+            valueColor: AlwaysStoppedAnimation<Color>(cs.primary),
           ),
         ),
       ),
@@ -295,17 +295,18 @@ abstract class BaseResponsiveImageState<T extends BaseResponsiveImage>
   Widget buildPlaceholder(double width, double height) {
     final iconSize = _placeholderIconSize(width);
     final fontSize = _placeholderFontSize(width);
+    final cs = Theme.of(context).colorScheme;
     return Container(
       width: width,
       height: height,
-      color: Colors.grey[200],
+      color: cs.surfaceVariant,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             Icons.image_outlined,
             size: iconSize,
-            color: Colors.grey[400],
+            color: cs.onSurfaceVariant,
           ),
           if (widget.placeholder != null) ...[
             const SizedBox(height: 8),
@@ -313,7 +314,7 @@ abstract class BaseResponsiveImageState<T extends BaseResponsiveImage>
               widget.placeholder!,
               style: TextStyle(
                 fontSize: fontSize,
-                color: Colors.grey[600],
+                color: cs.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
@@ -327,24 +328,25 @@ abstract class BaseResponsiveImageState<T extends BaseResponsiveImage>
   Widget buildErrorPlaceholder(double width, double height) {
     final iconSize = _placeholderIconSize(width);
     final fontSize = _placeholderFontSize(width);
+    final cs = Theme.of(context).colorScheme;
     return Container(
       width: width,
       height: height,
-      color: Colors.red[50],
+      color: cs.errorContainer,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             Icons.broken_image_outlined,
             size: iconSize,
-            color: Colors.red[300],
+            color: cs.error,
           ),
           const SizedBox(height: 8),
           Text(
             'Failed to load image',
             style: TextStyle(
               fontSize: fontSize,
-              color: Colors.red[600],
+              color: cs.onErrorContainer,
             ),
             textAlign: TextAlign.center,
           ),

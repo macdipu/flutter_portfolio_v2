@@ -17,15 +17,15 @@ class DynamicScreenshotBanner extends StatelessWidget {
     this.padding,
   });
 
-  Widget _buildImage(String screenshot) {
+  Widget _buildImage(String screenshot, Color shadowColor) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Color(0x42000000),
+            color: shadowColor,
             blurRadius: 8,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -35,7 +35,7 @@ class DynamicScreenshotBanner extends StatelessWidget {
           imagePath: screenshot,
           useMemoryCache: true,
           fit: BoxFit.cover,
-        )
+        ),
       ),
     );
   }
@@ -44,13 +44,15 @@ class DynamicScreenshotBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget content = LayoutBuilder(
       builder: (context, constraints) {
+        final shadowColor =
+            Theme.of(context).colorScheme.shadow.withAlpha(66);
         Widget banner;
         if (screenshots.isEmpty) {
           banner = const SizedBox.shrink();
         } else if (screenshots.length == 1) {
           banner = AspectRatio(
             aspectRatio: bannerRatio,
-            child: _buildImage(screenshots[0]),
+            child: _buildImage(screenshots[0], shadowColor),
           );
         } else if (screenshots.length <= 3) {
           banner = AspectRatio(
@@ -62,7 +64,7 @@ class DynamicScreenshotBanner extends StatelessWidget {
                           padding: EdgeInsets.only(right: screenshots.length > 1 ? 8.0 : 0),
                           child: AspectRatio(
                             aspectRatio: 9 / 16,
-                            child: _buildImage(s),
+                            child: _buildImage(s, shadowColor),
                           ),
                         ),
                       ))
@@ -82,7 +84,7 @@ class DynamicScreenshotBanner extends StatelessWidget {
                             width: 200,
                             child: AspectRatio(
                               aspectRatio: 9 / 16,
-                              child: _buildImage(s),
+                              child: _buildImage(s, shadowColor),
                             ),
                           ),
                         ))

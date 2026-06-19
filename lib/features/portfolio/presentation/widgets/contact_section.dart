@@ -155,7 +155,7 @@ class _ContactSectionState extends State<ContactSection> {
                           }
                         },
                   icon: state.isContactFormSubmitting
-                      ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3))
+                      ? SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Theme.of(context).colorScheme.onPrimary, strokeWidth: 3))
                       : const Icon(Icons.send),
                   label: Text(state.isContactFormSubmitting ? 'Sending...' : 'Send Message', style: buttonLabelStyle),
                 ),

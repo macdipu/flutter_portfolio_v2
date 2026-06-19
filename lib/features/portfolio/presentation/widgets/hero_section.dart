@@ -354,9 +354,9 @@ class HeroSection extends StatelessWidget {
       padding: padding,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Colors.black.withValues(alpha: 0.2),
+        color: Theme.of(context).colorScheme.surfaceVariant.withAlpha(51),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.15),
+          color: Theme.of(context).colorScheme.outline.withAlpha(38),
           width: 1,
         ),
       ),

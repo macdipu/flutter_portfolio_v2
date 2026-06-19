@@ -12,7 +12,7 @@ void main() async {
 
   // Initialize shared preferences for theme
   final sharedPreferences = await SharedPreferences.getInstance();
-  final isDarkMode = sharedPreferences.getBool('isDarkMode') ?? false;
+  final isDarkMode = sharedPreferences.getBool('isDarkMode') ?? true;
 
   runApp(MyApp(isDarkMode: isDarkMode));
 }

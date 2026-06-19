@@ -68,7 +68,7 @@ class _SidebarLayout extends StatelessWidget {
         color: theme.cardColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: theme.colorScheme.shadow.withAlpha(13),
             blurRadius: 10,
           ),
         ],
