@@ -144,7 +144,7 @@ class AppTheme {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(borderRadius8),
-          borderSide: BorderSide(color: textSecondary.withOpacity(0.2)),
+          borderSide: BorderSide(color: textSecondary.withAlpha(51)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(borderRadius8),

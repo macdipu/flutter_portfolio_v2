@@ -79,76 +79,30 @@ class _SidebarLayout extends StatelessWidget {
 
   Widget _buildSidebarContent(BuildContext context) {
     final theme = Theme.of(context);
+    final r = context.responsive;
 
-    // Define responsive text styles
-    final avatarTextStyle = theme.textTheme.headlineMedium?.copyWith(
+    final avatarFontSize = r.isMobile ? 24.0 : r.isTablet ? 26.0 : r.isSmallLaptop ? 28.0 : r.isDesktop ? 30.0 : 32.0;
+    final nameFontSize   = r.isMobile ? 20.0 : r.isTablet ? 22.0 : r.isSmallLaptop ? 24.0 : r.isDesktop ? 26.0 : 28.0;
+    final titleFontSize  = r.isMobile ? 14.0 : r.isTablet ? 15.0 : r.isSmallLaptop ? 16.0 : r.isDesktop ? 17.0 : 18.0;
+
+    final avatarTextStyle = (theme.textTheme.headlineMedium ?? const TextStyle()).copyWith(
       color: theme.colorScheme.primary,
       fontWeight: FontWeight.bold,
-      fontSize: context.responsiveValue(
-        mobile: 24.0,
-        tablet: 26.0,
-        smallLaptop: 28.0,
-        desktop: 30.0,
-        largeDesktop: 32.0,
-      ),
-    ) ??
-        TextStyle(
-          color: theme.colorScheme.primary,
-          fontWeight: FontWeight.bold,
-          fontSize: context.responsiveValue(
-            mobile: 24.0,
-            tablet: 26.0,
-            smallLaptop: 28.0,
-            desktop: 30.0,
-            largeDesktop: 32.0,
-          ),
-        );
-
-    final nameStyle = theme.textTheme.titleLarge?.copyWith(
-      fontSize: context.responsiveValue(
-        mobile: 20.0,
-        tablet: 22.0,
-        smallLaptop: 24.0,
-        desktop: 26.0,
-        largeDesktop: 28.0,
-      ),
-    ) ??
-        TextStyle(
-          fontSize: context.responsiveValue(
-            mobile: 20.0,
-            tablet: 22.0,
-            smallLaptop: 24.0,
-            desktop: 26.0,
-            largeDesktop: 28.0,
-          ),
-        );
-
-    final titleStyle = theme.textTheme.bodyMedium?.copyWith(
+      fontSize: avatarFontSize,
+    );
+    final nameStyle = (theme.textTheme.titleLarge ?? const TextStyle()).copyWith(
+      fontSize: nameFontSize,
+    );
+    final titleStyle = (theme.textTheme.bodyMedium ?? const TextStyle()).copyWith(
       color: theme.textTheme.bodySmall?.color,
-      fontSize: context.responsiveValue(
-        mobile: 14.0,
-        tablet: 15.0,
-        smallLaptop: 16.0,
-        desktop: 17.0,
-        largeDesktop: 18.0,
-      ),
-    ) ??
-        TextStyle(
-          color: theme.textTheme.bodySmall?.color,
-          fontSize: context.responsiveValue(
-            mobile: 14.0,
-            tablet: 15.0,
-            smallLaptop: 16.0,
-            desktop: 17.0,
-            largeDesktop: 18.0,
-          ),
-        );
+      fontSize: titleFontSize,
+    );
 
     return Column(
       children: [
         CircleAvatar(
           radius: 50,
-          backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
+          backgroundColor: theme.colorScheme.primary.withAlpha(26),
           child: Text(
             'MACD',
             style: avatarTextStyle,
@@ -223,27 +177,12 @@ class _NavigationItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    // Define responsive text style
-    final navItemStyle = theme.textTheme.bodyMedium?.copyWith(
+    final r = context.responsive;
+    final navFontSize = r.isMobile ? 14.0 : r.isTablet ? 15.0 : r.isSmallLaptop ? 16.0 : r.isDesktop ? 17.0 : 18.0;
+    final navItemStyle = (theme.textTheme.bodyMedium ?? const TextStyle()).copyWith(
       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-      fontSize: context.responsiveValue(
-        mobile: 14.0,
-        tablet: 15.0,
-        smallLaptop: 16.0,
-        desktop: 17.0,
-        largeDesktop: 18.0,
-      ),
-    ) ??
-        TextStyle(
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          fontSize: context.responsiveValue(
-            mobile: 14.0,
-            tablet: 15.0,
-            smallLaptop: 16.0,
-            desktop: 17.0,
-            largeDesktop: 18.0,
-          ),
-        );
+      fontSize: navFontSize,
+    );
 
     return ListTile(
       leading: Icon(

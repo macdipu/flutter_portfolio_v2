@@ -56,7 +56,7 @@ class ResumeSection extends StatelessWidget {
           child: Container(
             width: context.contentWidth,
             padding: context.defaultPadding.copyWith(
-              bottom: MediaQuery.of(context).padding.bottom + (theme.textTheme.bodyMedium?.fontSize ?? 16.0) * 4,
+              bottom: MediaQuery.paddingOf(context).bottom + (theme.textTheme.bodyMedium?.fontSize ?? 16.0) * 4,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
