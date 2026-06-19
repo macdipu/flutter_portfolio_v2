@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/responsive/responsive_framework.dart';
@@ -15,6 +14,11 @@ class TechStackSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PortfolioBloc, PortfolioState>(
+      buildWhen: (prev, curr) =>
+          prev.isLoading != curr.isLoading ||
+          prev.profile != curr.profile ||
+          prev.filteredTechStacks != curr.filteredTechStacks ||
+          prev.selectedTechStacksCategory != curr.selectedTechStacksCategory,
       builder: (context, state) {
         if (state.isLoading && state.profile == null) {
           return const Center(child: CircularProgressIndicator());
@@ -23,7 +27,7 @@ class TechStackSection extends StatelessWidget {
         final profile = state.profile;
         if (profile == null) {
           return Center(
-            child: SelectableText(
+            child: Text(
               'No profile data available',
               style: Theme.of(context).textTheme.bodyLarge,
             ),
@@ -38,14 +42,6 @@ class TechStackSection extends StatelessWidget {
           addBottomPadding: true,
           mobileChild: _buildLayout(context, state.filteredTechStacks,
               state.selectedTechStacksCategory, profile),
-          tabletChild: _buildLayout(context, state.filteredTechStacks,
-              state.selectedTechStacksCategory, profile),
-          smallLaptopChild: _buildLayout(context, state.filteredTechStacks,
-              state.selectedTechStacksCategory, profile),
-          desktopChild: _buildLayout(context, state.filteredTechStacks,
-              state.selectedTechStacksCategory, profile),
-          largeDesktopChild: _buildLayout(context, state.filteredTechStacks,
-              state.selectedTechStacksCategory, profile),
         );
       },
     );
@@ -54,28 +50,14 @@ class TechStackSection extends StatelessWidget {
   Widget _buildLayout(BuildContext context,
       List<TechStackModel> filteredTechStacks, TechStackCategory selectedCategory, ProfileModel profile) {
     final theme = Theme.of(context);
+    final r = context.responsive;
     final contentWidth = context.contentWidth;
-    final categories = TechStackCategory.values.where((c) => c == TechStackCategory.all || profile.techStacks.any((t) => t.category == c)).toList();
+    final categories = TechStackCategory.values
+        .where((c) => c == TechStackCategory.all || profile.techStacks.any((t) => t.category == c))
+        .toList();
 
-    // Define responsive text style for category chip
-    final chipLabelStyle = theme.textTheme.bodyMedium?.copyWith(
-          fontSize: context.responsiveValue(
-            mobile: 14.0,
-            tablet: 15.0,
-            smallLaptop: 16.0,
-            desktop: 17.0,
-            largeDesktop: 18.0,
-          ),
-        ) ??
-        TextStyle(
-          fontSize: context.responsiveValue(
-            mobile: 14.0,
-            tablet: 15.0,
-            smallLaptop: 16.0,
-            desktop: 17.0,
-            largeDesktop: 18.0,
-          ),
-        );
+    final chipFontSize = r.isMobile ? 14.0 : r.isTablet ? 15.0 : r.isSmallLaptop ? 16.0 : r.isDesktop ? 17.0 : 18.0;
+    final chipLabelStyle = (theme.textTheme.bodyMedium ?? const TextStyle()).copyWith(fontSize: chipFontSize);
 
     return Container(
       width: contentWidth,
@@ -84,7 +66,6 @@ class TechStackSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: AppTheme.spacing32),
-          // Category chips
           SizedBox(
             height: 40,
             child: ListView.builder(
@@ -93,37 +74,29 @@ class TechStackSection extends StatelessWidget {
               itemCount: categories.length,
               itemBuilder: (context, index) {
                 final category = categories[index];
+                final isSelected = selectedCategory == category;
                 return Padding(
                   padding: const EdgeInsets.only(right: AppTheme.spacing8),
                   child: ChoiceChip(
                     label: Text(
                       category.displayName,
                       style: chipLabelStyle.copyWith(
-                        color: selectedCategory == category
-                            ? theme.colorScheme.primary
-                            : theme.textTheme.bodyMedium?.color,
-                        fontWeight: selectedCategory == category
-                            ? FontWeight.bold
-                            : FontWeight.normal,
+                        color: isSelected ? theme.colorScheme.primary : theme.textTheme.bodyMedium?.color,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                       ),
                     ),
-                    selected: selectedCategory == category,
+                    selected: isSelected,
                     onSelected: (selected) {
                       if (selected) {
-                        context.read<PortfolioBloc>().add(
-                              UpdateTechStackCategory(category),
-                            );
+                        context.read<PortfolioBloc>().add(UpdateTechStackCategory(category));
                       }
                     },
-                    selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                    selectedColor: theme.colorScheme.primary.withAlpha(51),
                     backgroundColor: theme.colorScheme.surface,
                     shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(AppTheme.borderRadius8),
+                      borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
                       side: BorderSide(
-                        color: selectedCategory == category
-                            ? theme.colorScheme.primary
-                            : Colors.transparent,
+                        color: isSelected ? theme.colorScheme.primary : Colors.transparent,
                       ),
                     ),
                     padding: const EdgeInsets.symmetric(
@@ -136,7 +109,6 @@ class TechStackSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppTheme.spacing32),
-          // Tech stack grid
           TechStackGrid(items: filteredTechStacks),
         ],
       ),
@@ -152,9 +124,9 @@ class TechStackGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 200),
       child: GridView.builder(
-        key: ValueKey(items.length),
+        key: ValueKey(items.map((e) => e.name).join()),
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -166,7 +138,6 @@ class TechStackGrid extends StatelessWidget {
         itemBuilder: (context, index) => _TechStackCard(
           name: items[index].name,
           iconUrl: items[index].iconUrl,
-          index: index,
         ),
       ),
     );
@@ -176,45 +147,23 @@ class TechStackGrid extends StatelessWidget {
 class _TechStackCard extends StatelessWidget {
   final String name;
   final String iconUrl;
-  final int index;
 
-  const _TechStackCard({
-    required this.name,
-    required this.iconUrl,
-    required this.index,
-  });
+  const _TechStackCard({required this.name, required this.iconUrl});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
-    // Define responsive text style for tech name
-    final nameStyle = theme.textTheme.bodySmall?.copyWith(
-          fontWeight: FontWeight.w500,
-          fontSize: context.responsiveValue(
-            mobile: 12.0,
-            tablet: 13.0,
-            smallLaptop: 14.0,
-            desktop: 15.0,
-            largeDesktop: 16.0,
-          ),
-        ) ??
-        TextStyle(
-          fontWeight: FontWeight.w500,
-          fontSize: context.responsiveValue(
-            mobile: 12.0,
-            tablet: 13.0,
-            smallLaptop: 14.0,
-            desktop: 15.0,
-            largeDesktop: 16.0,
-          ),
-        );
+    final r = context.responsive;
+    final fontSize = r.isMobile ? 12.0 : r.isTablet ? 13.0 : r.isSmallLaptop ? 14.0 : r.isDesktop ? 15.0 : 16.0;
+    final nameStyle = (theme.textTheme.bodySmall ?? const TextStyle()).copyWith(
+      fontWeight: FontWeight.w500,
+      fontSize: fontSize,
+    );
+    final iconBg = theme.colorScheme.primary.withAlpha(26);
 
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.borderRadius8)),
       child: Padding(
         padding: const EdgeInsets.all(AppTheme.spacing8),
         child: Column(
@@ -227,38 +176,24 @@ class _TechStackCard extends StatelessWidget {
                     height: 32,
                     fit: BoxFit.contain,
                     enableHoverEffect: false,
-                    backgroundColor:
-                        theme.colorScheme.primary.withOpacity(0.1),
+                    backgroundColor: iconBg,
                     padding: const EdgeInsets.all(AppTheme.spacing4),
-                    borderRadius:
-                        BorderRadius.circular(AppTheme.borderRadius4),
+                    borderRadius: BorderRadius.circular(AppTheme.borderRadius4),
                   )
                 : Container(
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.1),
-                      borderRadius:
-                          BorderRadius.circular(AppTheme.borderRadius4),
+                      color: iconBg,
+                      borderRadius: BorderRadius.circular(AppTheme.borderRadius4),
                     ),
-                    child: Icon(
-                      Icons.code,
-                      color: theme.colorScheme.primary,
-                      size: 16,
-                    ),
+                    child: Icon(Icons.code, color: theme.colorScheme.primary, size: 16),
                   ),
             const SizedBox(height: AppTheme.spacing4),
-            SelectableText(
-              name,
-              style: nameStyle,
-              textAlign: TextAlign.center,
-            ),
+            Text(name, style: nameStyle, textAlign: TextAlign.center),
           ],
         ),
       ),
-    )
-        .animate()
-        .fade(duration: 600.ms, delay: Duration(milliseconds: 100 * index))
-        .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1));
+    );
   }
 }

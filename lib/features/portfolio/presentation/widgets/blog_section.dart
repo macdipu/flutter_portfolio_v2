@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/responsive/responsive_framework.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/common/responsive_image.dart';
 import '../../../../core/widgets/common/section_wrapper.dart';
 import '../../data/models/blog_post_model.dart';
@@ -17,135 +18,75 @@ class BlogSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PortfolioBloc, PortfolioState>(
+      buildWhen: (prev, curr) =>
+          prev.isLoading != curr.isLoading ||
+          prev.blogPosts != curr.blogPosts ||
+          prev.visibleBlogPostCount != curr.visibleBlogPostCount,
       builder: (context, state) {
+        final contentWidth = context.contentWidth;
+        final maxPosts = state.visibleBlogPostCount.clamp(0, state.blogPosts.length);
+
         return SectionWrapper(
           sectionId: 'blog',
           title: 'Blog',
           subtitle: 'My Latest Posts',
           addTopPadding: true,
           addBottomPadding: true,
-          mobileChild: _buildLayout(context, state),
-          tabletChild: _buildLayout(context, state),
-          smallLaptopChild: _buildLayout(context, state),
-          desktopChild: _buildLayout(context, state),
-          largeDesktopChild: _buildLayout(context, state),
+          child: Container(
+            width: contentWidth,
+            padding: context.defaultPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: AppTheme.spacing32),
+                if (state.isLoading && state.blogPosts.isEmpty)
+                  const Center(child: CircularProgressIndicator())
+                else if (state.blogPosts.isEmpty)
+                  _EmptyBlogState()
+                else ...[
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: maxPosts,
+                    itemBuilder: (context, index) =>
+                        _BlogPostCard(post: state.blogPosts[index], index: index),
+                  ),
+                  const SizedBox(height: AppTheme.spacing24),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        final url = Uri.parse('https://medium.com/@c.dipu0');
+                        if (await canLaunchUrl(url)) launchUrl(url);
+                      },
+                      child: const Text('Show More on Medium', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
         );
       },
     );
   }
+}
 
-  Widget _buildLayout(BuildContext context, PortfolioState state) {
-    final contentWidth = context.contentWidth;
-    final maxPosts =
-        state.visibleBlogPostCount.clamp(0, state.blogPosts.length);
-
-    return Container(
-      width: contentWidth,
-      padding: context.defaultPadding,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: AppTheme.spacing32),
-          if (state.isLoading && state.blogPosts.isEmpty)
-            const Center(child: CircularProgressIndicator())
-          else if (state.blogPosts.isEmpty)
-            _buildEmptyState(context)
-          else ...[
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: maxPosts,
-              itemBuilder: (context, index) {
-                return _BlogPostCard(
-                  post: state.blogPosts[index],
-                  index: index,
-                );
-              },
-            ),
-            const SizedBox(height: AppTheme.spacing24),
-            Center(
-              child: ElevatedButton(
-                onPressed: () async {
-                  final url = Uri.parse('https://medium.com/@c.dipu0');
-                  if (await canLaunchUrl(url)) {
-                    await launchUrl(url);
-                  }
-                },
-                child: const Text(
-                  'Show More on Medium',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEmptyState(BuildContext context) {
+class _EmptyBlogState extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final r = context.responsive;
     final theme = Theme.of(context);
-
-    // Define responsive text styles
-    final emptyTitleStyle = theme.textTheme.labelLarge?.copyWith(
-          fontSize: context.responsiveValue(
-            mobile: 16.0,
-            tablet: 18.0,
-            smallLaptop: 20.0,
-            desktop: 22.0,
-            largeDesktop: 24.0,
-          ),
-        ) ??
-        TextStyle(
-          fontSize: context.responsiveValue(
-            mobile: 16.0,
-            tablet: 18.0,
-            smallLaptop: 20.0,
-            desktop: 22.0,
-            largeDesktop: 24.0,
-          ),
-        );
-
-    final emptySubtitleStyle = theme.textTheme.bodyMedium?.copyWith(
-          fontSize: context.responsiveValue(
-            mobile: 14.0,
-            tablet: 15.0,
-            smallLaptop: 16.0,
-            desktop: 17.0,
-            largeDesktop: 18.0,
-          ),
-        ) ??
-        TextStyle(
-          fontSize: context.responsiveValue(
-            mobile: 14.0,
-            tablet: 15.0,
-            smallLaptop: 16.0,
-            desktop: 17.0,
-            largeDesktop: 18.0,
-          ),
-        );
-
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.article_outlined,
-            size: 64,
-            color: theme.colorScheme.primary,
-          ),
+          Icon(Icons.article_outlined, size: 64, color: theme.colorScheme.primary),
           const SizedBox(height: AppTheme.spacing16),
-          SelectableText(
-            'No blog posts available',
-            style: emptyTitleStyle,
-          ),
+          Text('No blog posts available',
+              style: (theme.textTheme.labelLarge ?? const TextStyle()).copyWith(fontSize: AppTypography.heading(r))),
           const SizedBox(height: AppTheme.spacing8),
-          SelectableText(
-            'Check back later for new content',
-            style: emptySubtitleStyle,
-          ),
+          Text('Check back later for new content',
+              style: (theme.textTheme.bodyMedium ?? const TextStyle()).copyWith(fontSize: AppTypography.bodyMedium(r))),
         ],
       ),
     );
@@ -156,27 +97,37 @@ class _BlogPostCard extends StatelessWidget {
   final BlogPostModel post;
   final int index;
 
-  const _BlogPostCard({
-    required this.post,
-    required this.index,
-  });
+  const _BlogPostCard({required this.post, required this.index});
 
   @override
   Widget build(BuildContext context) {
-    final isSmallScreen = MediaQuery.of(context).size.width < 600;
+    final r = context.responsive;
+    final theme = Theme.of(context);
+    final isNarrow = r.isMobile;
 
-    // Format date
-    String formattedDate = '';
+    String formattedDate = post.publishDate;
     try {
       final date = DateTime.tryParse(post.publishDate);
-      if (date != null) {
-        formattedDate = DateFormat.yMMMMd().format(date);
-      } else {
-        formattedDate = post.publishDate;
-      }
-    } catch (_) {
-      formattedDate = post.publishDate;
-    }
+      if (date != null) formattedDate = DateFormat.yMMMMd().format(date);
+    } catch (_) {}
+
+    final dateStyle = (theme.textTheme.bodySmall ?? const TextStyle()).copyWith(
+      color: theme.colorScheme.onSurface.withAlpha(153),
+      fontSize: AppTypography.bodySmall(r),
+    );
+    final titleStyle = (theme.textTheme.headlineSmall ?? const TextStyle()).copyWith(
+      fontWeight: FontWeight.bold,
+      fontSize: AppTypography.heading(r),
+    );
+    final excerptStyle = (theme.textTheme.bodyMedium ?? const TextStyle()).copyWith(
+      fontSize: AppTypography.bodyMedium(r),
+      color: theme.colorScheme.onSurface.withAlpha(179),
+    );
+    final readMoreStyle = TextStyle(
+      color: AppTheme.primary,
+      fontWeight: FontWeight.bold,
+      fontSize: AppTypography.bodyMedium(r),
+    );
 
     return Card(
       margin: const EdgeInsets.only(bottom: AppTheme.spacing24),
@@ -184,215 +135,88 @@ class _BlogPostCard extends StatelessWidget {
         onTap: () async {
           if (post.link.isNotEmpty) {
             final url = Uri.parse(post.link);
-            if (await canLaunchUrl(url)) {
-              await launchUrl(url);
-            }
+            if (await canLaunchUrl(url)) launchUrl(url);
           }
         },
         borderRadius: BorderRadius.circular(AppTheme.borderRadius16),
         child: Padding(
           padding: const EdgeInsets.all(AppTheme.spacing16),
           child: Flex(
-            direction: isSmallScreen ? Axis.vertical : Axis.horizontal,
+            direction: isNarrow ? Axis.vertical : Axis.horizontal,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Blog post image
-              _buildBlogImage(isSmallScreen),
-              SizedBox(
-                width: isSmallScreen ? 0 : AppTheme.spacing16,
-                height: isSmallScreen ? AppTheme.spacing16 : 0,
+              _BlogImage(imageUrl: post.imageUrl, isNarrow: isNarrow),
+              SizedBox(width: isNarrow ? 0 : AppTheme.spacing16, height: isNarrow ? AppTheme.spacing16 : 0),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(children: [
+                      Icon(Icons.calendar_today, size: 14, color: theme.colorScheme.onSurface.withAlpha(153)),
+                      const SizedBox(width: AppTheme.spacing4),
+                      Text(formattedDate, style: dateStyle),
+                      const SizedBox(width: AppTheme.spacing16),
+                      Icon(Icons.person, size: 14, color: theme.colorScheme.onSurface.withAlpha(153)),
+                      const SizedBox(width: AppTheme.spacing4),
+                      Text(post.author, style: dateStyle),
+                    ]),
+                    const SizedBox(height: AppTheme.spacing8),
+                    Text(post.title, style: titleStyle, maxLines: 2, overflow: TextOverflow.ellipsis),
+                    const SizedBox(height: AppTheme.spacing8),
+                    Text(post.excerpt, style: excerptStyle, maxLines: 3, overflow: TextOverflow.ellipsis),
+                    const SizedBox(height: AppTheme.spacing16),
+                    TextButton.icon(
+                      onPressed: () async {
+                        if (post.link.isNotEmpty) {
+                          final url = Uri.parse(post.link);
+                          if (await canLaunchUrl(url)) launchUrl(url);
+                        }
+                      },
+                      icon: const Icon(Icons.arrow_forward, color: AppTheme.primary),
+                      label: Text('Read More', style: readMoreStyle),
+                    ),
+                  ],
+                ),
               ),
-              // Blog post content
-              Expanded(child: _buildBlogContent(context, formattedDate)),
             ],
           ),
         ),
       ),
     )
         .animate()
-        .fade(duration: 600.ms, delay: Duration(milliseconds: 200 * index))
-        .slideY(begin: 0.1, end: 0);
+        .fade(duration: 400.ms, delay: Duration(milliseconds: 80 * index))
+        .slideY(begin: 0.05, end: 0);
   }
+}
 
-  Widget _buildBlogImage(bool isSmallScreen) {
-    if (post.imageUrl.isEmpty) {
+class _BlogImage extends StatelessWidget {
+  final String imageUrl;
+  final bool isNarrow;
+  const _BlogImage({required this.imageUrl, required this.isNarrow});
+
+  @override
+  Widget build(BuildContext context) {
+    if (imageUrl.isEmpty) {
       return Container(
-        width: isSmallScreen ? double.infinity : 200,
+        width: isNarrow ? double.infinity : 200,
         height: 120,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
-          color: AppTheme.primary.withOpacity(0.1),
+          color: AppTheme.primary.withAlpha(26),
         ),
-        child: const Center(
-          child: Icon(
-            Icons.article,
-            size: 40,
-            color: AppTheme.primary,
-          ),
-        ),
+        child: const Center(child: Icon(Icons.article, size: 40, color: AppTheme.primary)),
       );
     }
-
     return ResponsiveImage(
-      imageUrl: post.imageUrl,
-      width: isSmallScreen ? double.infinity : 200,
+      imageUrl: imageUrl,
+      width: isNarrow ? double.infinity : 200,
       height: 120,
-      aspectRatio: isSmallScreen ? null : 16 / 9,
+      aspectRatio: isNarrow ? null : 16 / 9,
       enableHoverEffect: false,
       borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
-      backgroundColor: AppTheme.primary.withOpacity(0.1),
+      backgroundColor: AppTheme.primary.withAlpha(26),
       fit: BoxFit.cover,
       placeholder: 'Loading image',
-    );
-  }
-
-  Widget _buildBlogContent(BuildContext context, String formattedDate) {
-    final theme = Theme.of(context);
-    // Fallback to Theme.of(context) if custom extensions are unavailable
-    final textTheme = context.textStyles ?? theme.textTheme;
-
-    // Define responsive text styles
-    final dateAuthorStyle = textTheme.bodySmall?.copyWith(
-          color: context.textColors.secondary,
-          fontSize: context.responsiveValue(
-            mobile: 12.0,
-            tablet: 13.0,
-            smallLaptop: 14.0,
-            desktop: 15.0,
-            largeDesktop: 16.0,
-          ),
-        ) ??
-        TextStyle(
-          color: context.textColors.secondary,
-          fontSize: context.responsiveValue(
-            mobile: 12.0,
-            tablet: 13.0,
-            smallLaptop: 14.0,
-            desktop: 15.0,
-            largeDesktop: 16.0,
-          ),
-        );
-
-    final titleStyle = textTheme.headlineSmall?.copyWith(
-          fontWeight: FontWeight.bold,
-          color: context.textColors.secondary,
-          fontSize: context.responsiveValue(
-            mobile: 20.0,
-            tablet: 22.0,
-            smallLaptop: 24.0,
-            desktop: 26.0,
-            largeDesktop: 28.0,
-          ),
-        ) ??
-        TextStyle(
-          fontWeight: FontWeight.bold,
-          color: context.textColors.primary,
-          fontSize: context.responsiveValue(
-            mobile: 20.0,
-            tablet: 22.0,
-            smallLaptop: 24.0,
-            desktop: 26.0,
-            largeDesktop: 28.0,
-          ),
-        );
-
-    final excerptStyle = textTheme.bodyMedium?.copyWith(
-          color: context.textColors.secondary,
-          fontSize: context.responsiveValue(
-            mobile: 14.0,
-            tablet: 15.0,
-            smallLaptop: 16.0,
-            desktop: 17.0,
-            largeDesktop: 18.0,
-          ),
-        ) ??
-        TextStyle(
-          color: context.textColors.secondary,
-          fontSize: context.responsiveValue(
-            mobile: 14.0,
-            tablet: 15.0,
-            smallLaptop: 16.0,
-            desktop: 17.0,
-            largeDesktop: 18.0,
-          ),
-        );
-
-    final readMoreStyle = TextStyle(
-      color: AppTheme.primary,
-      fontWeight: FontWeight.bold,
-      fontSize: context.responsiveValue(
-        mobile: 14.0,
-        tablet: 15.0,
-        smallLaptop: 16.0,
-        desktop: 17.0,
-        largeDesktop: 18.0,
-      ),
-    );
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Date and author
-        Row(
-          children: [
-            Icon(
-              Icons.calendar_today,
-              size: 14,
-              color: context.textColors.secondary,
-            ),
-            const SizedBox(width: AppTheme.spacing4),
-            SelectableText(
-              formattedDate,
-              style: dateAuthorStyle,
-            ),
-            const SizedBox(width: AppTheme.spacing16),
-            Icon(
-              Icons.person,
-              size: 14,
-              color: context.textColors.secondary,
-            ),
-            const SizedBox(width: AppTheme.spacing4),
-            SelectableText(
-              post.author,
-              style: dateAuthorStyle,
-            ),
-          ],
-        ),
-        const SizedBox(height: AppTheme.spacing8),
-        // Title
-        SelectableText(
-          post.title,
-          style: titleStyle,
-          maxLines: 2,
-        ),
-        const SizedBox(height: AppTheme.spacing8),
-        // Excerpt
-        SelectableText(
-          post.excerpt,
-          style: excerptStyle,
-          maxLines: 3,
-        ),
-        const SizedBox(height: AppTheme.spacing16),
-        // Read more link
-        TextButton.icon(
-          onPressed: () async {
-            if (post.link.isNotEmpty) {
-              final url = Uri.parse(post.link);
-              if (await canLaunchUrl(url)) {
-                await launchUrl(url);
-              }
-            }
-          },
-          icon: const Icon(
-            Icons.arrow_forward,
-            color: AppTheme.primary,
-          ),
-          label: Text(
-            'Read More',
-            style: readMoreStyle,
-          ),
-        ),
-      ],
     );
   }
 }

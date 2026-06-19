@@ -4,3 +4,5 @@
 # Project exclude paths
 /.dart_tool/
 /build/
+# Claude Code internal data
+.claude/

@@ -45,30 +45,25 @@ class _PortfolioView extends StatelessWidget {
 
     return ResponsiveBuilder(
       builder: (context, info) {
-        final deviceType = info.deviceType;
         final isDrawer =
-            deviceType == DeviceType.mobile || deviceType == DeviceType.tablet;
-        final isSidebar = deviceType.index >= DeviceType.smallLaptop.index;
+            info.deviceType == DeviceType.mobile || info.deviceType == DeviceType.tablet;
+        final isSidebar = info.deviceType.index >= DeviceType.smallLaptop.index;
 
-        return BlocBuilder<ScrollCubit, ScrollState>(
-          builder: (context, scrollState) {
-            return Scaffold(
-                drawer: isDrawer ? _buildDrawer(context, scrollCubit) : null,
-                body: Stack(
-                  children: [
-                    Row(
-                      children: [
-                        if (isSidebar)
-                          SafeArea(
-                              child: _buildSidebar(scrollState, scrollCubit)),
-                        Expanded(child: _buildScrollableContent(scrollCubit)),
-                      ],
-                    ),
-                    _buildThemeToggle(context),
-                    if (isDrawer) _buildDrawerToggleButton(context),
-                  ],
-                ));
-          },
+        return Scaffold(
+          drawer: isDrawer ? _buildDrawer(context, scrollCubit) : null,
+          body: Stack(
+            children: [
+              Row(
+                children: [
+                  if (isSidebar)
+                    SafeArea(child: _buildSidebarWithBloc(scrollCubit)),
+                  Expanded(child: _buildScrollableContent(scrollCubit)),
+                ],
+              ),
+              _buildThemeToggle(context),
+              if (isDrawer) _buildDrawerToggleButton(context),
+            ],
+          ),
         );
       },
     );
@@ -85,10 +80,12 @@ class _PortfolioView extends StatelessWidget {
     );
   }
 
-  Widget _buildSidebar(ScrollState scrollState, ScrollCubit scrollCubit) {
-    return SidebarNavigation(
-      currentSection: scrollState.currentSection,
-      onSectionSelected: scrollCubit.scrollToSection,
+  Widget _buildSidebarWithBloc(ScrollCubit scrollCubit) {
+    return BlocBuilder<ScrollCubit, ScrollState>(
+      builder: (context, scrollState) => SidebarNavigation(
+        currentSection: scrollState.currentSection,
+        onSectionSelected: scrollCubit.scrollToSection,
+      ),
     );
   }
 
