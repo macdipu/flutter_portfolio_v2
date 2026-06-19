@@ -6,3 +6,5 @@
 /build/
 # Claude Code internal data
 .claude/
+# Generated preview files
+*_preview.html
