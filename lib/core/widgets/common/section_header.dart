@@ -160,9 +160,9 @@ class SectionHeader extends StatelessWidget {
   Color _getDefaultSubtitleColor(BuildContext context) {
     final theme = Theme.of(context);
     return subtitleColor ??
-        theme.colorScheme.primary.withOpacity(0.8) ??
-        theme.textTheme.titleMedium?.color?.withOpacity(0.7) ??
-        theme.colorScheme.onSurface.withOpacity(0.7);
+        theme.colorScheme.primary.withAlpha(204) ??
+        theme.textTheme.titleMedium?.color?.withAlpha(178) ??
+        theme.colorScheme.onSurface.withAlpha(178);
   }
 
   Widget _buildSubtitle(BuildContext context) {

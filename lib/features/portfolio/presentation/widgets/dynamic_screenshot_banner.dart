@@ -1,6 +1,8 @@
 import 'package:any_image_view/any_image_view.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../core/responsive/responsive_framework.dart';
+
 class DynamicScreenshotBanner extends StatelessWidget {
   final List<String> screenshots;
   final Widget details;
@@ -19,9 +21,9 @@ class DynamicScreenshotBanner extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
-            color: Colors.black26,
+            color: Color(0x42000000),
             blurRadius: 8,
             offset: Offset(0, 4),
           ),
@@ -44,7 +46,7 @@ class DynamicScreenshotBanner extends StatelessWidget {
       builder: (context, constraints) {
         Widget banner;
         if (screenshots.isEmpty) {
-          banner = Container();
+          banner = const SizedBox.shrink();
         } else if (screenshots.length == 1) {
           banner = AspectRatio(
             aspectRatio: bannerRatio,
@@ -90,7 +92,7 @@ class DynamicScreenshotBanner extends StatelessWidget {
           );
         }
 
-        if (constraints.maxWidth < 600) {
+        if (constraints.maxWidth < ResponsiveBreakpoints.mobile) {
           // Mobile layout: column
           return Column(
             children: [

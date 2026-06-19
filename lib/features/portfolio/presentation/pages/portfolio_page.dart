@@ -82,6 +82,7 @@ class _PortfolioView extends StatelessWidget {
 
   Widget _buildSidebarWithBloc(ScrollCubit scrollCubit) {
     return BlocBuilder<ScrollCubit, ScrollState>(
+      buildWhen: (prev, curr) => prev.currentSection != curr.currentSection,
       builder: (context, scrollState) => SidebarNavigation(
         currentSection: scrollState.currentSection,
         onSectionSelected: scrollCubit.scrollToSection,
@@ -107,6 +108,7 @@ class _PortfolioView extends StatelessWidget {
       right: 16,
       child: SafeArea(
         child: BlocBuilder<ThemeCubit, ThemeState>(
+          buildWhen: (prev, curr) => prev.themeMode != curr.themeMode,
           builder: (context, state) {
             final isDark = state.themeMode == ThemeMode.dark;
             return IconButton(

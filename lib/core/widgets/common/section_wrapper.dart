@@ -57,7 +57,7 @@ class SectionWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
+    final screenHeight = MediaQuery.sizeOf(context).height;
 
     final defaultPad = _getDefaultPadding(context);
     final effectivePadding = padding ?? defaultPad;
