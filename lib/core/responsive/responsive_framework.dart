@@ -22,7 +22,6 @@ class ResponsiveBreakpoints {
   static const double desktop = 1680;
   static const double largeDesktop = 1920;
 
-  /// Optional custom breakpoints override
   final Map<DeviceType, double>? custom;
 
   const ResponsiveBreakpoints({this.custom});
@@ -91,6 +90,18 @@ class ResponsiveProvider extends InheritedWidget {
       oldWidget.config != config;
 }
 
+/// Package-private helper — resolves DeviceType without allocating a widget.
+DeviceType _resolveDeviceType(
+    double width, double pixelRatio, ResponsiveConfig config) {
+  final bp = config.breakpoints;
+  final d = config.densityAware;
+  if (width < bp.value(DeviceType.mobile, pixelRatio, d)) return DeviceType.mobile;
+  if (width < bp.value(DeviceType.tablet, pixelRatio, d)) return DeviceType.tablet;
+  if (width < bp.value(DeviceType.smallLaptop, pixelRatio, d)) return DeviceType.smallLaptop;
+  if (width < bp.value(DeviceType.desktop, pixelRatio, d)) return DeviceType.desktop;
+  return DeviceType.largeDesktop;
+}
+
 /// ----------------------------------------------
 /// DATA MODEL (cached snapshot of layout)
 /// ----------------------------------------------
@@ -135,31 +146,13 @@ class ResponsiveBuilder extends StatelessWidget {
 
   const ResponsiveBuilder({super.key, required this.builder});
 
-  DeviceType _resolveType(
-      double width, double pixelRatio, ResponsiveConfig config) {
-    final bp = config.breakpoints;
-    final d = config.densityAware;
-
-    if (width < bp.value(DeviceType.mobile, pixelRatio, d)) {
-      return DeviceType.mobile;
-    } else if (width < bp.value(DeviceType.tablet, pixelRatio, d)) {
-      return DeviceType.tablet;
-    } else if (width < bp.value(DeviceType.smallLaptop, pixelRatio, d)) {
-      return DeviceType.smallLaptop;
-    } else if (width < bp.value(DeviceType.desktop, pixelRatio, d)) {
-      return DeviceType.desktop;
-    } else {
-      return DeviceType.largeDesktop;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
     final config = ResponsiveProvider.of(context);
 
     final info = ResponsiveInfo(
-      deviceType: _resolveType(mq.size.width, mq.devicePixelRatio, config),
+      deviceType: _resolveDeviceType(mq.size.width, mq.devicePixelRatio, config),
       width: mq.size.width,
       height: mq.size.height,
       portrait: mq.orientation == Orientation.portrait,
@@ -212,26 +205,11 @@ class ResponsiveWidget extends StatelessWidget {
           case DeviceType.tablet:
             return tablet ?? mobile ?? fallback ?? const SizedBox.shrink();
           case DeviceType.smallLaptop:
-            return smallLaptop ??
-                tablet ??
-                mobile ??
-                fallback ??
-                const SizedBox.shrink();
+            return smallLaptop ?? tablet ?? mobile ?? fallback ?? const SizedBox.shrink();
           case DeviceType.desktop:
-            return desktop ??
-                smallLaptop ??
-                tablet ??
-                mobile ??
-                fallback ??
-                const SizedBox.shrink();
+            return desktop ?? smallLaptop ?? tablet ?? mobile ?? fallback ?? const SizedBox.shrink();
           case DeviceType.largeDesktop:
-            return largeDesktop ??
-                desktop ??
-                smallLaptop ??
-                tablet ??
-                mobile ??
-                fallback ??
-                const SizedBox.shrink();
+            return largeDesktop ?? desktop ?? smallLaptop ?? tablet ?? mobile ?? fallback ?? const SizedBox.shrink();
         }
       },
     );
@@ -245,13 +223,8 @@ class ResponsiveHelper {
   static ResponsiveInfo info(BuildContext context) {
     final mq = MediaQuery.of(context);
     final config = ResponsiveProvider.of(context);
-
-    final builder = ResponsiveBuilder(builder: (_, __) => const SizedBox());
-    final type = builder._resolveType(
-        mq.size.width, mq.devicePixelRatio, config);
-
     return ResponsiveInfo(
-      deviceType: type,
+      deviceType: _resolveDeviceType(mq.size.width, mq.devicePixelRatio, config),
       width: mq.size.width,
       height: mq.size.height,
       portrait: mq.orientation == Orientation.portrait,
@@ -270,7 +243,6 @@ class ResponsiveHelper {
     T? largeDesktop,
   }) {
     final i = info(context);
-
     switch (i.deviceType) {
       case DeviceType.mobile:
         return mobile;
@@ -292,15 +264,13 @@ class ResponsiveHelper {
       EdgeInsets? desktop,
       EdgeInsets? largeDesktop}) {
     final config = ResponsiveProvider.of(context);
-
     return value(
       context,
       mobile: mobile ?? config.defaultPadding[DeviceType.mobile]!,
       tablet: tablet ?? config.defaultPadding[DeviceType.tablet],
       smallLaptop: smallLaptop ?? config.defaultPadding[DeviceType.smallLaptop],
       desktop: desktop ?? config.defaultPadding[DeviceType.desktop],
-      largeDesktop: largeDesktop ??
-          config.defaultPadding[DeviceType.largeDesktop],
+      largeDesktop: largeDesktop ?? config.defaultPadding[DeviceType.largeDesktop],
     );
   }
 
@@ -318,7 +288,6 @@ class ResponsiveHelper {
   static double contentWidth(BuildContext context) {
     final config = ResponsiveProvider.of(context);
     final i = info(context);
-
     if (i.isMobile) return double.infinity;
     final max = value<double>(
       context,
@@ -328,7 +297,6 @@ class ResponsiveHelper {
       desktop: 1024,
       largeDesktop: config.maxContentWidth,
     );
-
     return math.min(max, i.width * .9);
   }
 
@@ -347,10 +315,7 @@ class ResponsiveHelper {
       desktop: desktopScale ?? 1.1,
       largeDesktop: 1.2,
     );
-
-    return style.copyWith(
-      fontSize: (style.fontSize ?? 14) * scale,
-    );
+    return style.copyWith(fontSize: (style.fontSize ?? 14) * scale);
   }
 }
 
@@ -365,7 +330,7 @@ class _DebugOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(6),
-      color: Colors.black.withValues(alpha: .7),
+      color: Colors.black.withAlpha(178),
       child: Text(
         '${info.deviceType.name}\n${info.width.toInt()}x${info.height.toInt()}',
         style: const TextStyle(color: Colors.white, fontSize: 10),
