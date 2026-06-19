@@ -124,7 +124,7 @@ class _BlogPostCard extends StatelessWidget {
       color: theme.colorScheme.onSurface.withAlpha(179),
     );
     final readMoreStyle = TextStyle(
-      color: AppTheme.primary,
+      color: theme.colorScheme.primary,
       fontWeight: FontWeight.bold,
       fontSize: AppTypography.bodyMedium(r),
     );
@@ -172,7 +172,7 @@ class _BlogPostCard extends StatelessWidget {
                           if (await canLaunchUrl(url)) launchUrl(url);
                         }
                       },
-                      icon: const Icon(Icons.arrow_forward, color: AppTheme.primary),
+                      icon: Icon(Icons.arrow_forward, color: theme.colorScheme.primary),
                       label: Text('Read More', style: readMoreStyle),
                     ),
                   ],
@@ -196,15 +196,16 @@ class _BlogImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
     if (imageUrl.isEmpty) {
       return Container(
         width: isNarrow ? double.infinity : 200,
         height: 120,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
-          color: AppTheme.primary.withAlpha(26),
+          color: primary.withAlpha(26),
         ),
-        child: const Center(child: Icon(Icons.article, size: 40, color: AppTheme.primary)),
+        child: Center(child: Icon(Icons.article, size: 40, color: primary)),
       );
     }
     return ResponsiveImage(
@@ -214,7 +215,7 @@ class _BlogImage extends StatelessWidget {
       aspectRatio: isNarrow ? null : 16 / 9,
       enableHoverEffect: false,
       borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
-      backgroundColor: AppTheme.primary.withAlpha(26),
+      backgroundColor: primary.withAlpha(26),
       fit: BoxFit.cover,
       placeholder: 'Loading image',
     );

@@ -17,8 +17,8 @@ class ThemeState extends Equatable {
 class ThemeCubit extends Cubit<ThemeState> {
   final bool initialDarkMode;
   
-  ThemeCubit(this.initialDarkMode) 
-    : super(ThemeState(themeMode: ThemeMode.light));
+  ThemeCubit(this.initialDarkMode)
+      : super(ThemeState(themeMode: ThemeMode.dark));
   
   Future<void> initialize() async {
     emit(ThemeState(themeMode: initialDarkMode ? ThemeMode.dark : ThemeMode.light));
