@@ -75,8 +75,8 @@ class HeroSection extends StatelessWidget {
     return SingleChildScrollView(
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          minHeight: MediaQuery.of(context).size.height -
-              MediaQuery.of(context).padding.vertical,
+          minHeight: MediaQuery.sizeOf(context).height -
+              MediaQuery.paddingOf(context).vertical,
         ),
         child: IntrinsicHeight(
           child: Column(
