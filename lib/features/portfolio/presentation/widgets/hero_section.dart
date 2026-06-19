@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_portfolio/core/navigation/scroll_controller.dart';
 import 'package:flutter_portfolio/core/responsive/responsive_framework.dart';
 import 'package:flutter_portfolio/core/widgets/common/responsive_image.dart';
+import 'package:flutter_portfolio/core/theme/app_typography.dart';
 import 'package:flutter_portfolio/core/widgets/common/section_wrapper.dart';
 import 'package:flutter_portfolio/features/portfolio/presentation/bloc/portfolio_bloc.dart';
 
@@ -31,118 +32,32 @@ class HeroSection extends StatelessWidget {
           );
         }
 
-        // Define responsive values for image size
-        final imageSize = context.responsiveValue<double>(
-          mobile: 180.0,
-          tablet: 240.0,
-          smallLaptop: 300.0,
-          desktop: 400.0,
-          largeDesktop: 480.0,
+        final r = context.responsive;
+        final theme = Theme.of(context);
+
+        final imageSize = r.isMobile ? 180.0 : r.isTablet ? 240.0 : r.isSmallLaptop ? 300.0 : r.isDesktop ? 400.0 : 480.0;
+        final fullHeight = !r.isMobileOrTablet;
+
+        final greetingStyle = (theme.textTheme.headlineMedium ?? const TextStyle()).copyWith(
+          color: theme.colorScheme.primary,
+          fontSize: AppTypography.sectionLabel(r),
         );
-
-        // Define responsive fullHeight value
-        final fullHeight = context.responsiveValue<bool>(
-          mobile: false,
-          tablet: false,
-          smallLaptop: true,
-          desktop: true,
-          largeDesktop: true,
+        final nameStyle = (theme.textTheme.displaySmall ?? const TextStyle()).copyWith(
+          fontSize: AppTypography.display(r),
         );
-
-        // Define text styles with responsive font sizes
-        final greetingStyle =
-            Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: context.responsiveValue(
-                        mobile: 18.0,
-                        tablet: 20.0,
-                        smallLaptop: 22.0,
-                        desktop: 24.0,
-                        largeDesktop: 26.0,
-                      ),
-                    ) ??
-                TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontSize: context.responsiveValue(
-                    mobile: 18.0,
-                    tablet: 20.0,
-                    smallLaptop: 22.0,
-                    desktop: 24.0,
-                    largeDesktop: 26.0,
-                  ),
-                );
-
-        final nameStyle = Theme.of(context).textTheme.displaySmall?.copyWith(
-                  fontSize: context.responsiveValue(
-                    mobile: 28.0,
-                    tablet: 38.0,
-                    smallLaptop: 46.0,
-                    desktop: 56.0,
-                    largeDesktop: 64.0,
-                  ),
-                ) ??
-            TextStyle(
-              fontSize: context.responsiveValue(
-                mobile: 28.0,
-                tablet: 38.0,
-                smallLaptop: 46.0,
-                desktop: 56.0,
-                largeDesktop: 64.0,
-              ),
-              fontWeight: FontWeight.bold,
-            );
-
-        final titleStyle = Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontSize: context.responsiveValue(
-                    mobile: 18.0,
-                    tablet: 22.0,
-                    smallLaptop: 24.0,
-                    desktop: 28.0,
-                    largeDesktop: 30.0,
-                  ),
-                ) ??
-            TextStyle(
-              fontSize: context.responsiveValue(
-                mobile: 18.0,
-                tablet: 22.0,
-                smallLaptop: 24.0,
-                desktop: 28.0,
-                largeDesktop: 30.0,
-              ),
-              fontWeight: FontWeight.normal,
-            );
-
-        final introStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: context.responsiveValue(
-                    mobile: 14.0,
-                    tablet: 16.0,
-                    smallLaptop: 17.0,
-                    desktop: 18.0,
-                    largeDesktop: 20.0,
-                  ),
-                ) ??
-            TextStyle(
-              fontSize: context.responsiveValue(
-                mobile: 14.0,
-                tablet: 16.0,
-                smallLaptop: 17.0,
-                desktop: 18.0,
-                largeDesktop: 20.0,
-              ),
-            );
+        final titleStyle = (theme.textTheme.titleLarge ?? const TextStyle()).copyWith(
+          fontSize: AppTypography.heroTitle(r),
+          fontWeight: FontWeight.normal,
+        );
+        final introStyle = (theme.textTheme.bodyLarge ?? const TextStyle()).copyWith(
+          fontSize: AppTypography.bodyLarge(r),
+        );
 
         return SectionWrapper(
           fullHeight: fullHeight,
-          mobileChild: _buildVerticalLayout(context, profile, imageSize,
-              greetingStyle, nameStyle, titleStyle, introStyle),
-          tabletChild: _buildVerticalLayout(context, profile, imageSize,
-              greetingStyle, nameStyle, titleStyle, introStyle),
-          smallLaptopChild: _buildHorizontalLayout(context, profile, imageSize,
-              greetingStyle, nameStyle, titleStyle, introStyle),
-          desktopChild: _buildHorizontalLayout(context, profile, imageSize,
-              greetingStyle, nameStyle, titleStyle, introStyle),
-          largeDesktopChild: _buildHorizontalLayout(context, profile, imageSize,
-              greetingStyle, nameStyle, titleStyle, introStyle),
+          child: r.isMobileOrTablet
+              ? _buildVerticalLayout(context, profile, imageSize, greetingStyle, nameStyle, titleStyle, introStyle)
+              : _buildHorizontalLayout(context, profile, imageSize, greetingStyle, nameStyle, titleStyle, introStyle),
         );
       },
     );
@@ -281,30 +196,12 @@ class HeroSection extends StatelessWidget {
   Widget _buildHeroImage(BuildContext context, String avatarUrl, double size) {
     final orbitSize = size * 1.45;
 
-    // Tag sizes / padding (responsive)
-    final tagFontSize = context.responsiveValue<double>(
-      mobile: 14,
-      tablet: 15,
-      smallLaptop: 16,
-      desktop: 16,
-      largeDesktop: 18,
-    );
-
-    final tagIconSize = context.responsiveValue<double>(
-      mobile: 14,
-      tablet: 15,
-      smallLaptop: 16,
-      desktop: 16,
-      largeDesktop: 18,
-    );
-
-    final tagPadding = context.responsiveValue<EdgeInsets>(
-      mobile: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-      tablet: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
-      smallLaptop: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
-      desktop: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      largeDesktop: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
-    );
+    final r = context.responsive;
+    final tagFontSize = AppTypography.bodySmall(r);
+    final tagIconSize = AppTypography.bodySmall(r);
+    final tagHPad = r.isMobile ? 10.0 : r.isTablet ? 12.0 : r.isSmallLaptop ? 13.0 : r.isDesktop ? 14.0 : 16.0;
+    final tagVPad = r.isMobile ? 8.0 : r.isTablet ? 9.0 : 10.0;
+    final tagPadding = EdgeInsets.symmetric(horizontal: tagHPad, vertical: tagVPad);
 
     // Build the portrait area mirroring the ProfileCard composition
     return _HoverFloat(
@@ -520,35 +417,14 @@ class HeroSection extends StatelessWidget {
   }
 
   Widget _buildButtons(BuildContext context, {bool isVertical = false}) {
-    // Define responsive button padding
-    final buttonPadding = context.responsiveValue<EdgeInsets>(
-      mobile: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      tablet: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      smallLaptop: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      desktop: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
-      largeDesktop: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+    final r = context.responsive;
+    final hPad = r.isMobile ? 16.0 : r.isTablet ? 20.0 : r.isSmallLaptop ? 24.0 : r.isDesktop ? 28.0 : 32.0;
+    final vPad = r.isMobile ? 8.0 : r.isTablet ? 10.0 : r.isSmallLaptop ? 12.0 : r.isDesktop ? 14.0 : 16.0;
+    final buttonPadding = EdgeInsets.symmetric(horizontal: hPad, vertical: vPad);
+    final buttonTextStyle = (Theme.of(context).textTheme.labelLarge ?? const TextStyle()).copyWith(
+      fontSize: AppTypography.bodyMedium(r),
+      fontWeight: FontWeight.w500,
     );
-
-    // Define responsive text style for buttons
-    final buttonTextStyle = Theme.of(context).textTheme.labelLarge?.copyWith(
-              fontSize: context.responsiveValue(
-                mobile: 14.0,
-                tablet: 15.0,
-                smallLaptop: 16.0,
-                desktop: 17.0,
-                largeDesktop: 18.0,
-              ),
-            ) ??
-        TextStyle(
-          fontSize: context.responsiveValue(
-            mobile: 14.0,
-            tablet: 15.0,
-            smallLaptop: 16.0,
-            desktop: 17.0,
-            largeDesktop: 18.0,
-          ),
-          fontWeight: FontWeight.w500,
-        );
 
     final children = [
       ElevatedButton(
