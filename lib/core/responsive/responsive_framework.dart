@@ -69,7 +69,7 @@ class ResponsiveConfig {
 }
 
 /// ----------------------------------------------
-/// INHERITED PROVIDER (cached for performance)
+/// CONFIG PROVIDER
 /// ----------------------------------------------
 class ResponsiveProvider extends InheritedWidget {
   final ResponsiveConfig config;
@@ -89,7 +89,7 @@ class ResponsiveProvider extends InheritedWidget {
       oldWidget.config != config;
 }
 
-/// Package-private helper — resolves DeviceType without allocating a widget.
+/// Package-private — resolves DeviceType without allocating a widget.
 DeviceType _resolveDeviceType(
     double width, double pixelRatio, ResponsiveConfig config) {
   final bp = config.breakpoints;
@@ -102,7 +102,7 @@ DeviceType _resolveDeviceType(
 }
 
 /// ----------------------------------------------
-/// DATA MODEL (cached snapshot of layout)
+/// DATA MODEL (immutable snapshot)
 /// ----------------------------------------------
 class ResponsiveInfo {
   final DeviceType deviceType;
@@ -138,7 +138,67 @@ class ResponsiveInfo {
 }
 
 /// ----------------------------------------------
-/// RESPONSIVE BUILDER
+/// INHERITED SNAPSHOT — gates rebuilds on DeviceType change only,
+/// not on every pixel of resize.
+/// ----------------------------------------------
+class _ResponsiveInherited extends InheritedWidget {
+  final ResponsiveInfo info;
+
+  const _ResponsiveInherited({
+    required this.info,
+    required super.child,
+  });
+
+  @override
+  bool updateShouldNotify(_ResponsiveInherited old) =>
+      old.info.deviceType != info.deviceType;
+}
+
+/// ----------------------------------------------
+/// RESPONSIVE SCOPE — single root MediaQuery subscriber.
+/// Place inside MaterialApp.builder so the entire widget tree reads
+/// [context.responsive] from the cached InheritedWidget rather than
+/// calling MediaQuery independently on every build.
+/// ----------------------------------------------
+class ResponsiveScope extends StatefulWidget {
+  final Widget child;
+  final ResponsiveConfig config;
+
+  const ResponsiveScope({
+    super.key,
+    required this.child,
+    this.config = const ResponsiveConfig(),
+  });
+
+  @override
+  State<ResponsiveScope> createState() => _ResponsiveScopeState();
+}
+
+class _ResponsiveScopeState extends State<ResponsiveScope> {
+  @override
+  Widget build(BuildContext context) {
+    final size       = MediaQuery.sizeOf(context);
+    final padding    = MediaQuery.paddingOf(context);
+    final viewInsets = MediaQuery.viewInsetsOf(context);
+    final pixelRatio = MediaQuery.devicePixelRatioOf(context);
+
+    return _ResponsiveInherited(
+      info: ResponsiveInfo(
+        deviceType: _resolveDeviceType(size.width, pixelRatio, widget.config),
+        width: size.width,
+        height: size.height,
+        portrait: size.height >= size.width,
+        pixelRatio: pixelRatio,
+        padding: padding,
+        viewInsets: viewInsets,
+      ),
+      child: widget.child,
+    );
+  }
+}
+
+/// ----------------------------------------------
+/// RESPONSIVE BUILDER — thin wrapper; reads from the cached scope.
 /// ----------------------------------------------
 class ResponsiveBuilder extends StatelessWidget {
   final Widget Function(BuildContext context, ResponsiveInfo info) builder;
@@ -147,21 +207,8 @@ class ResponsiveBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size       = MediaQuery.sizeOf(context);
-    final padding    = MediaQuery.paddingOf(context);
-    final viewInsets = MediaQuery.viewInsetsOf(context);
-    final pixelRatio = MediaQuery.devicePixelRatioOf(context);
-    final config     = ResponsiveProvider.of(context);
-
-    final info = ResponsiveInfo(
-      deviceType: _resolveDeviceType(size.width, pixelRatio, config),
-      width: size.width,
-      height: size.height,
-      portrait: size.height >= size.width,
-      pixelRatio: pixelRatio,
-      padding: padding,
-      viewInsets: viewInsets,
-    );
+    final info   = context.responsive;
+    final config = ResponsiveProvider.of(context);
 
     Widget child = builder(context, info);
 
@@ -222,22 +269,9 @@ class ResponsiveWidget extends StatelessWidget {
 /// HELPER API
 /// ----------------------------------------------
 class ResponsiveHelper {
-  static ResponsiveInfo info(BuildContext context) {
-    final size       = MediaQuery.sizeOf(context);
-    final padding    = MediaQuery.paddingOf(context);
-    final viewInsets = MediaQuery.viewInsetsOf(context);
-    final pixelRatio = MediaQuery.devicePixelRatioOf(context);
-    final config     = ResponsiveProvider.of(context);
-    return ResponsiveInfo(
-      deviceType: _resolveDeviceType(size.width, pixelRatio, config),
-      width: size.width,
-      height: size.height,
-      portrait: size.height >= size.width,
-      pixelRatio: pixelRatio,
-      padding: padding,
-      viewInsets: viewInsets,
-    );
-  }
+  /// Reads from the cached [_ResponsiveInherited] when a [ResponsiveScope] is
+  /// present; falls back to direct MediaQuery if not.
+  static ResponsiveInfo info(BuildContext context) => context.responsive;
 
   static T value<T>(
     BuildContext context, {
@@ -247,7 +281,7 @@ class ResponsiveHelper {
     T? desktop,
     T? largeDesktop,
   }) {
-    final i = info(context);
+    final i = context.responsive;
     switch (i.deviceType) {
       case DeviceType.mobile:
         return mobile;
@@ -292,7 +326,7 @@ class ResponsiveHelper {
 
   static double contentWidth(BuildContext context) {
     final config = ResponsiveProvider.of(context);
-    final i = info(context);
+    final i = context.responsive;
     if (i.isMobile) return double.infinity;
     final max = switch (i.deviceType) {
       DeviceType.tablet       => 720.0,
@@ -347,7 +381,28 @@ class _DebugOverlay extends StatelessWidget {
 /// EXTENSIONS
 /// ----------------------------------------------
 extension ResponsiveContext on BuildContext {
-  ResponsiveInfo get responsive => ResponsiveHelper.info(this);
+  /// Returns the [ResponsiveInfo] cached by the nearest [ResponsiveScope].
+  /// Falls back to a direct MediaQuery read if no scope is present.
+  ResponsiveInfo get responsive {
+    final inherited = dependOnInheritedWidgetOfExactType<_ResponsiveInherited>();
+    if (inherited != null) return inherited.info;
+
+    // Fallback — only runs when ResponsiveScope is not in the tree.
+    final size       = MediaQuery.sizeOf(this);
+    final padding    = MediaQuery.paddingOf(this);
+    final viewInsets = MediaQuery.viewInsetsOf(this);
+    final pixelRatio = MediaQuery.devicePixelRatioOf(this);
+    final config     = ResponsiveProvider.of(this);
+    return ResponsiveInfo(
+      deviceType: _resolveDeviceType(size.width, pixelRatio, config),
+      width: size.width,
+      height: size.height,
+      portrait: size.height >= size.width,
+      pixelRatio: pixelRatio,
+      padding: padding,
+      viewInsets: viewInsets,
+    );
+  }
 
   bool get isMobile => responsive.isMobile;
   bool get isTablet => responsive.isTablet;
