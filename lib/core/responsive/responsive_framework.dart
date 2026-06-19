@@ -382,9 +382,11 @@ extension ResponsiveContext on BuildContext {
 
   bool get isMobile => responsive.isMobile;
   bool get isTablet => responsive.isTablet;
+  bool get isSmallLaptop => responsive.isSmallLaptop;
   bool get isDesktop => responsive.isDesktop;
   bool get isLargeDesktop => responsive.isLargeDesktop;
   bool get isMobileOrTablet => responsive.isMobileOrTablet;
+  bool get isDesktopOrAbove => responsive.isDesktopOrAbove;
 
   EdgeInsets get defaultPadding =>
       ResponsiveProvider.of(this).defaultPadding[responsive.deviceType] ??
