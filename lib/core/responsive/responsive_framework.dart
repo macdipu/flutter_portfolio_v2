@@ -32,14 +32,13 @@ class ResponsiveBreakpoints {
   }
 
   double value(DeviceType type, double pixelRatio, bool useDensity) {
-    final base = custom?[type] ??
-        {
-          DeviceType.mobile: mobile,
-          DeviceType.tablet: tablet,
-          DeviceType.smallLaptop: smallLaptop,
-          DeviceType.desktop: desktop,
-          DeviceType.largeDesktop: largeDesktop,
-        }[type]!;
+    final base = custom?[type] ?? switch (type) {
+      DeviceType.mobile       => mobile,
+      DeviceType.tablet       => tablet,
+      DeviceType.smallLaptop  => smallLaptop,
+      DeviceType.desktop      => desktop,
+      DeviceType.largeDesktop => largeDesktop,
+    };
     return _scaled(base, pixelRatio, useDensity);
   }
 }
@@ -148,17 +147,20 @@ class ResponsiveBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mq = MediaQuery.of(context);
-    final config = ResponsiveProvider.of(context);
+    final size       = MediaQuery.sizeOf(context);
+    final padding    = MediaQuery.paddingOf(context);
+    final viewInsets = MediaQuery.viewInsetsOf(context);
+    final pixelRatio = MediaQuery.devicePixelRatioOf(context);
+    final config     = ResponsiveProvider.of(context);
 
     final info = ResponsiveInfo(
-      deviceType: _resolveDeviceType(mq.size.width, mq.devicePixelRatio, config),
-      width: mq.size.width,
-      height: mq.size.height,
-      portrait: mq.orientation == Orientation.portrait,
-      pixelRatio: mq.devicePixelRatio,
-      padding: mq.padding,
-      viewInsets: mq.viewInsets,
+      deviceType: _resolveDeviceType(size.width, pixelRatio, config),
+      width: size.width,
+      height: size.height,
+      portrait: size.height >= size.width,
+      pixelRatio: pixelRatio,
+      padding: padding,
+      viewInsets: viewInsets,
     );
 
     Widget child = builder(context, info);
@@ -221,16 +223,19 @@ class ResponsiveWidget extends StatelessWidget {
 /// ----------------------------------------------
 class ResponsiveHelper {
   static ResponsiveInfo info(BuildContext context) {
-    final mq = MediaQuery.of(context);
-    final config = ResponsiveProvider.of(context);
+    final size       = MediaQuery.sizeOf(context);
+    final padding    = MediaQuery.paddingOf(context);
+    final viewInsets = MediaQuery.viewInsetsOf(context);
+    final pixelRatio = MediaQuery.devicePixelRatioOf(context);
+    final config     = ResponsiveProvider.of(context);
     return ResponsiveInfo(
-      deviceType: _resolveDeviceType(mq.size.width, mq.devicePixelRatio, config),
-      width: mq.size.width,
-      height: mq.size.height,
-      portrait: mq.orientation == Orientation.portrait,
-      pixelRatio: mq.devicePixelRatio,
-      padding: mq.padding,
-      viewInsets: mq.viewInsets,
+      deviceType: _resolveDeviceType(size.width, pixelRatio, config),
+      width: size.width,
+      height: size.height,
+      portrait: size.height >= size.width,
+      pixelRatio: pixelRatio,
+      padding: padding,
+      viewInsets: viewInsets,
     );
   }
 
@@ -289,14 +294,13 @@ class ResponsiveHelper {
     final config = ResponsiveProvider.of(context);
     final i = info(context);
     if (i.isMobile) return double.infinity;
-    final max = value<double>(
-      context,
-      mobile: double.infinity,
-      tablet: 720,
-      smallLaptop: 860,
-      desktop: 1024,
-      largeDesktop: config.maxContentWidth,
-    );
+    final max = switch (i.deviceType) {
+      DeviceType.tablet       => 720.0,
+      DeviceType.smallLaptop  => 860.0,
+      DeviceType.desktop      => 1024.0,
+      DeviceType.largeDesktop => config.maxContentWidth,
+      _                       => double.infinity,
+    };
     return math.min(max, i.width * .9);
   }
 
