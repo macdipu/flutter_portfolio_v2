@@ -283,6 +283,7 @@ class HeroSection extends StatelessWidget {
               duration: const Duration(seconds: 11),
               clockwise: true,
               child: _buildFloatingTag(
+                context: context,
                 label: 'Flutter',
                 icon: Icons.flutter_dash,
                 delayMs: 300,
@@ -298,6 +299,7 @@ class HeroSection extends StatelessWidget {
               duration: const Duration(seconds: 13),
               clockwise: false,
               child: _buildFloatingTag(
+                context: context,
                 label: 'Mobile',
                 icon: Icons.phone_android,
                 delayMs: 500,
@@ -313,6 +315,7 @@ class HeroSection extends StatelessWidget {
               duration: const Duration(seconds: 9),
               clockwise: true,
               child: _buildFloatingTag(
+                context: context,
                 label: 'Web',
                 icon: Icons.web,
                 delayMs: 700,
@@ -328,6 +331,7 @@ class HeroSection extends StatelessWidget {
               duration: const Duration(seconds: 14),
               clockwise: false,
               child: _buildFloatingTag(
+                context: context,
                 label: 'Desktop',
                 icon: Icons.desktop_windows,
                 delayMs: 900,
@@ -343,6 +347,7 @@ class HeroSection extends StatelessWidget {
   }
 
   Widget _buildFloatingTag({
+    required BuildContext context,
     required String label,
     required IconData icon,
     required int delayMs,
