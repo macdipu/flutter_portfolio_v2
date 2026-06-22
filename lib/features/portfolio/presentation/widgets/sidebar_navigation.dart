@@ -84,6 +84,7 @@ class _SidebarLayout extends StatelessWidget {
     final avatarFontSize = r.isMobile ? 24.0 : r.isTablet ? 26.0 : r.isSmallLaptop ? 28.0 : r.isDesktop ? 30.0 : 32.0;
     final nameFontSize   = r.isMobile ? 20.0 : r.isTablet ? 22.0 : r.isSmallLaptop ? 24.0 : r.isDesktop ? 26.0 : 28.0;
     final titleFontSize  = r.isMobile ? 14.0 : r.isTablet ? 15.0 : r.isSmallLaptop ? 16.0 : r.isDesktop ? 17.0 : 18.0;
+    final heroRadius     = r.isMobile ? 55.0 : r.isSmallLaptop ? 65.0 : 75.0;
 
     final avatarTextStyle = (theme.textTheme.headlineMedium ?? const TextStyle()).copyWith(
       color: theme.colorScheme.primary,
@@ -100,13 +101,11 @@ class _SidebarLayout extends StatelessWidget {
 
     return Column(
       children: [
-        CircleAvatar(
-          radius: 50,
-          backgroundColor: theme.colorScheme.primary.withAlpha(26),
-          child: Text(
-            'MACD',
-            style: avatarTextStyle,
-          ),
+        const SizedBox(height: AppTheme.spacing24),
+        _SidebarHeroImage(
+          radius: heroRadius,
+          primaryColor: theme.colorScheme.primary,
+          fallbackStyle: avatarTextStyle,
         ),
         const SizedBox(height: AppTheme.spacing16),
         SelectableText(
@@ -155,6 +154,58 @@ class _SidebarLayout extends StatelessWidget {
                 url: 'https://twitter.com/c_dipu0',
               ),
             ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SidebarHeroImage extends StatelessWidget {
+  final double radius;
+  final Color primaryColor;
+  final TextStyle fallbackStyle;
+
+  const _SidebarHeroImage({
+    required this.radius,
+    required this.primaryColor,
+    required this.fallbackStyle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+          width: radius * 2 + 6,
+          height: radius * 2 + 6,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: primaryColor, width: 3),
+            boxShadow: [
+              BoxShadow(
+                color: primaryColor.withAlpha(77),
+                blurRadius: 24,
+                spreadRadius: 4,
+              ),
+            ],
+          ),
+        ),
+        ClipOval(
+          child: Image.network(
+            'https://github.com/dipu0.png',
+            width: radius * 2,
+            height: radius * 2,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => Container(
+              width: radius * 2,
+              height: radius * 2,
+              color: primaryColor.withAlpha(26),
+              child: Center(
+                child: Text('MACD', style: fallbackStyle),
+              ),
+            ),
           ),
         ),
       ],
