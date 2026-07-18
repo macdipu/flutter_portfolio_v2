@@ -250,7 +250,7 @@ class _NavigationItem extends StatelessWidget {
 }
 
 class _SocialIcon extends StatelessWidget {
-  final IconData icon;
+  final FaIconData icon;
   final String url;
 
   const _SocialIcon({required this.icon, required this.url});
