@@ -17,7 +17,7 @@ dependencies:
   url_launcher: ^6.3.2
   http: ^1.6.0
   google_fonts: ^6.3.3
-  font_awesome_flutter: ^10.12.0
+  font_awesome_flutter: ^11.0.0
   intl: ^0.20.2
   shared_preferences: ^2.5.4
   flutter_animate: ^4.5.2
