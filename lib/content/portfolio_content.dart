@@ -17,7 +17,6 @@ abstract class AppLinks {
   static const siteSource = 'https://github.com/macdipu/flutter_portfolio_v2';
 }
 
-
 abstract class Profile {
   static const name = 'Md. Asad Chowdhury Dipu';
   static const handle = 'MACDIPU';
@@ -56,7 +55,7 @@ enum Platform {
 }
 
 /// How a preview graphic is presented.
-enum ShotKind { phone, desktop, browser, banner }
+enum ShotKind { phone, desktop, browser, diagram }
 
 class Shot {
   const Shot(this.asset, this.kind, this.caption);
@@ -80,6 +79,7 @@ class Project {
     required this.tags,
     required this.links,
     required this.shots,
+    this.note,
   });
 
   final String title;
@@ -91,31 +91,99 @@ class Project {
   final List<String> tags;
   final List<ProjectLink> links;
   final List<Shot> shots;
+
+  /// Shown instead of links when there is nothing public to link to.
+  final String? note;
 }
 
 /// Showcase projects, in display order. Every one has real preview graphics.
 const projects = <Project>[
   Project(
-    title: 'Shell Agami and Shell Consumer',
-    role: 'Developer at Polygon Technology',
-    summary: 'Consumer mobile apps with e-commerce, product guides, MotoGP '
-        'campaigns, a geolocation-based mechanic and shop finder, and product '
-        'authenticity verification.',
-    platforms: [Platform.mobile],
-    tags: ['Flutter', 'BLoC', 'REST API'],
+    title: 'FlexWork',
+    role: 'Author, private repository',
+    summary:
+        'A mobile-first workforce marketplace for Bangladesh that connects '
+        'businesses with flexible workers. A Flutter worker app (find jobs, '
+        'apply, check in and out, get paid), a Flutter employer app (post '
+        'jobs, manage candidates, pay workers) and a Next.js admin panel '
+        'share one backend of 16 services behind a Spring Cloud Gateway.',
+    platforms: [Platform.fullStack, Platform.mobile, Platform.web],
+    tags: [
+      'Flutter',
+      'Spring Boot',
+      'Next.js',
+      'Django',
+      'FastAPI',
+      'Node.js',
+      'PostgreSQL',
+      'Docker',
+    ],
+    links: [],
+    note: 'Private repository. The diagram is the system architecture.',
+    shots: [
+      Shot('flexwork', ShotKind.diagram, 'FlexWork system architecture'),
+    ],
+  ),
+  Project(
+    title: 'BuildingOS',
+    role: 'Author, open source',
+    summary: 'A platform monorepo: Spring Boot microservices (gateway, auth, '
+        'building, subscription, back-office), a Flutter user app and a '
+        'back-office web app, joined by OpenAPI and Kafka contracts. Clean '
+        'Architecture is enforced by tests, and it is built with an agentic '
+        'development kit: 34 skills, delivery workflows and a harness with '
+        'evidence and approval gates.',
+    platforms: [Platform.fullStack, Platform.mobile, Platform.web],
+    tags: [
+      'Spring Boot',
+      'Flutter',
+      'GetX',
+      'Kafka',
+      'PostgreSQL',
+      'Clean Architecture',
+      'AI agents',
+    ],
     links: [
-      ProjectLink('Shell Consumer on Google Play',
-          'https://play.google.com/store/apps/details?id=com.shell.consumer.shell_consumer'),
-      ProjectLink('Shell Agami on Google Play',
+      ProjectLink('Source on GitHub', 'https://github.com/macdipu/BuildingOS'),
+    ],
+    shots: [
+      Shot('buildingos', ShotKind.diagram, 'BuildingOS system architecture'),
+    ],
+  ),
+  Project(
+    title: 'Five branded apps, one codebase',
+    role: 'Built and developed at Polygon Technology',
+    summary: 'One Flutter codebase that I built and developed, shipped as five '
+        'apps for five vendors: Shell Agami, Shell BD, Motul Bangladesh, '
+        'ASTRO Connect and Reward Link. Depending on the vendor, they cover '
+        'product authenticity verification, e-commerce and product guides, '
+        'campaigns and rewards, stock and target tracking, and a mechanic '
+        'and shop finder.',
+    platforms: [Platform.mobile],
+    tags: ['Flutter', 'BLoC', 'REST API', 'Multi-brand'],
+    links: [
+      ProjectLink('Shell Agami',
           'https://play.google.com/store/apps/details?id=com.shell.agami'),
+      ProjectLink('Shell BD',
+          'https://play.google.com/store/apps/details?id=com.shell.consumer.shell_consumer'),
+      ProjectLink('Motul Bangladesh',
+          'https://play.google.com/store/apps/details?id=com.motulbd.consumer'),
+      ProjectLink('ASTRO Connect',
+          'https://play.google.com/store/apps/details?id=com.astroconnectbd.customerapp'),
+      ProjectLink('Reward Link',
+          'https://play.google.com/store/apps/details?id=com.ulolrewardlink.reward_link'),
     ],
     shots: [
       Shot('assets/images/projects/shell-agami-home.webp', ShotKind.phone,
           'Shell Agami home screen'),
       Shot('assets/images/projects/shell-consumer-home.webp', ShotKind.phone,
-          'Shell Consumer home screen'),
-      Shot('assets/images/projects/shell-agami-scan.webp', ShotKind.phone,
-          'Shell Agami product code scanner'),
+          'Shell BD home screen'),
+      Shot('assets/images/projects/motul-home.webp', ShotKind.phone,
+          'Motul Bangladesh home screen'),
+      Shot('assets/images/projects/astro-home.webp', ShotKind.phone,
+          'ASTRO Connect home screen'),
+      Shot('assets/images/projects/reward-home.webp', ShotKind.phone,
+          'Reward Link home screen'),
     ],
   ),
   Project(
@@ -157,13 +225,72 @@ const projects = <Project>[
     ],
   ),
   Project(
-    title: 'BMI & BMR Calculator',
+    title: 'Muslim Deen',
+    role: 'Independent developer, Chowdhury eLab',
+    summary: 'An offline-first Islamic companion for Android. Prayer times are '
+        'calculated on the device with real azan alarms, alongside the Quran '
+        'with audio, a live Qibla compass, a prayer tracker with missed-prayer '
+        'counts, tasbih, duas and azkar, a Zakat calculator, a mosque finder '
+        'and 15 home-screen widgets, in English and Bangla. No ads, no '
+        'account.',
+    platforms: [Platform.mobile],
+    tags: ['Flutter', 'Offline-first', 'Home-screen widgets', 'Android'],
+    links: [
+      ProjectLink('Website', 'https://macdipu.github.io/muslim_deen/'),
+      ProjectLink('Google Play',
+          'https://play.google.com/store/apps/details?id=com.chowdhuryelab.muslimdeen'),
+    ],
+    shots: [
+      Shot('assets/images/projects/md-01-home.jpg', ShotKind.phone,
+          'Muslim Deen prayer times and daily progress'),
+      Shot('assets/images/projects/md-02-collection.jpg', ShotKind.phone,
+          'Muslim Deen feature collection'),
+      Shot('assets/images/projects/md-03-quran.jpg', ShotKind.phone,
+          'Muslim Deen Quran with translation'),
+      Shot('assets/images/projects/md-04-tasbih.jpg', ShotKind.phone,
+          'Muslim Deen tasbih counter'),
+      Shot('assets/images/projects/md-05-daily-amal.jpg', ShotKind.phone,
+          'Muslim Deen daily Amal checklist'),
+    ],
+  ),
+  Project(
+    title: 'Weight Tracker',
+    role: 'Independent developer, Chowdhury eLab',
+    summary:
+        'Log weigh-ins, body measurements, meals, water, steps and sleep, with '
+        'BMI, calorie targets and goal projections worked out on the device. '
+        'Multiple profiles, reminders, backup and restore, and no account: '
+        'your records stay in a local database.',
+    platforms: [Platform.mobile],
+    tags: ['Flutter', 'Drift', 'Health Connect', 'Offline-first'],
+    links: [
+      ProjectLink('Website', 'https://macdipu.github.io/weight_tracker/'),
+      ProjectLink('Google Play',
+          'https://play.google.com/store/apps/details?id=com.chowdhury_elab.weight_tracker'),
+    ],
+    shots: [
+      Shot('assets/images/projects/wt-today.webp', ShotKind.phone,
+          'Weight Tracker today screen'),
+      Shot('assets/images/projects/wt-weight_trend.webp', ShotKind.phone,
+          'Weight Tracker weight trend'),
+      Shot('assets/images/projects/wt-insights.webp', ShotKind.phone,
+          'Weight Tracker weekly insights'),
+      Shot('assets/images/projects/wt-food.webp', ShotKind.phone,
+          'Weight Tracker food log'),
+      Shot('assets/images/projects/wt-share_progress.webp', ShotKind.phone,
+          'Weight Tracker shareable progress card'),
+    ],
+  ),
+  Project(
+    title: 'BMI and BMR Calculator',
     role: 'Independent developer, Chowdhury eLab',
     summary: 'Calculates Body Mass Index and Basal Metabolic Rate from weight, '
-        'height, age and gender. First written in Java, later migrated to '
-        'Flutter, and published on Google Play.',
+        'height, age and gender, with a weight monitor, a BMI avatar, metric '
+        'and imperial units, and offline use. It started as a Java app and '
+        'was later migrated to Flutter. Published on Google Play with 50K+ '
+        'downloads.',
     platforms: [Platform.mobile],
-    tags: ['Flutter', 'BLoC', 'Java'],
+    tags: ['Flutter', 'BLoC', 'Java', 'Offline'],
     links: [
       ProjectLink('Google Play',
           'https://play.google.com/store/apps/details?id=com.chowdhuryelab.bmiandbmrcalculator'),
@@ -171,28 +298,12 @@ const projects = <Project>[
           'https://github.com/macdipu/BMI_and_BMR_Calculator_Android_Java_Application'),
     ],
     shots: [
-      Shot('assets/images/projects/bmi-1.webp', ShotKind.phone,
-          'BMI & BMR Calculator input screen'),
-      Shot('assets/images/projects/bmi-2.webp', ShotKind.phone,
-          'BMI & BMR Calculator result'),
-      Shot('assets/images/projects/bmi-3.webp', ShotKind.phone,
-          'BMI & BMR Calculator result, dark'),
-    ],
-  ),
-  Project(
-    title: 'QrXpert',
-    role: 'Independent developer, Chowdhury eLab',
-    summary: 'A QR code scanner and generator with fast scanning and export, '
-        'published on Google Play.',
-    platforms: [Platform.mobile],
-    tags: ['Flutter'],
-    links: [
-      ProjectLink('Google Play',
-          'https://play.google.com/store/apps/details?id=com.chowdhuryelab.qrxpert'),
-    ],
-    shots: [
-      Shot('assets/images/projects/qrxpert-banner.webp', ShotKind.banner,
-          'QrXpert scanning and generating QR codes'),
+      Shot('assets/images/projects/bmi-input.webp', ShotKind.phone,
+          'BMI and BMR Calculator input screen'),
+      Shot('assets/images/projects/bmi-result-dark.webp', ShotKind.phone,
+          'BMI and BMR Calculator result, dark theme'),
+      Shot('assets/images/projects/bmi-result.webp', ShotKind.phone,
+          'BMI and BMR Calculator result, light theme'),
     ],
   ),
 ];
@@ -209,7 +320,8 @@ const proofFacts = <ProofFact>[
       'At Polygon Technology, promoted twice since Sep 2023'),
   ProofFact(
       'On Google Play since 2020', 'Own apps published through Chowdhury eLab'),
-  ProofFact('Open source', 'OpenReader and GitSwitch, public on GitHub'),
+  ProofFact(
+      'Open source', 'OpenReader, GitSwitch and BuildingOS, public on GitHub'),
 ];
 
 class Role {
@@ -301,13 +413,40 @@ class SkillGroup {
   final List<String> items;
 }
 
-/// Grouped by what appears in the work above. No ratings: they mean nothing.
+/// Two rows, used by both the scrolling strip and the About section.
+const engineeringSkills = <String>[
+  'Flutter',
+  'Dart',
+  'Kotlin',
+  'Java',
+  'Spring Boot',
+  'PostgreSQL',
+  'Redis',
+  'Docker',
+  'Kubernetes',
+  'Kafka',
+  'Clean Architecture',
+  'Microservices',
+];
+
+const aiSkills = <String>[
+  'AI Agents',
+  'MCP',
+  'RAG',
+  'LLM Integration',
+  'Agentic Workflows',
+  'Multi-Agent Systems',
+  'Context Engineering',
+  'AI Orchestration',
+  'OpenAI API',
+  'LangGraph',
+  'FDE',
+];
+
+/// Grouped for the About section. No ratings: they mean nothing.
 const skills = <SkillGroup>[
-  SkillGroup('Apps', ['Flutter', 'Dart', 'Flutter Web', 'Android (Java)']),
-  SkillGroup('Architecture', ['BLoC', 'GetX', 'Clean Architecture']),
-  SkillGroup(
-      'Backend and data', ['REST APIs', 'Firebase', 'Supabase', 'Django']),
-  SkillGroup('Also used', ['Go', 'Python', 'Git', 'Figma']),
+  SkillGroup('Engineering', engineeringSkills),
+  SkillGroup('AI and agentic engineering', aiSkills),
 ];
 
 class Education {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_portfolio/content/portfolio_content.dart';
 import 'package:flutter_portfolio/core/design/tokens.dart';
 import 'package:flutter_portfolio/core/motion/reveal.dart';
 import 'package:flutter_portfolio/core/theme/app_theme.dart';
@@ -15,10 +16,12 @@ void main() {
   testWidgets('shows the name, role and nav links', (tester) async {
     _desktop(tester);
     await tester.pumpWidget(const MyApp(initialMode: ThemeMode.light));
+    await tester.pump(); // the hero builds once the intro signal resolves
     await tester.pump(const Duration(seconds: 2));
+    await tester.pump(const Duration(seconds: 3)); // and its entrance finishes
 
     expect(find.text('Chowdhury'), findsOneWidget);
-    expect(find.text('Flutter engineer.'), findsOneWidget);
+    expect(find.text('${Profile.role}.'), findsOneWidget);
     for (final label in ['Projects', 'Experience', 'About', 'Contact']) {
       expect(find.text(label), findsWidgets);
     }
@@ -30,7 +33,7 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
 
     Brightness current() =>
-        Theme.of(tester.element(find.text('Flutter engineer.'))).brightness;
+        Theme.of(tester.element(find.text('${Profile.role}.'))).brightness;
     expect(current(), Brightness.light);
 
     await tester.tap(find.byIcon(Icons.dark_mode_outlined));

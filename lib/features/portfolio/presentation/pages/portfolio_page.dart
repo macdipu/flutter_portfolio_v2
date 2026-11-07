@@ -9,6 +9,7 @@ import '../sections/about_section.dart';
 import '../sections/contact_section.dart';
 import '../sections/experience_section.dart';
 import '../sections/hero_section.dart';
+import '../sections/marquee_strip.dart';
 import '../sections/proof_strip.dart';
 import '../sections/projects_section.dart';
 import '../sections/writing_section.dart';
@@ -41,7 +42,7 @@ class _PortfolioViewState extends State<_PortfolioView> {
 
   Widget _section(NavigationSection s) => switch (s) {
         NavigationSection.hero => const Column(
-            children: [HeroSection(), ProofStrip()],
+            children: [HeroSection(), MarqueeStrip(), ProofStrip()],
           ),
         NavigationSection.projects => const ProjectsSection(),
         NavigationSection.experience => const ExperienceSection(),

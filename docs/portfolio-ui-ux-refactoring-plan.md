@@ -577,3 +577,12 @@ Still open: resume PDF (not supplied), `flexword` repo, Lighthouse run, 200% tex
 | Robustness | Found by a test: the project text overflowed at 1440x900. Fixed with a scale-down fit box. Verified at 1366x650 and 320x568. |
 
 Still open: resume PDF, `flexword` repo, Lighthouse, 200% text scale.
+
+## Q. FlexWork added
+
+Read from the private repo `macdipu/flexwork` (README and `landing/README.md`, in the logged-in browser). It is a mobile-first workforce marketplace for Bangladesh: Flutter worker app, Flutter employer app, Next.js admin panel and a Next.js landing page over 16 backend services (Spring Boot, Django, Node.js, FastAPI) behind a Spring Cloud Gateway, with PostgreSQL, Redis, MinIO and optional Kafka.
+
+- First slide in Projects (the strongest full-stack evidence). Badges: Full stack, Mobile, Web.
+- The repo has no screenshots and nothing is deployed publicly, so no UI is shown. The preview graphic is the real system architecture, drawn in Flutter from the README (`core/widgets/architecture_diagram.dart`).
+- No link, because the repository is private; the slide says so. Demo credentials and other internal docs were not used.
+- Add real screenshots later as `Shot`s on the project.

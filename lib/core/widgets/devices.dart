@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../content/portfolio_content.dart';
 import '../design/tokens.dart';
+import 'architecture_diagram.dart';
 import 'ui.dart';
 
 const double _phoneAspect = 9 / 19.5;
@@ -163,12 +164,11 @@ class ShotDevice extends StatelessWidget {
           title: 'OpenReader',
           child: image,
         ),
-      ShotKind.banner => ClipRRect(
-          borderRadius: BorderRadius.circular(Radii.md),
-          child: SizedBox(
-            width: width,
-            child: AspectRatio(aspectRatio: 4 / 3, child: image),
-          ),
+      ShotKind.diagram => WindowFrame(
+          width: width,
+          aspect: 640 / 470,
+          title: 'architecture',
+          child: ArchitectureDiagram(rows: Diagrams.byKey(shot.asset)),
         ),
       ShotKind.browser => WindowFrame(
           width: width,
