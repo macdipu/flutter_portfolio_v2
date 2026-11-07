@@ -30,6 +30,7 @@ class TopBar extends StatelessWidget {
         child: Stack(
           children: [
             Frame(
+              alignment: Alignment.center,
               child: Row(
                 children: [
                   Pressable(
@@ -208,6 +209,7 @@ class MobileMenu extends StatelessWidget {
             SizedBox(
               height: 64,
               child: Frame(
+                alignment: Alignment.center,
                 child: Row(
                   children: [
                     const BrandLogo(),
