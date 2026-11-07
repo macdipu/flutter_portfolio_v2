@@ -8,14 +8,21 @@ import '../utils/launch.dart';
 
 /// Centers content, applies the fluid gutter and the max content width.
 class Frame extends StatelessWidget {
-  const Frame({super.key, required this.child});
+  const Frame({
+    super.key,
+    required this.child,
+    this.alignment = Alignment.topCenter,
+  });
   final Widget child;
+
+  /// Where the content sits when the frame is taller than it. Bars centre it.
+  final Alignment alignment;
 
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.sizeOf(context).width;
     return Align(
-      alignment: Alignment.topCenter,
+      alignment: alignment,
       child: ConstrainedBox(
         constraints: BoxConstraints(
             maxWidth: Widths.forViewport(w) + gutter(context) * 2),
