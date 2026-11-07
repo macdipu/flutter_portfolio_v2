@@ -9,6 +9,7 @@ import '../../../../core/motion/scroll_scope.dart';
 import '../../../../core/motion/tilt.dart';
 import '../../../../core/widgets/devices.dart';
 import '../../../../core/widgets/ui.dart';
+import 'other_projects_section.dart';
 
 class ProjectsSection extends StatelessWidget {
   const ProjectsSection({super.key});
@@ -26,6 +27,7 @@ class ProjectsSection extends StatelessWidget {
           child: SizedBox.shrink(),
         ),
         ProjectShowcase(),
+        OtherProjectsSection(),
       ],
     );
   }
@@ -316,6 +318,8 @@ class _ProjectText extends StatelessWidget {
           runSpacing: Space.s,
           children: [
             for (final l in project.links) TextLink(label: l.label, url: l.url),
+            if (project.links.isEmpty && project.note != null)
+              Text(project.note!, style: AppType.caption(context)),
           ],
         ),
       ],
@@ -397,12 +401,11 @@ class _Devices extends StatelessWidget {
     final shots = project.shots;
     final phones = shots.where((s) => s.kind == ShotKind.phone).toList();
     final windows = shots
-        .where((s) => s.kind == ShotKind.desktop || s.kind == ShotKind.browser)
+        .where((s) =>
+            s.kind == ShotKind.desktop ||
+            s.kind == ShotKind.browser ||
+            s.kind == ShotKind.diagram)
         .toList();
-    final banners = shots.where((s) => s.kind == ShotKind.banner).toList();
-    if (banners.isNotEmpty) {
-      return ShotDevice(shot: banners.first, width: w * 0.86);
-    }
 
     // Desktop or browser window with a phone in front.
     if (windows.isNotEmpty && phones.isNotEmpty) {
@@ -428,11 +431,18 @@ class _Devices extends StatelessWidget {
     }
     // A single window, centred.
     if (windows.isNotEmpty) {
-      return ShotDevice(shot: windows.first, width: w * 0.88);
+      return ShotDevice(
+        shot: windows.first,
+        width: w * (windows.first.kind == ShotKind.diagram ? 0.96 : 0.88),
+      );
     }
-    // Phones fan out.
-    final fan = phones.take(3).toList();
+    // Phones fan out. Up to five, with the middle one in front.
+    final fan = phones.take(5).toList();
     if (fan.length == 1) return ShotDevice(shot: fan.first, width: w * 0.36);
+    final many = fan.length >= 5;
+    final mid = (fan.length - 1) / 2;
+    final order = List<int>.generate(fan.length, (i) => i)
+      ..sort((a, b) => (b - mid).abs().compareTo((a - mid).abs()));
     return SizedBox(
       width: w,
       height: w * 0.8,
@@ -440,17 +450,20 @@ class _Devices extends StatelessWidget {
         alignment: Alignment.center,
         clipBehavior: Clip.none,
         children: [
-          for (var k = 0; k < fan.length; k++)
+          for (final k in order)
             Transform(
               alignment: Alignment.center,
               transform: perspective(
-                rotateZ: (k - (fan.length - 1) / 2) * 0.16,
-                dx: (k - (fan.length - 1) / 2) * w * 0.27,
-                dy: (k - (fan.length - 1) / 2).abs() * w * 0.025,
+                rotateZ: (k - mid) * (many ? 0.11 : 0.16),
+                dx: (k - mid) * w * (many ? 0.20 : 0.27),
+                dy: (k - mid).abs() * w * (many ? 0.03 : 0.025),
               ),
               child: ShotDevice(
                 shot: fan[k],
-                width: w * (k == (fan.length - 1) ~/ 2 ? 0.30 : 0.27),
+                width: w *
+                    (many
+                        ? (k == mid.round() ? 0.24 : 0.21)
+                        : (k == mid.round() ? 0.30 : 0.27)),
               ),
             ),
         ],

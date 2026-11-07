@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
       create: (_) => ThemeCubit(initialMode),
       child: BlocBuilder<ThemeCubit, ThemeState>(
         builder: (context, state) => MaterialApp(
-          title: 'Md. Asad Chowdhury Dipu: Flutter engineer',
+          title: 'Md. Asad Chowdhury Dipu: Forward Deployed Engineer',
           debugShowCheckedModeBanner: false,
           theme: AppTheme.light,
           darkTheme: AppTheme.dark,

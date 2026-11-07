@@ -7,8 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
 
-  <title>Md. Asad Chowdhury Dipu: Flutter engineer</title>
-  <meta name="description" content="Md. Asad Chowdhury Dipu is a Flutter engineer at Polygon Technology. Open-source projects: OpenReader and GitSwitch.">
+  <title>Md. Asad Chowdhury Dipu: Forward Deployed Engineer</title>
+  <meta name="description" content="Md. Asad Chowdhury Dipu is a Forward Deployed Engineer and Software Engineer III at Polygon Technology. Mobile, desktop, web and AI-powered products, plus open-source tools.">
   <link rel="canonical" href="https://masadcd.online/">
   <meta name="author" content="Md. Asad Chowdhury Dipu">
   <meta name="color-scheme" content="dark light">
@@ -17,15 +17,15 @@
 
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Md. Asad Chowdhury Dipu">
-  <meta property="og:title" content="Md. Asad Chowdhury Dipu: Flutter engineer">
-  <meta property="og:description" content="Flutter engineer at Polygon Technology. Mobile, desktop and web apps, and open-source tools.">
+  <meta property="og:title" content="Md. Asad Chowdhury Dipu: Forward Deployed Engineer">
+  <meta property="og:description" content="Forward Deployed Engineer. Software Engineer III at Polygon Technology. Mobile, desktop, web and AI-powered products.">
   <meta property="og:url" content="https://masadcd.online/">
   <meta property="og:image" content="https://masadcd.online/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Md. Asad Chowdhury Dipu: Flutter engineer">
-  <meta name="twitter:description" content="Flutter engineer at Polygon Technology. Mobile, desktop and web apps, and open-source tools.">
+  <meta name="twitter:title" content="Md. Asad Chowdhury Dipu: Forward Deployed Engineer">
+  <meta name="twitter:description" content="Forward Deployed Engineer. Software Engineer III at Polygon Technology. Mobile, desktop, web and AI-powered products.">
   <meta name="twitter:image" content="https://masadcd.online/og-image.png">
 
   <meta name="mobile-web-app-capable" content="yes">
@@ -40,7 +40,7 @@
     "@context": "https://schema.org",
     "@type": "Person",
     "name": "Md. Asad Chowdhury Dipu",
-    "jobTitle": "Flutter engineer",
+    "jobTitle": "Forward Deployed Engineer",
     "worksFor": { "@type": "Organization", "name": "Polygon Technology" },
     "url": "https://masadcd.online/",
     "sameAs": [
@@ -60,9 +60,9 @@
       font-weight: 200 800;
       font-display: block;
     }
-    :root { --bg:#0A1330; --fg:#EEF2FF; --line:#1F2E5C; --sig:#2BB7FF; }
-    :root[data-theme="dark"]  { --bg:#0A1330; --fg:#EEF2FF; --line:#1F2E5C; --sig:#2BB7FF; }
-    :root[data-theme="light"] { --bg:#F2F5FB; --fg:#081230; --line:#D5DCEB; --sig:#0A5BFF; }
+    :root { --bg:#0A1330; --fg:#EEF2FF; --line:#1F2E5C; --sig:#2BB7FF; --vig:rgba(2,6,20,.55); }
+    :root[data-theme="dark"]  { --bg:#0A1330; --fg:#EEF2FF; --line:#1F2E5C; --sig:#2BB7FF; --vig:rgba(2,6,20,.55); }
+    :root[data-theme="light"] { --bg:#F2F5FB; --fg:#081230; --line:#D5DCEB; --sig:#0A5BFF; --vig:rgba(8,18,48,.10); }
     html, body { margin:0; background:var(--bg); }
 
     #app-loader {
@@ -71,8 +71,13 @@
     }
     #app-loader.done { opacity:0; pointer-events:none; }
     #intro { position:absolute; inset:0; width:100%; height:100%; display:block; }
+    /* Soft vignette: pulls the eye to the centre where the name forms. */
+    #app-loader::after {
+      content:""; position:absolute; inset:0; pointer-events:none;
+      background:radial-gradient(ellipse at center, transparent 50%, var(--vig) 100%);
+    }
     #intro-skip {
-      position:absolute; left:50%; bottom:max(28px, env(safe-area-inset-bottom));
+      position:absolute; z-index:1; left:50%; bottom:max(28px, env(safe-area-inset-bottom));
       transform:translateX(-50%); opacity:0; transition:opacity .4s ease;
       font:500 13px "Bricolage", system-ui, sans-serif; letter-spacing:.02em;
       color:var(--fg); background:transparent; border:1px solid var(--line);
@@ -88,8 +93,8 @@
     <button id="intro-skip" type="button">Skip intro</button>
   </div>
   <noscript>
-    <h1>Md. Asad Chowdhury Dipu: Flutter engineer</h1>
-    <p>Flutter engineer at Polygon Technology. Open-source projects: OpenReader and GitSwitch.</p>
+    <h1>Md. Asad Chowdhury Dipu: Forward Deployed Engineer</h1>
+    <p>Forward Deployed Engineer. Software Engineer III at Polygon Technology. Open-source projects: OpenReader and GitSwitch.</p>
     <p><a href="https://github.com/macdipu">GitHub</a>, <a href="https://www.linkedin.com/in/md-asad-chowdhury-dipu/">LinkedIn</a>, <a href="mailto:c.dipu0@gmail.com">c.dipu0@gmail.com</a></p>
   </noscript>
   <script>
@@ -107,12 +112,14 @@
       var seen = false;
       try { seen = sessionStorage.getItem('introSeen') === '1'; } catch (e) {}
 
+      var ROLE = 'Forward Deployed Engineer';
       var ready = false, played = false, finished = false;
       function finish() {
         if (finished || !ready || !played) return;
         finished = true;
         try { sessionStorage.setItem('introSeen', '1'); } catch (e) {}
         loader.classList.add('done');
+        window.dispatchEvent(new Event('intro-done'));
         setTimeout(function () { loader.remove(); }, 600);
       }
       // Real signal: Flutter fires this once fonts are loaded and the hero images are decoded.
@@ -122,16 +129,17 @@
         setTimeout(function () { ready = true; finish(); }, 2500);
       });
 
-      // ---- Timeline, in seconds. Everything below is a pure function of time,
-      // so skipping, resizing and seeking all stay consistent. ----
+      // ---- Timeline, in seconds. Every position below is a pure function of
+      // time, so skipping, resizing and seeking all stay consistent. ----
       var T = {
-        convStart: 1.3, convDur: 1.6, convStagger: 0.45,
-        formA: 3.1, formB: 3.9,
-        dissA: 4.7, dissB: 5.4,
-        scatA: 4.8, scatB: 5.8,
-        reconA: 5.8, reconDur: 0.8, reconStagger: 0.4,
-        nameA: 6.9, nameB: 7.5,
-        end: 7.7
+        convStart: 1.0, convDur: 1.7, convStagger: 0.4,   // letters swirl into MACDIPU
+        formA: 2.6, formB: 3.3,                            // the word sharpens, glow builds
+        dissA: 3.9, dissB: 4.4,                            // letters break into fine particles
+        scatA: 3.95, scatB: 4.65,                          // a short, tight burst
+        reconA: 4.65, reconDur: 0.9, reconStagger: 0.35,   // particles flow into the name
+        nameA: 5.55, nameB: 6.15,                          // the name resolves
+        subA: 6.0, subB: 6.5,                              // the role fades in
+        end: 6.8
       };
 
       var rs = getComputedStyle(document.documentElement);
@@ -140,19 +148,18 @@
         hex = hex.replace('#', '');
         return [parseInt(hex.substr(0, 2), 16), parseInt(hex.substr(2, 2), 16), parseInt(hex.substr(4, 2), 16)];
       }
-      var BG = rgb(css('--bg')), FG = css('--fg'), SIG = css('--sig');
+      var BG = rgb(css('--bg')), FG = css('--fg'), SIG = css('--sig'), FGRGB = rgb(css('--fg'));
 
       function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
       function sm(t, a, b) { var x = clamp((t - a) / (b - a), 0, 1); return x * x * (3 - 2 * x); }
-      function eio(x) { return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+      function eio(x) { return x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }   // quad: gentler peak speed
       function eout(x) { return 1 - Math.pow(1 - x, 3); }
       function lerp(a, b, x) { return a + (b - a) * x; }
       function rnd(a, b) { return a + Math.random() * (b - a); }
 
-      var W = 0, H = 0, dpr = 1;
-      var N = 1000;
-      var sprites = [];
-      var layout1, layout2;
+      var W = 0, H = 0, dpr = 1, N = 1000;
+      var sprites = [], dust = [];
+      var layout1, layout2, subY = 0, subSize = 14;
       var atlasFg = [], atlasSig = [], glow;
 
       function makeAtlas(color) {
@@ -173,14 +180,13 @@
         var g = c.getContext('2d');
         var grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
         grad.addColorStop(0, 'rgba(255,255,255,1)');
-        grad.addColorStop(.18, SIG);
-        grad.addColorStop(.5, SIG.length === 7 ? SIG + '55' : SIG);
+        grad.addColorStop(.2, SIG);
+        grad.addColorStop(.55, SIG.length === 7 ? SIG + '44' : SIG);
         grad.addColorStop(1, 'rgba(0,0,0,0)');
         g.fillStyle = grad; g.fillRect(0, 0, 64, 64);
         return c;
       }
 
-      // Fit lines of text so the widest line fills at most `frac` of the width.
       function fit(lines, maxFs, frac) {
         var m = document.createElement('canvas').getContext('2d');
         m.font = '800 100px Bricolage, system-ui, sans-serif';
@@ -188,18 +194,17 @@
         lines.forEach(function (l) { widest = Math.max(widest, m.measureText(l).width); });
         return Math.min(maxFs, (W * frac) / (widest / 100));
       }
-      function makeLayout(lines, maxFs) {
-        var fs = fit(lines, maxFs, 0.86);
-        return { lines: lines, fs: fs, lh: fs * 1.14 };
+      function makeLayout(lines, maxFs, dy) {
+        var fs = fit(lines, maxFs, 0.84);
+        return { lines: lines, fs: fs, lh: fs * 1.08, dy: dy ? dy(fs) : 0 };
       }
       function drawLines(g, lay, color) {
         g.font = '800 ' + lay.fs + 'px Bricolage, system-ui, sans-serif';
         g.textAlign = 'center'; g.textBaseline = 'middle';
         g.fillStyle = color;
-        var top = H / 2 - (lay.lines.length - 1) * lay.lh / 2;
+        var top = H / 2 + lay.dy - (lay.lines.length - 1) * lay.lh / 2;
         lay.lines.forEach(function (l, i) { g.fillText(l, W / 2, top + i * lay.lh); });
       }
-      // Sample N points inside the glyph shapes of a layout.
       function samplePoints(lay) {
         var c = document.createElement('canvas'); c.width = W; c.height = H;
         var g = c.getContext('2d', { willReadFrequently: true });
@@ -217,7 +222,8 @@
         var out = [];
         for (var k = 0; k < N; k++) {
           var p = pts[k % Math.max(pts.length, 1)] || [W / 2, H / 2];
-          out.push([p[0] + (k >= pts.length ? rnd(-2, 2) : 0), p[1] + (k >= pts.length ? rnd(-2, 2) : 0)]);
+          var extra = k >= pts.length ? 2 : 0;
+          out.push([p[0] + rnd(-extra, extra), p[1] + rnd(-extra, extra)]);
         }
         return out;
       }
@@ -226,32 +232,36 @@
         dpr = Math.min(window.devicePixelRatio || 1, 2);
         W = window.innerWidth; H = window.innerHeight;
         canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
-        N = W < 600 ? 640 : 1000;
+        N = W < 600 ? 700 : 1100;
 
-        layout1 = makeLayout(['MACDIPU'], Math.min(W * 0.16, 170));
-        var oneLine = W >= 900;
-        layout2 = oneLine
-          ? makeLayout(['MD. ASAD CHOWDHURY DIPU'], Math.min(W * 0.06, 88))
-          : makeLayout(['MD. ASAD', 'CHOWDHURY DIPU'], Math.min(W * 0.12, 84));
+        layout1 = makeLayout(['MACDIPU'], Math.min(W * 0.17, 190));
+        // The name is always two lines: bigger, and balanced on every screen.
+        layout2 = makeLayout(['MD. ASAD', 'CHOWDHURY DIPU'], Math.min(W * 0.115, 124),
+          function (fs) { return -fs * 0.22; });
+        var blockBottom = H / 2 + layout2.dy + layout2.lh * 0.5 + layout2.lh * 0.5;
+        subSize = clamp(layout2.fs * 0.17, 13, 22);
+        subY = blockBottom + layout2.fs * 0.42;
 
         var p1 = samplePoints(layout1), p2 = samplePoints(layout2);
         var cx = W / 2, cy = H / 2;
-        var tsz1 = clamp(layout1.fs * 0.075, 5, 11);
-        var tsz2 = clamp(layout2.fs * 0.085, 4, 9);
+        // Big enough that the word reads as a mosaic of letters while it holds.
+        var tsz1 = clamp(layout1.fs * 0.1, 8, 19);
+        var tsz2 = clamp(layout2.fs * 0.075, 4, 9);
 
         if (sprites.length !== N) {
           sprites = [];
           for (var i = 0; i < N; i++) {
+            var z = rnd(.45, 1);   // depth: far letters are smaller, dimmer, slower
             sprites.push({
-              nx: Math.random(), ny: Math.random(),
-              fx: rnd(.4, 1.1), fy: rnd(.4, 1.1), ph: rnd(0, 6.28),
-              ax: rnd(20, 90), ay: rnd(20, 90), vx: rnd(-14, 14), vy: rnd(-12, 12),
-              r0: rnd(0, 6.28), vr: rnd(-1.2, 1.2),
-              s0: rnd(14, 40), a0: rnd(.35, .95),
+              nx: Math.random(), ny: Math.random(), z: z,
+              fx: rnd(.35, .9) * z, fy: rnd(.35, .9) * z, ph: rnd(0, 6.28),
+              ax: rnd(20, 80) * z, ay: rnd(20, 80) * z, vx: rnd(-12, 12) * z, vy: rnd(-10, 10) * z,
+              r0: rnd(0, 6.28), vr: rnd(-1, 1) * z,
+              s0: rnd(14, 42) * z, a0: rnd(.4, 1) * z,
               ch: (Math.random() * 26) | 0, sig: Math.random() < .12,
               d1: Math.random() * T.convStagger, d2: Math.random() * T.reconStagger,
-              curve: rnd(-1, 1) * rnd(120, 280), curve2: rnd(-1, 1) * rnd(60, 160),
-              ang: Math.random() * 6.28, R: rnd(70, 260)
+              k1: rnd(.28, .5), k2: rnd(.2, .4),   // one rotational sense: a vortex, not a blast
+              R: rnd(30, 120)
             });
           }
         }
@@ -260,9 +270,13 @@
           s.t1x = p1[k][0]; s.t1y = p1[k][1]; s.t2x = p2[k][0]; s.t2y = p2[k][1];
           s.ts1 = tsz1 * rnd(.9, 1.15); s.ts2 = tsz2 * rnd(.9, 1.15);
           s.bx = s.nx * W; s.by = s.ny * H;
-          // Fly outward from the word's centre when it dissolves.
-          s.ang = Math.atan2(s.t1y - cy, s.t1x - cx) + rnd(-.7, .7);
-          s.sx = s.t1x + Math.cos(s.ang) * s.R; s.sy = s.t1y + Math.sin(s.ang) * s.R;
+          var ang = Math.atan2(s.t1y - cy, s.t1x - cx) + rnd(-.8, .8);
+          s.sx = s.t1x + Math.cos(ang) * s.R; s.sy = s.t1y + Math.sin(ang) * s.R * 0.8;
+        }
+        if (dust.length === 0) {
+          for (var d = 0; d < 70; d++) {
+            dust.push({ nx: Math.random(), ny: Math.random(), z: rnd(.3, 1), ph: rnd(0, 6.28) });
+          }
         }
       }
 
@@ -274,9 +288,10 @@
         var m = 1 - u;
         return [m * m * ax + 2 * m * u * cx + u * u * bx, m * m * ay + 2 * m * u * cy + u * u * by];
       }
-      function bend(ax, ay, bx, by, k) {
+      // Control point offset sideways by a fraction of the distance travelled.
+      function swirl(ax, ay, bx, by, k) {
         var dx = bx - ax, dy = by - ay, len = Math.hypot(dx, dy) || 1;
-        return [(ax + bx) / 2 - dy / len * k, (ay + by) / 2 + dx / len * k];
+        return [(ax + bx) / 2 - dy / len * len * k, (ay + by) / 2 + dx / len * len * k];
       }
 
       var out = { x: 0, y: 0, r: 0, size: 0, a: 1, dot: 0 };
@@ -289,58 +304,81 @@
         if (t < tStart) {
           var f = floatPos(s, t); x = f[0]; y = f[1];
           r = s.r0 + s.vr * t; size = s.s0;
-          a = s.a0 * sm(t, 0, 0.7);
+          a = s.a0 * sm(t, 0, 0.8);
         } else {
           var u = clamp((t - tStart) / T.convDur, 0, 1), e = eio(u);
           var st = floatPos(s, tStart);
-          var c = bend(st[0], st[1], s.t1x, s.t1y, s.curve);
+          var c = swirl(st[0], st[1], s.t1x, s.t1y, s.k1);
           var p = bez(st[0], st[1], c[0], c[1], s.t1x, s.t1y, e);
           x = p[0]; y = p[1]; r = lerp(rStart, rEnd, e); size = lerp(s.s0, s.ts1, e);
           a = lerp(s.a0, 1, e);
         }
-        a *= 1 - 0.65 * sm(t, T.formA, T.formB);
+        a *= 1 - 0.4 * sm(t, T.formA, T.formB);   // the mosaic stays visible under the crisp word
 
         if (t >= T.scatA) {
           var us = eout(clamp((t - T.scatA) / (T.scatB - T.scatA), 0, 1));
-          var cc = bend(s.t1x, s.t1y, s.sx, s.sy, s.curve2);
-          var q = bez(s.t1x, s.t1y, cc[0], cc[1], s.sx, s.sy, us);
-          x = q[0]; y = q[1]; r += 0.03;
+          x = lerp(s.t1x, s.sx, us); y = lerp(s.t1y, s.sy, us); r += 0.02;
         }
         if (t >= T.dissA) {
           dot = sm(t, T.dissA, T.dissB);
-          size = lerp(s.ts1, 11, dot);
+          size = lerp(s.ts1, 7, dot);
           a = lerp(a, 0.95, dot);
         }
         if (t >= T.reconA + s.d2) {
           var ur = clamp((t - T.reconA - s.d2) / T.reconDur, 0, 1), er = eio(ur);
-          var c2 = bend(s.sx, s.sy, s.t2x, s.t2y, -s.curve2);
+          var c2 = swirl(s.sx, s.sy, s.t2x, s.t2y, -s.k2);
           var w = bez(s.sx, s.sy, c2[0], c2[1], s.t2x, s.t2y, er);
           x = w[0]; y = w[1];
-          size = lerp(11, s.ts2 + 3, er);
+          size = lerp(7, s.ts2 + 3, er);
         }
-        if (t >= T.nameA) a = lerp(a, 0.2, sm(t, T.nameA, T.nameB));
+        if (t >= T.nameA) a = lerp(a, 0.16, sm(t, T.nameA, T.nameB));
         out.x = x; out.y = y; out.r = r; out.size = size; out.a = a; out.dot = dot;
         return out;
       }
 
       function trailAlpha(t) {
-        if (t < T.convStart) return 0.5;
-        if (t < T.formA + 0.3) return 0.26;
-        if (t < T.scatA) return 0.6;
-        if (t < T.nameA) return 0.24;
-        return 0.6;
+        if (t < T.convStart) return 0.55;
+        if (t < T.formA + 0.2) return 0.4;      // a short comet tail while letters fly in
+        if (t < T.scatA) return 0.7;
+        if (t < T.nameA) return 0.34;
+        return 0.7;
       }
 
-      function crisp(lay, alpha) {
+      function crisp(lay, alpha, pulse) {
         if (alpha <= 0.002) return;
         ctx.save();
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.globalAlpha = alpha;
-        ctx.shadowColor = SIG; ctx.shadowBlur = 26 * dpr;
+        ctx.shadowColor = SIG; ctx.shadowBlur = (22 + 10 * pulse) * dpr;
         drawLines(ctx, lay, FG);
         ctx.shadowBlur = 0;
         drawLines(ctx, lay, FG);
         ctx.restore();
+      }
+      function subtitle(alpha) {
+        if (alpha <= 0.002) return;
+        ctx.save();
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.globalAlpha = alpha * 0.8;
+        ctx.font = '500 ' + subSize + 'px Bricolage, system-ui, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        if ('letterSpacing' in ctx) ctx.letterSpacing = '0.14em';
+        ctx.fillStyle = FG;
+        ctx.fillText(ROLE, W / 2, subY - (1 - alpha) * -6);
+        ctx.restore();
+      }
+
+      function drawDust(t) {
+        ctx.globalCompositeOperation = 'lighter';
+        for (var i = 0; i < dust.length; i++) {
+          var d = dust[i];
+          var x = (d.nx * W + Math.sin(t * .15 * d.z + d.ph) * 40 * d.z) , y = (d.ny * H + t * 6 * d.z) % H;
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+          ctx.globalAlpha = 0.22 * d.z;
+          var sz = 5 * d.z * dpr;
+          ctx.drawImage(glow, x * dpr - sz / 2, y * dpr - sz / 2, sz, sz);
+        }
+        ctx.globalCompositeOperation = 'source-over';
       }
 
       function draw(t) {
@@ -349,6 +387,8 @@
         ctx.globalAlpha = 1;
         ctx.fillStyle = 'rgba(' + BG[0] + ',' + BG[1] + ',' + BG[2] + ',' + trailAlpha(t) + ')';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        drawDust(t);
 
         for (var i = 0; i < sprites.length; i++) {
           var s = sprites[i], o = state(s, t);
@@ -373,15 +413,18 @@
         }
         ctx.globalCompositeOperation = 'source-over';
 
-        crisp(layout1, sm(t, T.formA, T.formB) * (1 - sm(t, T.dissA, T.dissB - 0.2)));
-        crisp(layout2, sm(t, T.nameA, T.nameB));
+        var holdPulse = 0.5 + 0.5 * Math.sin(t * 3);
+        crisp(layout1, sm(t, T.formA, T.formB) * 0.95 * (1 - sm(t, T.dissA, T.dissA + 0.35)), holdPulse);
+        crisp(layout2, sm(t, T.nameA, T.nameB), 0.3);
+        subtitle(sm(t, T.subA, T.subB));
       }
 
       function drawStatic() {
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.fillStyle = 'rgb(' + BG.join(',') + ')';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        crisp(layout2, 1);
+        crisp(layout2, 1, 0);
+        subtitle(1);
       }
 
       var offset = reduced ? T.end : (seen ? T.nameA - 0.3 : 0);
@@ -414,7 +457,7 @@
         t0 = performance.now();
         requestAnimationFrame(frame);
       }
-      // Wait (briefly) for the face so the word is measured and drawn in it.
+      // Wait (briefly) for the face so the words are measured and drawn in it.
       var started = false;
       function go() { if (!started) { started = true; start(); } }
       if (document.fonts && document.fonts.load) {
