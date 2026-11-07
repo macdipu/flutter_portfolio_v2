@@ -11,9 +11,8 @@
   <meta name="description" content="Md. Asad Chowdhury Dipu is a Forward Deployed Engineer and Software Engineer III at Polygon Technology. Mobile, desktop, web and AI-powered products, plus open-source tools.">
   <link rel="canonical" href="https://masadcd.online/">
   <meta name="author" content="Md. Asad Chowdhury Dipu">
-  <meta name="color-scheme" content="dark light">
-  <meta name="theme-color" content="#0A1330" media="(prefers-color-scheme: dark)">
-  <meta name="theme-color" content="#F2F5FB" media="(prefers-color-scheme: light)">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0A1330">
 
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Md. Asad Chowdhury Dipu">
@@ -32,7 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Dipu">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" href="favicon.png">
   <link rel="manifest" href="manifest.json">
 
   <script type="application/ld+json">
@@ -100,7 +100,7 @@
   <script>
     (function () {
       try {
-        var t = JSON.parse(localStorage.getItem('flutter.themeMode') || 'null');
+        var t = JSON.parse(localStorage.getItem('flutter.themeMode.v2') || 'null');
         if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
       } catch (e) {}
 
@@ -148,7 +148,10 @@
         hex = hex.replace('#', '');
         return [parseInt(hex.substr(0, 2), 16), parseInt(hex.substr(2, 2), 16), parseInt(hex.substr(4, 2), 16)];
       }
-      var BG = rgb(css('--bg')), FG = css('--fg'), SIG = css('--sig'), FGRGB = rgb(css('--fg'));
+      var BG = rgb(css('--bg')), FG = css('--fg'), SIG = css('--sig');
+      // Additive glow only works on dark; on light, particles are drawn solid.
+      var LIGHT = (BG[0] * 299 + BG[1] * 587 + BG[2] * 114) / 1000 > 140;
+      var GLOW_BLEND = LIGHT ? 'source-over' : 'lighter';
 
       function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
       function sm(t, a, b) { var x = clamp((t - a) / (b - a), 0, 1); return x * x * (3 - 2 * x); }
@@ -179,10 +182,17 @@
         var c = document.createElement('canvas'); c.width = c.height = 64;
         var g = c.getContext('2d');
         var grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
-        grad.addColorStop(0, 'rgba(255,255,255,1)');
-        grad.addColorStop(.2, SIG);
-        grad.addColorStop(.55, SIG.length === 7 ? SIG + '44' : SIG);
-        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        if (LIGHT) {
+          grad.addColorStop(0, SIG);
+          grad.addColorStop(.55, SIG);
+          grad.addColorStop(.8, SIG.length === 7 ? SIG + '55' : SIG);
+          grad.addColorStop(1, 'rgba(0,0,0,0)');
+        } else {
+          grad.addColorStop(0, 'rgba(255,255,255,1)');
+          grad.addColorStop(.2, SIG);
+          grad.addColorStop(.55, SIG.length === 7 ? SIG + '44' : SIG);
+          grad.addColorStop(1, 'rgba(0,0,0,0)');
+        }
         g.fillStyle = grad; g.fillRect(0, 0, 64, 64);
         return c;
       }
@@ -201,6 +211,7 @@
       function drawLines(g, lay, color) {
         g.font = '800 ' + lay.fs + 'px Bricolage, system-ui, sans-serif';
         g.textAlign = 'center'; g.textBaseline = 'middle';
+        if ('letterSpacing' in g) g.letterSpacing = (-lay.fs * 0.012) + 'px';
         g.fillStyle = color;
         var top = H / 2 + lay.dy - (lay.lines.length - 1) * lay.lh / 2;
         lay.lines.forEach(function (l, i) { g.fillText(l, W / 2, top + i * lay.lh); });
@@ -239,7 +250,7 @@
         layout2 = makeLayout(['MD. ASAD', 'CHOWDHURY DIPU'], Math.min(W * 0.115, 124),
           function (fs) { return -fs * 0.22; });
         var blockBottom = H / 2 + layout2.dy + layout2.lh * 0.5 + layout2.lh * 0.5;
-        subSize = clamp(layout2.fs * 0.17, 13, 22);
+        subSize = clamp(layout2.fs * 0.19, 14, 24);
         subY = blockBottom + layout2.fs * 0.42;
 
         var p1 = samplePoints(layout1), p2 = samplePoints(layout2);
@@ -331,7 +342,7 @@
           x = w[0]; y = w[1];
           size = lerp(7, s.ts2 + 3, er);
         }
-        if (t >= T.nameA) a = lerp(a, 0.16, sm(t, T.nameA, T.nameB));
+        if (t >= T.nameA) a = lerp(a, LIGHT ? 0 : 0.16, sm(t, T.nameA, T.nameB));
         out.x = x; out.y = y; out.r = r; out.size = size; out.a = a; out.dot = dot;
         return out;
       }
@@ -349,9 +360,18 @@
         ctx.save();
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.globalAlpha = alpha;
-        ctx.shadowColor = SIG; ctx.shadowBlur = (22 + 10 * pulse) * dpr;
+        if (LIGHT) {
+          ctx.shadowColor = 'rgba(8,18,48,0.20)';
+          ctx.shadowBlur = 24 * dpr;
+          ctx.shadowOffsetY = 9 * dpr;
+        } else {
+          ctx.shadowColor = SIG;
+          ctx.shadowBlur = (22 + 10 * pulse) * dpr;
+        }
         drawLines(ctx, lay, FG);
         ctx.shadowBlur = 0;
+        ctx.shadowOffsetY = 0;
+        ctx.shadowColor = 'transparent';
         drawLines(ctx, lay, FG);
         ctx.restore();
       }
@@ -359,22 +379,28 @@
         if (alpha <= 0.002) return;
         ctx.save();
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        ctx.globalAlpha = alpha * 0.8;
-        ctx.font = '500 ' + subSize + 'px Bricolage, system-ui, sans-serif';
+        // Accent rule, growing from the centre.
+        var rw = Math.min(W * 0.18, 120) * alpha;
+        ctx.globalAlpha = Math.min(1, alpha * 1.2);
+        ctx.fillStyle = SIG;
+        ctx.fillRect(W / 2 - rw / 2, subY - subSize * 1.9, rw, 3);
+        // Role, tracked out. Accent colour on light, soft white on dark.
+        ctx.globalAlpha = alpha * (LIGHT ? 0.95 : 0.85);
+        ctx.font = '600 ' + (subSize * 1.05) + 'px Bricolage, system-ui, sans-serif';
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        if ('letterSpacing' in ctx) ctx.letterSpacing = '0.14em';
-        ctx.fillStyle = FG;
-        ctx.fillText(ROLE, W / 2, subY - (1 - alpha) * -6);
+        if ('letterSpacing' in ctx) ctx.letterSpacing = '0.18em';
+        ctx.fillStyle = LIGHT ? SIG : FG;
+        ctx.fillText(ROLE.toUpperCase(), W / 2, subY + (1 - alpha) * 6);
         ctx.restore();
       }
 
       function drawDust(t) {
-        ctx.globalCompositeOperation = 'lighter';
+        ctx.globalCompositeOperation = GLOW_BLEND;
         for (var i = 0; i < dust.length; i++) {
           var d = dust[i];
           var x = (d.nx * W + Math.sin(t * .15 * d.z + d.ph) * 40 * d.z) , y = (d.ny * H + t * 6 * d.z) % H;
           ctx.setTransform(1, 0, 0, 1, 0, 0);
-          ctx.globalAlpha = 0.22 * d.z;
+          ctx.globalAlpha = (LIGHT ? 0.16 : 0.22) * d.z;
           var sz = 5 * d.z * dpr;
           ctx.drawImage(glow, x * dpr - sz / 2, y * dpr - sz / 2, sz, sz);
         }
@@ -400,7 +426,7 @@
             ctx.drawImage((s.sig ? atlasSig : atlasFg)[s.ch], -32, -32);
           }
         }
-        ctx.globalCompositeOperation = 'lighter';
+        ctx.globalCompositeOperation = GLOW_BLEND;
         for (var j = 0; j < sprites.length; j++) {
           var p = sprites[j], q = state(p, t);
           var dA = q.a * q.dot;
