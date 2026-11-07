@@ -18,9 +18,9 @@ enum DeviceType {
 class ResponsiveBreakpoints {
   static const double mobile = 600;
   static const double tablet = 1024;
-  static const double smallLaptop = 1366;
-  static const double desktop = 1680;
-  static const double largeDesktop = 1920;
+  static const double smallLaptop = 1440;
+  static const double desktop = 1920;
+  static const double largeDesktop = 2560;
 
   final Map<DeviceType, double>? custom;
 
@@ -32,13 +32,14 @@ class ResponsiveBreakpoints {
   }
 
   double value(DeviceType type, double pixelRatio, bool useDensity) {
-    final base = custom?[type] ?? switch (type) {
-      DeviceType.mobile       => mobile,
-      DeviceType.tablet       => tablet,
-      DeviceType.smallLaptop  => smallLaptop,
-      DeviceType.desktop      => desktop,
-      DeviceType.largeDesktop => largeDesktop,
-    };
+    final base = custom?[type] ??
+        switch (type) {
+          DeviceType.mobile => mobile,
+          DeviceType.tablet => tablet,
+          DeviceType.smallLaptop => smallLaptop,
+          DeviceType.desktop => desktop,
+          DeviceType.largeDesktop => largeDesktop,
+        };
     return _scaled(base, pixelRatio, useDensity);
   }
 }
@@ -81,7 +82,9 @@ class ResponsiveProvider extends InheritedWidget {
   });
 
   static ResponsiveConfig of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<ResponsiveProvider>()?.config ??
+      context
+          .dependOnInheritedWidgetOfExactType<ResponsiveProvider>()
+          ?.config ??
       const ResponsiveConfig();
 
   @override
@@ -94,10 +97,18 @@ DeviceType _resolveDeviceType(
     double width, double pixelRatio, ResponsiveConfig config) {
   final bp = config.breakpoints;
   final d = config.densityAware;
-  if (width < bp.value(DeviceType.mobile, pixelRatio, d)) return DeviceType.mobile;
-  if (width < bp.value(DeviceType.tablet, pixelRatio, d)) return DeviceType.tablet;
-  if (width < bp.value(DeviceType.smallLaptop, pixelRatio, d)) return DeviceType.smallLaptop;
-  if (width < bp.value(DeviceType.desktop, pixelRatio, d)) return DeviceType.desktop;
+  if (width < bp.value(DeviceType.mobile, pixelRatio, d)) {
+    return DeviceType.mobile;
+  }
+  if (width < bp.value(DeviceType.tablet, pixelRatio, d)) {
+    return DeviceType.tablet;
+  }
+  if (width < bp.value(DeviceType.smallLaptop, pixelRatio, d)) {
+    return DeviceType.smallLaptop;
+  }
+  if (width < bp.value(DeviceType.desktop, pixelRatio, d)) {
+    return DeviceType.desktop;
+  }
   return DeviceType.largeDesktop;
 }
 
@@ -133,8 +144,7 @@ class ResponsiveInfo {
   bool get isDesktopOrAbove => isDesktop || isLargeDesktop;
 
   double get availableWidth => width - padding.horizontal;
-  double get availableHeight =>
-      height - padding.vertical - viewInsets.vertical;
+  double get availableHeight => height - padding.vertical - viewInsets.vertical;
 }
 
 /// ----------------------------------------------
@@ -177,8 +187,8 @@ class ResponsiveScope extends StatefulWidget {
 class _ResponsiveScopeState extends State<ResponsiveScope> {
   @override
   Widget build(BuildContext context) {
-    final size       = MediaQuery.sizeOf(context);
-    final padding    = MediaQuery.paddingOf(context);
+    final size = MediaQuery.sizeOf(context);
+    final padding = MediaQuery.paddingOf(context);
     final viewInsets = MediaQuery.viewInsetsOf(context);
     final pixelRatio = MediaQuery.devicePixelRatioOf(context);
 
@@ -207,7 +217,7 @@ class ResponsiveBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final info   = context.responsive;
+    final info = context.responsive;
     final config = ResponsiveProvider.of(context);
 
     Widget child = builder(context, info);
@@ -254,11 +264,26 @@ class ResponsiveWidget extends StatelessWidget {
           case DeviceType.tablet:
             return tablet ?? mobile ?? fallback ?? const SizedBox.shrink();
           case DeviceType.smallLaptop:
-            return smallLaptop ?? tablet ?? mobile ?? fallback ?? const SizedBox.shrink();
+            return smallLaptop ??
+                tablet ??
+                mobile ??
+                fallback ??
+                const SizedBox.shrink();
           case DeviceType.desktop:
-            return desktop ?? smallLaptop ?? tablet ?? mobile ?? fallback ?? const SizedBox.shrink();
+            return desktop ??
+                smallLaptop ??
+                tablet ??
+                mobile ??
+                fallback ??
+                const SizedBox.shrink();
           case DeviceType.largeDesktop:
-            return largeDesktop ?? desktop ?? smallLaptop ?? tablet ?? mobile ?? fallback ?? const SizedBox.shrink();
+            return largeDesktop ??
+                desktop ??
+                smallLaptop ??
+                tablet ??
+                mobile ??
+                fallback ??
+                const SizedBox.shrink();
         }
       },
     );
@@ -309,7 +334,8 @@ class ResponsiveHelper {
       tablet: tablet ?? config.defaultPadding[DeviceType.tablet],
       smallLaptop: smallLaptop ?? config.defaultPadding[DeviceType.smallLaptop],
       desktop: desktop ?? config.defaultPadding[DeviceType.desktop],
-      largeDesktop: largeDesktop ?? config.defaultPadding[DeviceType.largeDesktop],
+      largeDesktop:
+          largeDesktop ?? config.defaultPadding[DeviceType.largeDesktop],
     );
   }
 
@@ -329,11 +355,11 @@ class ResponsiveHelper {
     final i = context.responsive;
     if (i.isMobile) return double.infinity;
     final max = switch (i.deviceType) {
-      DeviceType.tablet       => 720.0,
-      DeviceType.smallLaptop  => 860.0,
-      DeviceType.desktop      => 1024.0,
+      DeviceType.tablet => 720.0,
+      DeviceType.smallLaptop => 860.0,
+      DeviceType.desktop => 1024.0,
       DeviceType.largeDesktop => config.maxContentWidth,
-      _                       => double.infinity,
+      _ => double.infinity,
     };
     return math.min(max, i.width * .9);
   }
@@ -384,15 +410,16 @@ extension ResponsiveContext on BuildContext {
   /// Returns the [ResponsiveInfo] cached by the nearest [ResponsiveScope].
   /// Falls back to a direct MediaQuery read if no scope is present.
   ResponsiveInfo get responsive {
-    final inherited = dependOnInheritedWidgetOfExactType<_ResponsiveInherited>();
+    final inherited =
+        dependOnInheritedWidgetOfExactType<_ResponsiveInherited>();
     if (inherited != null) return inherited.info;
 
     // Fallback — only runs when ResponsiveScope is not in the tree.
-    final size       = MediaQuery.sizeOf(this);
-    final padding    = MediaQuery.paddingOf(this);
+    final size = MediaQuery.sizeOf(this);
+    final padding = MediaQuery.paddingOf(this);
     final viewInsets = MediaQuery.viewInsetsOf(this);
     final pixelRatio = MediaQuery.devicePixelRatioOf(this);
-    final config     = ResponsiveProvider.of(this);
+    final config = ResponsiveProvider.of(this);
     return ResponsiveInfo(
       deviceType: _resolveDeviceType(size.width, pixelRatio, config),
       width: size.width,

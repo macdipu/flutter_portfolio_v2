@@ -1,76 +1,427 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
 
-  <!-- iOS meta tags & icons -->
+  <title>Md. Asad Chowdhury Dipu: Flutter engineer</title>
+  <meta name="description" content="Md. Asad Chowdhury Dipu is a Flutter engineer at Polygon Technology. Open-source projects: OpenReader and GitSwitch.">
+  <link rel="canonical" href="https://masadcd.online/">
+  <meta name="author" content="Md. Asad Chowdhury Dipu">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#0A1330" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#F2F5FB" media="(prefers-color-scheme: light)">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Md. Asad Chowdhury Dipu">
+  <meta property="og:title" content="Md. Asad Chowdhury Dipu: Flutter engineer">
+  <meta property="og:description" content="Flutter engineer at Polygon Technology. Mobile, desktop and web apps, and open-source tools.">
+  <meta property="og:url" content="https://masadcd.online/">
+  <meta property="og:image" content="https://masadcd.online/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Md. Asad Chowdhury Dipu: Flutter engineer">
+  <meta name="twitter:description" content="Flutter engineer at Polygon Technology. Mobile, desktop and web apps, and open-source tools.">
+  <meta name="twitter:image" content="https://masadcd.online/og-image.png">
+
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="flutter_portfolio">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Dipu">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
-
-  <meta name="theme-color" content="#0F172A">
-
-  <title>flutter_portfolio</title>
   <link rel="manifest" href="manifest.json">
 
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Md. Asad Chowdhury Dipu",
+    "jobTitle": "Flutter engineer",
+    "worksFor": { "@type": "Organization", "name": "Polygon Technology" },
+    "url": "https://masadcd.online/",
+    "sameAs": [
+      "https://github.com/macdipu",
+      "https://www.linkedin.com/in/md-asad-chowdhury-dipu/",
+      "https://x.com/dipu093",
+      "https://medium.com/@c.dipu0"
+    ]
+  }
+  </script>
+
   <style>
+    /* Same face the app uses, so the intro and the page share a voice. */
+    @font-face {
+      font-family: "Bricolage";
+      src: url("assets/assets/fonts/Bricolage.ttf") format("truetype");
+      font-weight: 200 800;
+      font-display: block;
+    }
+    :root { --bg:#0A1330; --fg:#EEF2FF; --line:#1F2E5C; --sig:#2BB7FF; }
+    :root[data-theme="dark"]  { --bg:#0A1330; --fg:#EEF2FF; --line:#1F2E5C; --sig:#2BB7FF; }
+    :root[data-theme="light"] { --bg:#F2F5FB; --fg:#081230; --line:#D5DCEB; --sig:#0A5BFF; }
+    html, body { margin:0; background:var(--bg); }
+
     #app-loader {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #0F172A;
-      z-index: 9999;
-      transition: opacity 0.35s ease;
+      position:fixed; inset:0; z-index:9999; background:var(--bg);
+      transition: opacity .5s cubic-bezier(.22,1,.36,1);
     }
-    #app-loader .spinner {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      border: 3px solid #263347;
-      border-top-color: #38BDF8;
-      animation: app-loader-spin 0.85s linear infinite;
+    #app-loader.done { opacity:0; pointer-events:none; }
+    #intro { position:absolute; inset:0; width:100%; height:100%; display:block; }
+    #intro-skip {
+      position:absolute; left:50%; bottom:max(28px, env(safe-area-inset-bottom));
+      transform:translateX(-50%); opacity:0; transition:opacity .4s ease;
+      font:500 13px "Bricolage", system-ui, sans-serif; letter-spacing:.02em;
+      color:var(--fg); background:transparent; border:1px solid var(--line);
+      border-radius:999px; padding:10px 18px; min-height:44px; cursor:pointer;
     }
-    #app-loader.app-loader-hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-    @keyframes app-loader-spin {
-      to { transform: rotate(360deg); }
-    }
+    #intro-skip.show { opacity:.7; }
+    #intro-skip:hover, #intro-skip:focus-visible { opacity:1; border-color:var(--sig); outline:none; }
   </style>
 </head>
 <body>
-  <div id="app-loader"><div class="spinner"></div></div>
+  <div id="app-loader" role="status" aria-label="Loading Md. Asad Chowdhury Dipu">
+    <canvas id="intro" aria-hidden="true"></canvas>
+    <button id="intro-skip" type="button">Skip intro</button>
+  </div>
+  <noscript>
+    <h1>Md. Asad Chowdhury Dipu: Flutter engineer</h1>
+    <p>Flutter engineer at Polygon Technology. Open-source projects: OpenReader and GitSwitch.</p>
+    <p><a href="https://github.com/macdipu">GitHub</a>, <a href="https://www.linkedin.com/in/md-asad-chowdhury-dipu/">LinkedIn</a>, <a href="mailto:c.dipu0@gmail.com">c.dipu0@gmail.com</a></p>
+  </noscript>
   <script>
-    window.addEventListener('flutter-first-frame', function () {
+    (function () {
+      try {
+        var t = JSON.parse(localStorage.getItem('flutter.themeMode') || 'null');
+        if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+
       var loader = document.getElementById('app-loader');
-      if (!loader) return;
-      loader.classList.add('app-loader-hidden');
-      setTimeout(function () { loader.remove(); }, 400);
-    });
+      var canvas = document.getElementById('intro');
+      var skipBtn = document.getElementById('intro-skip');
+      var ctx = canvas.getContext('2d');
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var seen = false;
+      try { seen = sessionStorage.getItem('introSeen') === '1'; } catch (e) {}
+
+      var ready = false, played = false, finished = false;
+      function finish() {
+        if (finished || !ready || !played) return;
+        finished = true;
+        try { sessionStorage.setItem('introSeen', '1'); } catch (e) {}
+        loader.classList.add('done');
+        setTimeout(function () { loader.remove(); }, 600);
+      }
+      // Real signal: Flutter fires this once fonts are loaded and the hero images are decoded.
+      window.addEventListener('portfolio-ready', function () { ready = true; finish(); });
+      // Safety net so a failed image never traps the visitor behind the intro.
+      window.addEventListener('flutter-first-frame', function () {
+        setTimeout(function () { ready = true; finish(); }, 2500);
+      });
+
+      // ---- Timeline, in seconds. Everything below is a pure function of time,
+      // so skipping, resizing and seeking all stay consistent. ----
+      var T = {
+        convStart: 1.3, convDur: 1.6, convStagger: 0.45,
+        formA: 3.1, formB: 3.9,
+        dissA: 4.7, dissB: 5.4,
+        scatA: 4.8, scatB: 5.8,
+        reconA: 5.8, reconDur: 0.8, reconStagger: 0.4,
+        nameA: 6.9, nameB: 7.5,
+        end: 7.7
+      };
+
+      var rs = getComputedStyle(document.documentElement);
+      function css(n) { return rs.getPropertyValue(n).trim(); }
+      function rgb(hex) {
+        hex = hex.replace('#', '');
+        return [parseInt(hex.substr(0, 2), 16), parseInt(hex.substr(2, 2), 16), parseInt(hex.substr(4, 2), 16)];
+      }
+      var BG = rgb(css('--bg')), FG = css('--fg'), SIG = css('--sig');
+
+      function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+      function sm(t, a, b) { var x = clamp((t - a) / (b - a), 0, 1); return x * x * (3 - 2 * x); }
+      function eio(x) { return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+      function eout(x) { return 1 - Math.pow(1 - x, 3); }
+      function lerp(a, b, x) { return a + (b - a) * x; }
+      function rnd(a, b) { return a + Math.random() * (b - a); }
+
+      var W = 0, H = 0, dpr = 1;
+      var N = 1000;
+      var sprites = [];
+      var layout1, layout2;
+      var atlasFg = [], atlasSig = [], glow;
+
+      function makeAtlas(color) {
+        var out = [];
+        for (var i = 0; i < 26; i++) {
+          var c = document.createElement('canvas'); c.width = c.height = 64;
+          var g = c.getContext('2d');
+          g.font = '700 46px Bricolage, system-ui, sans-serif';
+          g.textAlign = 'center'; g.textBaseline = 'middle';
+          g.fillStyle = color;
+          g.fillText(String.fromCharCode(65 + i), 32, 35);
+          out.push(c);
+        }
+        return out;
+      }
+      function makeGlow() {
+        var c = document.createElement('canvas'); c.width = c.height = 64;
+        var g = c.getContext('2d');
+        var grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+        grad.addColorStop(0, 'rgba(255,255,255,1)');
+        grad.addColorStop(.18, SIG);
+        grad.addColorStop(.5, SIG.length === 7 ? SIG + '55' : SIG);
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        g.fillStyle = grad; g.fillRect(0, 0, 64, 64);
+        return c;
+      }
+
+      // Fit lines of text so the widest line fills at most `frac` of the width.
+      function fit(lines, maxFs, frac) {
+        var m = document.createElement('canvas').getContext('2d');
+        m.font = '800 100px Bricolage, system-ui, sans-serif';
+        var widest = 0;
+        lines.forEach(function (l) { widest = Math.max(widest, m.measureText(l).width); });
+        return Math.min(maxFs, (W * frac) / (widest / 100));
+      }
+      function makeLayout(lines, maxFs) {
+        var fs = fit(lines, maxFs, 0.86);
+        return { lines: lines, fs: fs, lh: fs * 1.14 };
+      }
+      function drawLines(g, lay, color) {
+        g.font = '800 ' + lay.fs + 'px Bricolage, system-ui, sans-serif';
+        g.textAlign = 'center'; g.textBaseline = 'middle';
+        g.fillStyle = color;
+        var top = H / 2 - (lay.lines.length - 1) * lay.lh / 2;
+        lay.lines.forEach(function (l, i) { g.fillText(l, W / 2, top + i * lay.lh); });
+      }
+      // Sample N points inside the glyph shapes of a layout.
+      function samplePoints(lay) {
+        var c = document.createElement('canvas'); c.width = W; c.height = H;
+        var g = c.getContext('2d', { willReadFrequently: true });
+        drawLines(g, lay, '#fff');
+        var data = g.getImageData(0, 0, W, H).data;
+        var pts = [];
+        for (var y = 0; y < H; y += 2) {
+          for (var x = 0; x < W; x += 2) {
+            if (data[(y * W + x) * 4 + 3] > 128) pts.push([x, y]);
+          }
+        }
+        for (var i = pts.length - 1; i > 0; i--) {
+          var j = (Math.random() * (i + 1)) | 0, t = pts[i]; pts[i] = pts[j]; pts[j] = t;
+        }
+        var out = [];
+        for (var k = 0; k < N; k++) {
+          var p = pts[k % Math.max(pts.length, 1)] || [W / 2, H / 2];
+          out.push([p[0] + (k >= pts.length ? rnd(-2, 2) : 0), p[1] + (k >= pts.length ? rnd(-2, 2) : 0)]);
+        }
+        return out;
+      }
+
+      function build() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        W = window.innerWidth; H = window.innerHeight;
+        canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+        N = W < 600 ? 640 : 1000;
+
+        layout1 = makeLayout(['MACDIPU'], Math.min(W * 0.16, 170));
+        var oneLine = W >= 900;
+        layout2 = oneLine
+          ? makeLayout(['MD. ASAD CHOWDHURY DIPU'], Math.min(W * 0.06, 88))
+          : makeLayout(['MD. ASAD', 'CHOWDHURY DIPU'], Math.min(W * 0.12, 84));
+
+        var p1 = samplePoints(layout1), p2 = samplePoints(layout2);
+        var cx = W / 2, cy = H / 2;
+        var tsz1 = clamp(layout1.fs * 0.075, 5, 11);
+        var tsz2 = clamp(layout2.fs * 0.085, 4, 9);
+
+        if (sprites.length !== N) {
+          sprites = [];
+          for (var i = 0; i < N; i++) {
+            sprites.push({
+              nx: Math.random(), ny: Math.random(),
+              fx: rnd(.4, 1.1), fy: rnd(.4, 1.1), ph: rnd(0, 6.28),
+              ax: rnd(20, 90), ay: rnd(20, 90), vx: rnd(-14, 14), vy: rnd(-12, 12),
+              r0: rnd(0, 6.28), vr: rnd(-1.2, 1.2),
+              s0: rnd(14, 40), a0: rnd(.35, .95),
+              ch: (Math.random() * 26) | 0, sig: Math.random() < .12,
+              d1: Math.random() * T.convStagger, d2: Math.random() * T.reconStagger,
+              curve: rnd(-1, 1) * rnd(120, 280), curve2: rnd(-1, 1) * rnd(60, 160),
+              ang: Math.random() * 6.28, R: rnd(70, 260)
+            });
+          }
+        }
+        for (var k = 0; k < N; k++) {
+          var s = sprites[k];
+          s.t1x = p1[k][0]; s.t1y = p1[k][1]; s.t2x = p2[k][0]; s.t2y = p2[k][1];
+          s.ts1 = tsz1 * rnd(.9, 1.15); s.ts2 = tsz2 * rnd(.9, 1.15);
+          s.bx = s.nx * W; s.by = s.ny * H;
+          // Fly outward from the word's centre when it dissolves.
+          s.ang = Math.atan2(s.t1y - cy, s.t1x - cx) + rnd(-.7, .7);
+          s.sx = s.t1x + Math.cos(s.ang) * s.R; s.sy = s.t1y + Math.sin(s.ang) * s.R;
+        }
+      }
+
+      function floatPos(s, t) {
+        return [s.bx + Math.sin(t * s.fx + s.ph) * s.ax + s.vx * t,
+                s.by + Math.cos(t * s.fy + s.ph * 1.3) * s.ay + s.vy * t];
+      }
+      function bez(ax, ay, cx, cy, bx, by, u) {
+        var m = 1 - u;
+        return [m * m * ax + 2 * m * u * cx + u * u * bx, m * m * ay + 2 * m * u * cy + u * u * by];
+      }
+      function bend(ax, ay, bx, by, k) {
+        var dx = bx - ax, dy = by - ay, len = Math.hypot(dx, dy) || 1;
+        return [(ax + bx) / 2 - dy / len * k, (ay + by) / 2 + dx / len * k];
+      }
+
+      var out = { x: 0, y: 0, r: 0, size: 0, a: 1, dot: 0 };
+      function state(s, t) {
+        var tStart = T.convStart + s.d1;
+        var x, y, r, size, a = s.a0, dot = 0;
+        var rStart = s.r0 + s.vr * tStart;
+        var rEnd = Math.PI * 2 * Math.round(rStart / (Math.PI * 2));
+
+        if (t < tStart) {
+          var f = floatPos(s, t); x = f[0]; y = f[1];
+          r = s.r0 + s.vr * t; size = s.s0;
+          a = s.a0 * sm(t, 0, 0.7);
+        } else {
+          var u = clamp((t - tStart) / T.convDur, 0, 1), e = eio(u);
+          var st = floatPos(s, tStart);
+          var c = bend(st[0], st[1], s.t1x, s.t1y, s.curve);
+          var p = bez(st[0], st[1], c[0], c[1], s.t1x, s.t1y, e);
+          x = p[0]; y = p[1]; r = lerp(rStart, rEnd, e); size = lerp(s.s0, s.ts1, e);
+          a = lerp(s.a0, 1, e);
+        }
+        a *= 1 - 0.65 * sm(t, T.formA, T.formB);
+
+        if (t >= T.scatA) {
+          var us = eout(clamp((t - T.scatA) / (T.scatB - T.scatA), 0, 1));
+          var cc = bend(s.t1x, s.t1y, s.sx, s.sy, s.curve2);
+          var q = bez(s.t1x, s.t1y, cc[0], cc[1], s.sx, s.sy, us);
+          x = q[0]; y = q[1]; r += 0.03;
+        }
+        if (t >= T.dissA) {
+          dot = sm(t, T.dissA, T.dissB);
+          size = lerp(s.ts1, 11, dot);
+          a = lerp(a, 0.95, dot);
+        }
+        if (t >= T.reconA + s.d2) {
+          var ur = clamp((t - T.reconA - s.d2) / T.reconDur, 0, 1), er = eio(ur);
+          var c2 = bend(s.sx, s.sy, s.t2x, s.t2y, -s.curve2);
+          var w = bez(s.sx, s.sy, c2[0], c2[1], s.t2x, s.t2y, er);
+          x = w[0]; y = w[1];
+          size = lerp(11, s.ts2 + 3, er);
+        }
+        if (t >= T.nameA) a = lerp(a, 0.2, sm(t, T.nameA, T.nameB));
+        out.x = x; out.y = y; out.r = r; out.size = size; out.a = a; out.dot = dot;
+        return out;
+      }
+
+      function trailAlpha(t) {
+        if (t < T.convStart) return 0.5;
+        if (t < T.formA + 0.3) return 0.26;
+        if (t < T.scatA) return 0.6;
+        if (t < T.nameA) return 0.24;
+        return 0.6;
+      }
+
+      function crisp(lay, alpha) {
+        if (alpha <= 0.002) return;
+        ctx.save();
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.globalAlpha = alpha;
+        ctx.shadowColor = SIG; ctx.shadowBlur = 26 * dpr;
+        drawLines(ctx, lay, FG);
+        ctx.shadowBlur = 0;
+        drawLines(ctx, lay, FG);
+        ctx.restore();
+      }
+
+      function draw(t) {
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = 'rgba(' + BG[0] + ',' + BG[1] + ',' + BG[2] + ',' + trailAlpha(t) + ')';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        for (var i = 0; i < sprites.length; i++) {
+          var s = sprites[i], o = state(s, t);
+          var gA = o.a * (1 - o.dot);
+          if (gA > 0.01) {
+            var cs = Math.cos(o.r), sn = Math.sin(o.r), k = o.size / 64 * dpr;
+            ctx.setTransform(cs * k, sn * k, -sn * k, cs * k, o.x * dpr, o.y * dpr);
+            ctx.globalAlpha = gA;
+            ctx.drawImage((s.sig ? atlasSig : atlasFg)[s.ch], -32, -32);
+          }
+        }
+        ctx.globalCompositeOperation = 'lighter';
+        for (var j = 0; j < sprites.length; j++) {
+          var p = sprites[j], q = state(p, t);
+          var dA = q.a * q.dot;
+          if (dA > 0.01) {
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.globalAlpha = dA;
+            var d = q.size * dpr;
+            ctx.drawImage(glow, q.x * dpr - d / 2, q.y * dpr - d / 2, d, d);
+          }
+        }
+        ctx.globalCompositeOperation = 'source-over';
+
+        crisp(layout1, sm(t, T.formA, T.formB) * (1 - sm(t, T.dissA, T.dissB - 0.2)));
+        crisp(layout2, sm(t, T.nameA, T.nameB));
+      }
+
+      function drawStatic() {
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.fillStyle = 'rgb(' + BG.join(',') + ')';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        crisp(layout2, 1);
+      }
+
+      var offset = reduced ? T.end : (seen ? T.nameA - 0.3 : 0);
+      var t0 = performance.now();
+      function now() { return (performance.now() - t0) / 1000 + offset; }
+
+      function skip() { offset = Math.max(offset, T.nameA - 0.1 - (performance.now() - t0) / 1000); }
+      skipBtn.addEventListener('click', skip);
+      window.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !finished) skip(); });
+      setTimeout(function () { if (!reduced && !seen) skipBtn.classList.add('show'); }, 1000);
+      if (reduced || seen) skipBtn.style.display = 'none';
+
+      function frame() {
+        if (finished) return;
+        var t = now();
+        if (t >= T.end) { played = true; finish(); }
+        if (reduced) drawStatic(); else draw(Math.min(t, T.end));
+        requestAnimationFrame(frame);
+      }
+
+      var resizeTimer;
+      window.addEventListener('resize', function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function () { if (!finished) build(); }, 150);
+      });
+
+      function start() {
+        atlasFg = makeAtlas(FG); atlasSig = makeAtlas(SIG); glow = makeGlow();
+        build();
+        t0 = performance.now();
+        requestAnimationFrame(frame);
+      }
+      // Wait (briefly) for the face so the word is measured and drawn in it.
+      var started = false;
+      function go() { if (!started) { started = true; start(); } }
+      if (document.fonts && document.fonts.load) {
+        document.fonts.load('800 100px Bricolage').then(go, go);
+        setTimeout(go, 1200);
+      } else { go(); }
+    })();
   </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
