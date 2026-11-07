@@ -1,43 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/responsive/responsive_framework.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_cubit.dart';
 import 'features/portfolio/presentation/pages/portfolio_page.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize shared preferences for theme
-  final sharedPreferences = await SharedPreferences.getInstance();
-  final isDarkMode = sharedPreferences.getBool('isDarkMode') ?? true;
-
-  runApp(MyApp(isDarkMode: isDarkMode));
+  final mode = await ThemeCubit.load();
+  runApp(MyApp(initialMode: mode));
 }
 
 class MyApp extends StatelessWidget {
-  final bool isDarkMode;
+  const MyApp({super.key, this.initialMode = ThemeMode.dark});
 
-  const MyApp({super.key, required this.isDarkMode});
+  final ThemeMode initialMode;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ThemeCubit(isDarkMode)..initialize(),
+      create: (_) => ThemeCubit(initialMode),
       child: BlocBuilder<ThemeCubit, ThemeState>(
-        builder: (context, state) {
-          return MaterialApp(
-            title: 'Flutter Developer Portfolio',
-            debugShowCheckedModeBanner: false,
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            themeMode: state.themeMode,
-            builder: (context, child) => ResponsiveScope(child: child!),
-            home: const PortfolioPage(),
-          );
-        },
+        builder: (context, state) => MaterialApp(
+          title: 'Md. Asad Chowdhury Dipu: Flutter engineer',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.light,
+          darkTheme: AppTheme.dark,
+          themeMode: state.themeMode,
+          themeAnimationDuration: const Duration(milliseconds: 240),
+          builder: (context, child) => ResponsiveScope(child: child!),
+          home: const PortfolioPage(),
+        ),
       ),
     );
   }

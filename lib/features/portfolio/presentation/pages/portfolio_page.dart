@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_portfolio/features/portfolio/presentation/widgets/hero_section.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
+import '../../../../core/design/tokens.dart';
+import '../../../../core/motion/scroll_scope.dart';
 import '../../../../core/navigation/scroll_controller.dart';
-import '../../../../core/responsive/responsive_framework.dart';
-import '../../../../core/theme/theme_cubit.dart';
-import '../bloc/portfolio_bloc.dart';
-import '../widgets/about_section.dart';
-import '../widgets/blog_section.dart';
-import '../widgets/contact_section.dart';
-import '../widgets/experience_section.dart';
-import '../widgets/portfolio_section.dart';
-import '../widgets/resume_section.dart';
-import '../widgets/services_section.dart';
-import '../widgets/sidebar_navigation.dart';
-import '../widgets/tech_stack_section.dart';
+import '../bloc/blog_cubit.dart';
+import '../sections/about_section.dart';
+import '../sections/contact_section.dart';
+import '../sections/experience_section.dart';
+import '../sections/hero_section.dart';
+import '../sections/proof_strip.dart';
+import '../sections/projects_section.dart';
+import '../sections/writing_section.dart';
+import '../widgets/top_bar.dart';
 
 class PortfolioPage extends StatelessWidget {
   const PortfolioPage({super.key});
@@ -25,141 +22,78 @@ class PortfolioPage extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => ScrollCubit()),
-        BlocProvider(
-          create: (_) => PortfolioBloc()
-            ..add(LoadPortfolioData())
-            ..add(LoadBlogPosts()),
-        ),
+        BlocProvider(create: (_) => BlogCubit()..load(), lazy: false),
       ],
       child: const _PortfolioView(),
     );
   }
 }
 
-class _PortfolioView extends StatelessWidget {
+class _PortfolioView extends StatefulWidget {
   const _PortfolioView();
 
   @override
+  State<_PortfolioView> createState() => _PortfolioViewState();
+}
+
+class _PortfolioViewState extends State<_PortfolioView> {
+  bool _menuOpen = false;
+
+  Widget _section(NavigationSection s) => switch (s) {
+        NavigationSection.hero => const Column(
+            children: [HeroSection(), ProofStrip()],
+          ),
+        NavigationSection.projects => const ProjectsSection(),
+        NavigationSection.experience => const ExperienceSection(),
+        NavigationSection.about => const AboutSection(),
+        NavigationSection.writing => const WritingSection(),
+        NavigationSection.contact => const ContactSection(),
+      };
+
+  @override
   Widget build(BuildContext context) {
-    final scrollCubit = context.read<ScrollCubit>();
+    final cubit = context.read<ScrollCubit>();
+    final reduced = Motion.reduced(context);
 
-    return ResponsiveBuilder(
-      builder: (context, info) {
-        final isDrawer =
-            info.deviceType == DeviceType.mobile || info.deviceType == DeviceType.tablet;
-        final isSidebar = info.deviceType.index >= DeviceType.smallLaptop.index;
-
-        return Scaffold(
-          drawer: isDrawer ? _buildDrawer(context, scrollCubit) : null,
-          body: Stack(
-            children: [
-              Row(
+    return ScrollScope(
+      controller: cubit.controller,
+      child: Scaffold(
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              controller: cubit.controller,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if (isSidebar)
-                    SafeArea(child: _buildSidebarWithBloc(scrollCubit)),
-                  Expanded(child: _buildScrollableContent(scrollCubit)),
+                  for (final s in NavigationSection.values)
+                    KeyedSubtree(key: cubit.keys[s], child: _section(s)),
                 ],
               ),
-              _buildThemeToggle(context),
-              if (isDrawer) _buildDrawerToggleButton(context),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildDrawer(BuildContext context, ScrollCubit scrollCubit) {
-    return Drawer(
-      child: SafeArea(
-        child: SidebarNavigation(
-          currentSection: scrollCubit.state.currentSection,
-          onSectionSelected: scrollCubit.scrollToSection,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSidebarWithBloc(ScrollCubit scrollCubit) {
-    return BlocBuilder<ScrollCubit, ScrollState>(
-      buildWhen: (prev, curr) => prev.currentSection != curr.currentSection,
-      builder: (context, scrollState) => SidebarNavigation(
-        currentSection: scrollState.currentSection,
-        onSectionSelected: scrollCubit.scrollToSection,
-      ),
-    );
-  }
-
-  Widget _buildScrollableContent(ScrollCubit scrollCubit) {
-    return ScrollablePositionedList.builder(
-      itemCount: NavigationSection.values.length,
-      itemScrollController: scrollCubit.itemScrollController,
-      itemPositionsListener: scrollCubit.itemPositionsListener,
-      itemBuilder: (context, index) {
-        final section = NavigationSection.values[index];
-        return _buildSection(section);
-      },
-    );
-  }
-
-  Widget _buildThemeToggle(BuildContext context) {
-    return Positioned(
-      top: 16,
-      right: 16,
-      child: SafeArea(
-        child: BlocBuilder<ThemeCubit, ThemeState>(
-          buildWhen: (prev, curr) => prev.themeMode != curr.themeMode,
-          builder: (context, state) {
-            final isDark = state.themeMode == ThemeMode.dark;
-            return IconButton(
-              icon: Icon(
-                isDark ? Icons.light_mode : Icons.dark_mode,
-                color: Theme.of(context).colorScheme.primary,
+            ),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: TopBar(onMenu: () => setState(() => _menuOpen = true)),
+            ),
+            Positioned.fill(
+              child: AnimatedSwitcher(
+                duration: Motion.scaled(context, Motion.exit),
+                child: _menuOpen
+                    ? MobileMenu(
+                        key: const ValueKey('menu'),
+                        onClose: () => setState(() => _menuOpen = false),
+                        onSelect: (s) {
+                          setState(() => _menuOpen = false);
+                          cubit.scrollTo(s, reduced: reduced);
+                        },
+                      )
+                    : const SizedBox.shrink(key: ValueKey('no-menu')),
               ),
-              onPressed: () => context.read<ThemeCubit>().toggleTheme(),
-            );
-          },
+            ),
+          ],
         ),
       ),
     );
-  }
-
-  Widget _buildDrawerToggleButton(BuildContext context) {
-    return Positioned(
-      top: 16,
-      left: 16,
-      child: SafeArea(
-        child: Builder(
-          builder: (context) => IconButton(
-            icon:
-                Icon(Icons.menu, color: Theme.of(context).colorScheme.primary),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSection(NavigationSection section) {
-    switch (section) {
-      case NavigationSection.hero:
-        return const HeroSection();
-      case NavigationSection.about:
-        return const AboutSection();
-      case NavigationSection.experience:
-        return const ExperienceSection();
-      case NavigationSection.portfolio:
-        return const PortfolioSection();
-      case NavigationSection.services:
-        return const ServicesSection();
-      case NavigationSection.techStack:
-        return const TechStackSection();
-      case NavigationSection.blog:
-        return const BlogSection();
-      case NavigationSection.contact:
-        return const ContactSection();
-      case NavigationSection.resume:
-        return const ResumeSection();
-    }
   }
 }

@@ -7,7 +7,7 @@ class BlogPostModel extends Equatable {
   final String publishDate;
   final String imageUrl;
   final String author;
-  
+
   const BlogPostModel({
     required this.title,
     required this.excerpt,
@@ -16,7 +16,8 @@ class BlogPostModel extends Equatable {
     required this.imageUrl,
     required this.author,
   });
-  
+
   @override
-  List<Object> get props => [title, excerpt, link, publishDate, imageUrl, author];
+  List<Object> get props =>
+      [title, excerpt, link, publishDate, imageUrl, author];
 }

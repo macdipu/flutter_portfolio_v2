@@ -1,36 +1,41 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// Theme state
 class ThemeState extends Equatable {
-  final ThemeMode themeMode;
-  
   const ThemeState({required this.themeMode});
-  
+  final ThemeMode themeMode;
+
   @override
   List<Object> get props => [themeMode];
 }
 
-// Theme cubit
+/// Dark by default; remembers the visitor's choice.
 class ThemeCubit extends Cubit<ThemeState> {
-  final bool initialDarkMode;
-  
-  ThemeCubit(this.initialDarkMode)
-      : super(ThemeState(themeMode: ThemeMode.dark));
-  
-  Future<void> initialize() async {
-    emit(ThemeState(themeMode: initialDarkMode ? ThemeMode.dark : ThemeMode.light));
+  ThemeCubit(ThemeMode initial) : super(ThemeState(themeMode: initial));
+
+  static const _key = 'themeMode';
+
+  static Future<ThemeMode> load() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return switch (prefs.getString(_key)) {
+        'dark' => ThemeMode.dark,
+        'light' => ThemeMode.light,
+        _ => ThemeMode.dark,
+      };
+    } catch (_) {
+      return ThemeMode.dark;
+    }
   }
-  
-  Future<void> toggleTheme() async {
-    final newMode = state.themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
-    
-    // Save theme preference
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isDarkMode', newMode == ThemeMode.dark);
-    
-    emit(ThemeState(themeMode: newMode));
+
+  Future<void> toggle(Brightness current) async {
+    final next = current == Brightness.dark ? ThemeMode.light : ThemeMode.dark;
+    emit(ThemeState(themeMode: next));
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_key, next == ThemeMode.dark ? 'dark' : 'light');
+    } catch (_) {}
   }
 }
