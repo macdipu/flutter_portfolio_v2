@@ -460,6 +460,7 @@ class _Stage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
+    final dark = Theme.of(context).brightness == Brightness.dark;
     final master = perspective(
       rotateX: 0.10 - tilt.dy * 0.07 + scrollT * 0.32,
       rotateY: -0.24 + tilt.dx * 0.12,
@@ -512,7 +513,10 @@ class _Stage extends StatelessWidget {
                       decoration: BoxDecoration(
                         gradient: RadialGradient(
                           colors: [
-                            Colors.white,
+                            // A white flash on dark; an accent flash on light.
+                            dark
+                                ? Colors.white
+                                : c.signal.withValues(alpha: 0.7),
                             c.signal.withValues(alpha: 0.45),
                             Colors.transparent,
                           ],

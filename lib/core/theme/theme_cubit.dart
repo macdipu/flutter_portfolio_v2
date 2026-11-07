@@ -15,7 +15,8 @@ class ThemeState extends Equatable {
 class ThemeCubit extends Cubit<ThemeState> {
   ThemeCubit(ThemeMode initial) : super(ThemeState(themeMode: initial));
 
-  static const _key = 'themeMode';
+  static const _key =
+      'themeMode.v2'; // v2: resets old saved choices so dark is the default
 
   static Future<ThemeMode> load() async {
     try {

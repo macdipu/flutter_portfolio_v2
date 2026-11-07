@@ -79,17 +79,17 @@ class _RowState extends State<_Row> with SingleTickerProviderStateMixin {
   static const _gap = 40.0;
 
   /// How far the row moves per pixel of page scroll, immediately.
-  static const _follow = 1.4;
+  static const _follow = 0.55;
 
   /// Extra glide, in pixels per second, per pixel-per-second of scroll.
-  static const _impulse = 0.7;
+  static const _impulse = 0.3;
 
   /// Fastest the glide can go.
-  static const _maxVelocity = 2200.0;
+  static const _maxVelocity = 650.0;
 
-  /// The glide's time constant in seconds. About three of these (a few
-  /// seconds) and it has effectively stopped.
-  static const _tau = 1.1;
+  /// The glide's time constant in seconds. Five of these (2 to 3 seconds)
+  /// and it has effectively stopped.
+  static const _tau = 0.5;
 
   final ValueNotifier<double> _pos = ValueNotifier(0);
   late final Ticker _ticker = createTicker(_tick);
@@ -143,7 +143,7 @@ class _RowState extends State<_Row> with SingleTickerProviderStateMixin {
     _lastTick = elapsed;
     _pos.value += _velocity * dt;
     _velocity *= math.exp(-dt / _tau);
-    if (_velocity.abs() < 4) {
+    if (_velocity.abs() < 10) {
       _velocity = 0;
       _ticker.stop();
     }

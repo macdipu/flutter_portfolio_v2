@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../content/portfolio_content.dart' show Profile;
 import '../../../../core/design/tokens.dart';
 import '../../../../core/motion/pressable.dart';
 import '../../../../core/navigation/scroll_controller.dart';
 import '../../../../core/theme/theme_cubit.dart';
+import '../../../../core/widgets/brand_logo.dart';
 import '../../../../core/widgets/ui.dart';
 
 /// Below this width the nav collapses into a menu button.
@@ -39,13 +39,7 @@ class TopBar extends StatelessWidget {
                     builder: (context, s) => Container(
                       padding: const EdgeInsets.symmetric(horizontal: 4),
                       decoration: focusRing(context, s.focused),
-                      child: Text(
-                        Profile.handle,
-                        style: AppType.h3(context).copyWith(
-                          fontWeight: FontWeight.w800,
-                          color: s.active ? c.signal : c.ink,
-                        ),
-                      ),
+                      child: BrandLogo(active: s.active),
                     ),
                   ),
                   const Spacer(),
@@ -216,9 +210,7 @@ class MobileMenu extends StatelessWidget {
               child: Frame(
                 child: Row(
                   children: [
-                    Text(Profile.handle,
-                        style: AppType.h3(context)
-                            .copyWith(fontWeight: FontWeight.w800)),
+                    const BrandLogo(),
                     const Spacer(),
                     _IconAction(
                         icon: Icons.close, label: 'Close menu', onTap: onClose),
