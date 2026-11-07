@@ -99,6 +99,97 @@ class Project {
 /// Showcase projects, in display order. Every one has real preview graphics.
 const projects = <Project>[
   Project(
+    title: 'Distribution and product verification platform',
+    role: 'Built and developed at Polygon Technology',
+    summary: 'A distribution, e-commerce and product verification management '
+        'system for engine oil brands. I built and developed it, and it ships '
+        'as five apps: Shell Agami, Shell BD, Motul Bangladesh, ASTRO Connect '
+        'and Reward Link.',
+    platforms: [Platform.mobile],
+    tags: ['Flutter', 'BLoC', 'REST API', 'Engine oil'],
+    links: [
+      ProjectLink('Shell Agami',
+          'https://play.google.com/store/apps/details?id=com.shell.agami'),
+      ProjectLink('Shell BD',
+          'https://play.google.com/store/apps/details?id=com.shell.consumer.shell_consumer'),
+      ProjectLink('Motul Bangladesh',
+          'https://play.google.com/store/apps/details?id=com.motulbd.consumer'),
+      ProjectLink('ASTRO Connect',
+          'https://play.google.com/store/apps/details?id=com.astroconnectbd.customerapp'),
+      ProjectLink('Reward Link',
+          'https://play.google.com/store/apps/details?id=com.ulolrewardlink.reward_link'),
+    ],
+    shots: [
+      Shot('assets/images/projects/shell-agami-home.webp', ShotKind.phone,
+          'Shell Agami home screen'),
+      Shot('assets/images/projects/shell-consumer-home.webp', ShotKind.phone,
+          'Shell BD home screen'),
+      Shot('assets/images/projects/motul-home.webp', ShotKind.phone,
+          'Motul Bangladesh home screen'),
+      Shot('assets/images/projects/astro-home.webp', ShotKind.phone,
+          'ASTRO Connect home screen'),
+      Shot('assets/images/projects/reward-home.webp', ShotKind.phone,
+          'Reward Link home screen'),
+    ],
+  ),
+  Project(
+    title: 'Weight Tracker',
+    role: 'Independent developer, Chowdhury eLab',
+    summary:
+        'Log weigh-ins, body measurements, meals, water, steps and sleep, with '
+        'BMI, calorie targets and goal projections worked out on the device. '
+        'Multiple profiles, reminders, backup and restore, and no account: '
+        'your records stay in a local database.',
+    platforms: [Platform.mobile],
+    tags: ['Flutter', 'Drift', 'Health Connect', 'Offline-first'],
+    links: [
+      ProjectLink('Website', 'https://macdipu.github.io/weight_tracker/'),
+      ProjectLink('Google Play',
+          'https://play.google.com/store/apps/details?id=com.chowdhury_elab.weight_tracker'),
+    ],
+    shots: [
+      Shot('assets/images/projects/wt-today.webp', ShotKind.phone,
+          'Weight Tracker today screen'),
+      Shot('assets/images/projects/wt-weight_trend.webp', ShotKind.phone,
+          'Weight Tracker weight trend'),
+      Shot('assets/images/projects/wt-insights.webp', ShotKind.phone,
+          'Weight Tracker weekly insights'),
+      Shot('assets/images/projects/wt-food.webp', ShotKind.phone,
+          'Weight Tracker food log'),
+      Shot('assets/images/projects/wt-share_progress.webp', ShotKind.phone,
+          'Weight Tracker shareable progress card'),
+    ],
+  ),
+  Project(
+    title: 'Muslim Deen',
+    role: 'Independent developer, Chowdhury eLab',
+    summary: 'An offline-first Islamic companion for Android. Prayer times are '
+        'calculated on the device with real azan alarms, alongside the Quran '
+        'with audio, a live Qibla compass, a prayer tracker with missed-prayer '
+        'counts, tasbih, duas and azkar, a Zakat calculator, a mosque finder '
+        'and 15 home-screen widgets, in English and Bangla. No ads, no '
+        'account.',
+    platforms: [Platform.mobile],
+    tags: ['Flutter', 'Offline-first', 'Home-screen widgets', 'Android'],
+    links: [
+      ProjectLink('Website', 'https://macdipu.github.io/muslim_deen/'),
+      ProjectLink('Google Play',
+          'https://play.google.com/store/apps/details?id=com.chowdhuryelab.muslimdeen'),
+    ],
+    shots: [
+      Shot('assets/images/projects/md-01-home.jpg', ShotKind.phone,
+          'Muslim Deen prayer times and daily progress'),
+      Shot('assets/images/projects/md-02-collection.jpg', ShotKind.phone,
+          'Muslim Deen feature collection'),
+      Shot('assets/images/projects/md-03-quran.jpg', ShotKind.phone,
+          'Muslim Deen Quran with translation'),
+      Shot('assets/images/projects/md-04-tasbih.jpg', ShotKind.phone,
+          'Muslim Deen tasbih counter'),
+      Shot('assets/images/projects/md-05-daily-amal.jpg', ShotKind.phone,
+          'Muslim Deen daily Amal checklist'),
+    ],
+  ),
+  Project(
     title: 'FlexWork',
     role: 'Author, private repository',
     summary:
@@ -151,42 +242,6 @@ const projects = <Project>[
     ],
   ),
   Project(
-    title: 'Five branded apps, one codebase',
-    role: 'Built and developed at Polygon Technology',
-    summary: 'One Flutter codebase that I built and developed, shipped as five '
-        'apps for five vendors: Shell Agami, Shell BD, Motul Bangladesh, '
-        'ASTRO Connect and Reward Link. Depending on the vendor, they cover '
-        'product authenticity verification, e-commerce and product guides, '
-        'campaigns and rewards, stock and target tracking, and a mechanic '
-        'and shop finder.',
-    platforms: [Platform.mobile],
-    tags: ['Flutter', 'BLoC', 'REST API', 'Multi-brand'],
-    links: [
-      ProjectLink('Shell Agami',
-          'https://play.google.com/store/apps/details?id=com.shell.agami'),
-      ProjectLink('Shell BD',
-          'https://play.google.com/store/apps/details?id=com.shell.consumer.shell_consumer'),
-      ProjectLink('Motul Bangladesh',
-          'https://play.google.com/store/apps/details?id=com.motulbd.consumer'),
-      ProjectLink('ASTRO Connect',
-          'https://play.google.com/store/apps/details?id=com.astroconnectbd.customerapp'),
-      ProjectLink('Reward Link',
-          'https://play.google.com/store/apps/details?id=com.ulolrewardlink.reward_link'),
-    ],
-    shots: [
-      Shot('assets/images/projects/shell-agami-home.webp', ShotKind.phone,
-          'Shell Agami home screen'),
-      Shot('assets/images/projects/shell-consumer-home.webp', ShotKind.phone,
-          'Shell BD home screen'),
-      Shot('assets/images/projects/motul-home.webp', ShotKind.phone,
-          'Motul Bangladesh home screen'),
-      Shot('assets/images/projects/astro-home.webp', ShotKind.phone,
-          'ASTRO Connect home screen'),
-      Shot('assets/images/projects/reward-home.webp', ShotKind.phone,
-          'Reward Link home screen'),
-    ],
-  ),
-  Project(
     title: 'OpenReader',
     role: 'Author, open source',
     summary:
@@ -222,63 +277,6 @@ const projects = <Project>[
     shots: [
       Shot('assets/images/projects/gitswitch-accounts.png', ShotKind.browser,
           'GitSwitch accounts screen'),
-    ],
-  ),
-  Project(
-    title: 'Muslim Deen',
-    role: 'Independent developer, Chowdhury eLab',
-    summary: 'An offline-first Islamic companion for Android. Prayer times are '
-        'calculated on the device with real azan alarms, alongside the Quran '
-        'with audio, a live Qibla compass, a prayer tracker with missed-prayer '
-        'counts, tasbih, duas and azkar, a Zakat calculator, a mosque finder '
-        'and 15 home-screen widgets, in English and Bangla. No ads, no '
-        'account.',
-    platforms: [Platform.mobile],
-    tags: ['Flutter', 'Offline-first', 'Home-screen widgets', 'Android'],
-    links: [
-      ProjectLink('Website', 'https://macdipu.github.io/muslim_deen/'),
-      ProjectLink('Google Play',
-          'https://play.google.com/store/apps/details?id=com.chowdhuryelab.muslimdeen'),
-    ],
-    shots: [
-      Shot('assets/images/projects/md-01-home.jpg', ShotKind.phone,
-          'Muslim Deen prayer times and daily progress'),
-      Shot('assets/images/projects/md-02-collection.jpg', ShotKind.phone,
-          'Muslim Deen feature collection'),
-      Shot('assets/images/projects/md-03-quran.jpg', ShotKind.phone,
-          'Muslim Deen Quran with translation'),
-      Shot('assets/images/projects/md-04-tasbih.jpg', ShotKind.phone,
-          'Muslim Deen tasbih counter'),
-      Shot('assets/images/projects/md-05-daily-amal.jpg', ShotKind.phone,
-          'Muslim Deen daily Amal checklist'),
-    ],
-  ),
-  Project(
-    title: 'Weight Tracker',
-    role: 'Independent developer, Chowdhury eLab',
-    summary:
-        'Log weigh-ins, body measurements, meals, water, steps and sleep, with '
-        'BMI, calorie targets and goal projections worked out on the device. '
-        'Multiple profiles, reminders, backup and restore, and no account: '
-        'your records stay in a local database.',
-    platforms: [Platform.mobile],
-    tags: ['Flutter', 'Drift', 'Health Connect', 'Offline-first'],
-    links: [
-      ProjectLink('Website', 'https://macdipu.github.io/weight_tracker/'),
-      ProjectLink('Google Play',
-          'https://play.google.com/store/apps/details?id=com.chowdhury_elab.weight_tracker'),
-    ],
-    shots: [
-      Shot('assets/images/projects/wt-today.webp', ShotKind.phone,
-          'Weight Tracker today screen'),
-      Shot('assets/images/projects/wt-weight_trend.webp', ShotKind.phone,
-          'Weight Tracker weight trend'),
-      Shot('assets/images/projects/wt-insights.webp', ShotKind.phone,
-          'Weight Tracker weekly insights'),
-      Shot('assets/images/projects/wt-food.webp', ShotKind.phone,
-          'Weight Tracker food log'),
-      Shot('assets/images/projects/wt-share_progress.webp', ShotKind.phone,
-          'Weight Tracker shareable progress card'),
     ],
   ),
   Project(
@@ -318,8 +316,8 @@ class ProofFact {
 const proofFacts = <ProofFact>[
   ProofFact('Software Engineer III',
       'At Polygon Technology, promoted twice since Sep 2023'),
-  ProofFact(
-      'On Google Play since 2020', 'Own apps published through Chowdhury eLab'),
+  ProofFact('50K+ downloads on Google Play',
+      'BMI and BMR Calculator, from Chowdhury eLab'),
   ProofFact(
       'Open source', 'OpenReader, GitSwitch and BuildingOS, public on GitHub'),
 ];
