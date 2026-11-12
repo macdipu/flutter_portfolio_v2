@@ -30,9 +30,12 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Dipu">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png?v=3">
-  <link rel="icon" type="image/png" href="favicon.png?v=3">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png?v=4">
+  <link rel="icon" type="image/png" href="favicon.png?v=4">
   <link rel="manifest" href="manifest.json">
+  <!-- Flutter's engine is fetched from gstatic: open that connection now, not after the bootstrap runs. -->
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <link rel="preload" href="assets/assets/fonts/Bricolage.ttf" as="fetch" crossorigin>
 
   <script type="application/ld+json">
   {
@@ -52,44 +55,119 @@
   </script>
 
   <style>
-    /* Same face the app uses, so the intro and the page share a voice. */
-    @font-face {
-      font-family: "Bricolage";
-      src: url("assets/assets/fonts/Bricolage.ttf") format("truetype");
-      font-weight: 200 800;
-      font-display: block;
-    }
-    :root { --bg:#0A1330; --fg:#EEF2FF; --line:#1F2E5C; --sig:#2BB7FF; --vig:rgba(2,6,20,.55); }
-    :root[data-theme="dark"]  { --bg:#0A1330; --fg:#EEF2FF; --line:#1F2E5C; --sig:#2BB7FF; --vig:rgba(2,6,20,.55); }
-    :root[data-theme="light"] { --bg:#F2F5FB; --fg:#081230; --line:#D5DCEB; --sig:#0A5BFF; --vig:rgba(8,18,48,.10); }
-    html, body { margin:0; background:var(--bg); }
-
-    #app-loader {
-      position:fixed; inset:0; z-index:9999; background:var(--bg);
-      transition: opacity .5s cubic-bezier(.22,1,.36,1);
-    }
-    #app-loader.done { opacity:0; pointer-events:none; }
-    #intro { position:absolute; inset:0; width:100%; height:100%; display:block; }
-    /* Soft vignette: pulls the eye to the centre where the name forms. */
-    #app-loader::after {
-      content:""; position:absolute; inset:0; pointer-events:none;
-      background:radial-gradient(ellipse at center, transparent 50%, var(--vig) 100%);
-    }
-    #intro-skip {
-      position:absolute; z-index:1; left:50%; bottom:max(28px, env(safe-area-inset-bottom));
-      transform:translateX(-50%); opacity:0; transition:opacity .4s ease;
-      font:500 13px "Bricolage", system-ui, sans-serif; letter-spacing:.02em;
-      color:var(--fg); background:transparent; border:1px solid var(--line);
-      border-radius:999px; padding:10px 18px; min-height:44px; cursor:pointer;
-    }
-    #intro-skip.show { opacity:.7; }
-    #intro-skip:hover, #intro-skip:focus-visible { opacity:1; border-color:var(--sig); outline:none; }
+    /* Only the page colour, so the moment before Flutter starts is not a white
+       flash. The intro itself is drawn by Flutter (lib/features/intro). */
+    html, body { margin:0; background:#0A1330; }
+    html[data-theme="light"], html[data-theme="light"] body { background:#F2F5FB; }
+    /* Still first frame (see #first-frame): loose letters, drifting slowly. */
+    @font-face { font-family:"Bricolage"; src:url("assets/assets/fonts/Bricolage.ttf") format("truetype"); font-weight:400 800; font-display:swap; }
+    #first-frame { position:fixed; inset:0; z-index:10; overflow:hidden; pointer-events:none;
+      background:#0A1330; --l:#EEF2FF; --c:#12B5D8; transition:opacity .45s ease; }
+    html[data-theme="light"] #first-frame { background:#F2F5FB; --l:#072A54; }
+    #first-frame.gone { opacity:0; }
+    #first-frame i { position:absolute; font:normal 800 1em "Bricolage", system-ui, sans-serif; line-height:1;
+      transform:rotate(var(--r)); animation:drift linear infinite alternate; }
+    #first-frame i.l { color:var(--l); }
+    #first-frame i.c { color:var(--c); }
+    @keyframes drift { from { transform:translate(-18px,-12px) rotate(var(--r)); } to { transform:translate(18px,12px) rotate(calc(var(--r) + 40deg)); } }
+    @media (prefers-reduced-motion: reduce) { #first-frame i { animation:none; } }
   </style>
 </head>
 <body>
-  <div id="app-loader" role="status" aria-label="Loading Md. Asad Chowdhury Dipu">
-    <canvas id="intro" aria-hidden="true"></canvas>
-    <button id="intro-skip" type="button">Skip intro</button>
+  <!-- Still first frame: shown the moment the page opens, while Flutter's
+       engine downloads. It matches the start of the Flutter intro
+       (lib/features/intro) and fades out on Flutter's first frame. -->
+  <div id="first-frame" aria-hidden="true">
+    <i class="l" style="left:73.4%;top:25.0%;font-size:15.4px;opacity:0.29;--r:309deg;animation-duration:18.9s;animation-delay:-5.7s">D</i>
+    <i class="l" style="left:49.4%;top:43.7%;font-size:24.9px;opacity:0.7;--r:266deg;animation-duration:14.3s;animation-delay:-13.8s">J</i>
+    <i class="l" style="left:91.0%;top:54.1%;font-size:10.0px;opacity:0.4;--r:55deg;animation-duration:26.8s;animation-delay:-3.0s">T</i>
+    <i class="c" style="left:88.4%;top:96.0%;font-size:10.1px;opacity:0.34;--r:142deg;animation-duration:15.9s;animation-delay:-10.5s">F</i>
+    <i class="l" style="left:26.3%;top:28.1%;font-size:14.7px;opacity:0.56;--r:333deg;animation-duration:9.8s;animation-delay:-8.9s">E</i>
+    <i class="l" style="left:65.3%;top:42.9%;font-size:15.3px;opacity:0.32;--r:357deg;animation-duration:18.8s;animation-delay:-1.7s">E</i>
+    <i class="c" style="left:87.0%;top:66.3%;font-size:8.4px;opacity:0.18;--r:88deg;animation-duration:20.0s;animation-delay:-8.7s">Q</i>
+    <i class="l" style="left:30.9%;top:35.3%;font-size:7.8px;opacity:0.26;--r:215deg;animation-duration:30.0s;animation-delay:-3.7s">B</i>
+    <i class="c" style="left:12.7%;top:8.5%;font-size:27.8px;opacity:0.31;--r:175deg;animation-duration:12.3s;animation-delay:-8.5s">N</i>
+    <i class="l" style="left:76.6%;top:7.8%;font-size:29.4px;opacity:0.61;--r:72deg;animation-duration:20.5s;animation-delay:-14.6s">V</i>
+    <i class="l" style="left:35.0%;top:89.4%;font-size:22.1px;opacity:0.46;--r:75deg;animation-duration:21.3s;animation-delay:-7.6s">B</i>
+    <i class="c" style="left:60.1%;top:67.6%;font-size:24.2px;opacity:0.29;--r:249deg;animation-duration:16.7s;animation-delay:-6.7s">L</i>
+    <i class="c" style="left:58.5%;top:99.9%;font-size:14.5px;opacity:0.43;--r:189deg;animation-duration:19.7s;animation-delay:-4.2s">Q</i>
+    <i class="l" style="left:84.3%;top:35.7%;font-size:24.2px;opacity:0.39;--r:279deg;animation-duration:12.1s;animation-delay:-6.5s">Z</i>
+    <i class="c" style="left:99.5%;top:91.0%;font-size:12.0px;opacity:0.5;--r:288deg;animation-duration:19.1s;animation-delay:-2.4s">O</i>
+    <i class="c" style="left:45.9%;top:33.7%;font-size:13.7px;opacity:0.58;--r:247deg;animation-duration:18.3s;animation-delay:-12.6s">A</i>
+    <i class="c" style="left:53.9%;top:45.0%;font-size:21.9px;opacity:0.54;--r:14deg;animation-duration:17.4s;animation-delay:-6.0s">E</i>
+    <i class="c" style="left:24.0%;top:68.6%;font-size:18.3px;opacity:0.29;--r:78deg;animation-duration:14.9s;animation-delay:-4.5s">B</i>
+    <i class="l" style="left:97.9%;top:22.9%;font-size:28.5px;opacity:0.49;--r:214deg;animation-duration:13.4s;animation-delay:-10.7s">M</i>
+    <i class="l" style="left:70.8%;top:18.8%;font-size:20.0px;opacity:0.3;--r:241deg;animation-duration:16.8s;animation-delay:-3.7s">Q</i>
+    <i class="c" style="left:97.1%;top:8.5%;font-size:32.7px;opacity:0.58;--r:17deg;animation-duration:13.1s;animation-delay:-15.6s">B</i>
+    <i class="l" style="left:1.2%;top:8.8%;font-size:21.8px;opacity:0.68;--r:348deg;animation-duration:9.8s;animation-delay:-15.0s">B</i>
+    <i class="l" style="left:76.9%;top:12.9%;font-size:18.2px;opacity:0.74;--r:53deg;animation-duration:14.6s;animation-delay:-4.5s">X</i>
+    <i class="c" style="left:93.7%;top:44.5%;font-size:10.1px;opacity:0.29;--r:211deg;animation-duration:18.8s;animation-delay:-12.9s">F</i>
+    <i class="l" style="left:48.9%;top:63.5%;font-size:31.1px;opacity:0.35;--r:325deg;animation-duration:12.1s;animation-delay:-6.2s">W</i>
+    <i class="c" style="left:31.5%;top:67.1%;font-size:14.8px;opacity:0.21;--r:321deg;animation-duration:25.5s;animation-delay:-13.5s">L</i>
+    <i class="c" style="left:63.8%;top:65.1%;font-size:12.4px;opacity:0.31;--r:231deg;animation-duration:14.4s;animation-delay:-3.6s">T</i>
+    <i class="l" style="left:15.8%;top:39.6%;font-size:17.6px;opacity:0.49;--r:8deg;animation-duration:10.9s;animation-delay:-8.4s">P</i>
+    <i class="c" style="left:81.4%;top:34.7%;font-size:23.0px;opacity:0.29;--r:235deg;animation-duration:16.5s;animation-delay:-3.7s">G</i>
+    <i class="c" style="left:5.6%;top:0.6%;font-size:17.6px;opacity:0.28;--r:89deg;animation-duration:23.6s;animation-delay:-6.4s">Z</i>
+    <i class="l" style="left:76.8%;top:1.2%;font-size:19.8px;opacity:0.34;--r:280deg;animation-duration:21.0s;animation-delay:-9.8s">O</i>
+    <i class="l" style="left:62.5%;top:35.8%;font-size:24.3px;opacity:0.31;--r:297deg;animation-duration:20.7s;animation-delay:-7.3s">M</i>
+    <i class="l" style="left:53.0%;top:88.5%;font-size:16.0px;opacity:0.23;--r:136deg;animation-duration:19.3s;animation-delay:-3.4s">U</i>
+    <i class="l" style="left:3.4%;top:55.4%;font-size:23.0px;opacity:0.53;--r:275deg;animation-duration:12.4s;animation-delay:-11.7s">E</i>
+    <i class="l" style="left:22.0%;top:61.2%;font-size:23.1px;opacity:0.35;--r:47deg;animation-duration:12.9s;animation-delay:-11.0s">T</i>
+    <i class="c" style="left:43.0%;top:1.0%;font-size:17.2px;opacity:0.55;--r:294deg;animation-duration:11.7s;animation-delay:-9.9s">P</i>
+    <i class="l" style="left:25.1%;top:56.0%;font-size:9.0px;opacity:0.22;--r:287deg;animation-duration:25.7s;animation-delay:-10.6s">A</i>
+    <i class="l" style="left:45.0%;top:60.3%;font-size:13.2px;opacity:0.36;--r:78deg;animation-duration:14.3s;animation-delay:-3.9s">K</i>
+    <i class="c" style="left:2.7%;top:8.9%;font-size:16.3px;opacity:0.35;--r:113deg;animation-duration:16.1s;animation-delay:-3.5s">G</i>
+    <i class="l" style="left:7.3%;top:13.3%;font-size:17.0px;opacity:0.54;--r:90deg;animation-duration:14.0s;animation-delay:-14.0s">Q</i>
+    <i class="c" style="left:21.2%;top:65.0%;font-size:26.5px;opacity:0.62;--r:152deg;animation-duration:13.8s;animation-delay:-4.7s">C</i>
+    <i class="c" style="left:24.5%;top:40.7%;font-size:21.4px;opacity:0.21;--r:210deg;animation-duration:22.4s;animation-delay:-11.8s">U</i>
+    <i class="l" style="left:9.4%;top:46.3%;font-size:14.8px;opacity:0.53;--r:205deg;animation-duration:10.5s;animation-delay:-9.5s">J</i>
+    <i class="l" style="left:48.6%;top:87.7%;font-size:12.5px;opacity:0.31;--r:257deg;animation-duration:20.2s;animation-delay:-11.1s">T</i>
+    <i class="c" style="left:21.6%;top:15.1%;font-size:22.5px;opacity:0.44;--r:358deg;animation-duration:16.4s;animation-delay:-15.2s">X</i>
+    <i class="c" style="left:91.7%;top:91.5%;font-size:22.6px;opacity:0.43;--r:168deg;animation-duration:18.2s;animation-delay:-10.4s">K</i>
+    <i class="c" style="left:33.6%;top:78.5%;font-size:16.6px;opacity:0.36;--r:195deg;animation-duration:13.4s;animation-delay:-3.0s">X</i>
+    <i class="c" style="left:13.3%;top:73.8%;font-size:27.8px;opacity:0.47;--r:317deg;animation-duration:14.1s;animation-delay:-5.7s">J</i>
+    <i class="c" style="left:59.9%;top:46.2%;font-size:26.7px;opacity:0.24;--r:169deg;animation-duration:18.4s;animation-delay:-15.7s">S</i>
+    <i class="l" style="left:57.4%;top:89.3%;font-size:20.8px;opacity:0.39;--r:205deg;animation-duration:24.5s;animation-delay:-2.6s">J</i>
+    <i class="c" style="left:63.1%;top:78.6%;font-size:17.3px;opacity:0.36;--r:210deg;animation-duration:10.3s;animation-delay:-13.0s">E</i>
+    <i class="l" style="left:92.0%;top:2.3%;font-size:13.5px;opacity:0.65;--r:283deg;animation-duration:17.4s;animation-delay:-13.2s">C</i>
+    <i class="l" style="left:44.6%;top:50.9%;font-size:34.0px;opacity:0.36;--r:163deg;animation-duration:13.9s;animation-delay:-6.7s">M</i>
+    <i class="l" style="left:91.3%;top:68.9%;font-size:20.7px;opacity:0.3;--r:173deg;animation-duration:14.1s;animation-delay:-7.6s">Z</i>
+    <i class="c" style="left:2.2%;top:43.9%;font-size:12.2px;opacity:0.19;--r:35deg;animation-duration:25.9s;animation-delay:-11.6s">I</i>
+    <i class="l" style="left:95.6%;top:75.6%;font-size:13.2px;opacity:0.5;--r:278deg;animation-duration:17.1s;animation-delay:-11.6s">B</i>
+    <i class="c" style="left:59.0%;top:8.5%;font-size:12.2px;opacity:0.35;--r:262deg;animation-duration:28.8s;animation-delay:-11.2s">C</i>
+    <i class="l" style="left:69.9%;top:74.8%;font-size:12.3px;opacity:0.23;--r:155deg;animation-duration:19.8s;animation-delay:-14.0s">F</i>
+    <i class="l" style="left:24.7%;top:96.8%;font-size:33.6px;opacity:0.39;--r:134deg;animation-duration:17.1s;animation-delay:-8.6s">V</i>
+    <i class="l" style="left:9.1%;top:0.6%;font-size:11.7px;opacity:0.19;--r:284deg;animation-duration:23.0s;animation-delay:-0.8s">R</i>
+    <i class="c" style="left:11.4%;top:25.7%;font-size:17.1px;opacity:0.54;--r:39deg;animation-duration:13.4s;animation-delay:-15.3s">U</i>
+    <i class="l" style="left:55.3%;top:70.8%;font-size:29.5px;opacity:0.65;--r:235deg;animation-duration:13.2s;animation-delay:-10.5s">L</i>
+    <i class="l" style="left:3.9%;top:87.1%;font-size:26.5px;opacity:0.32;--r:61deg;animation-duration:11.7s;animation-delay:-3.6s">W</i>
+    <i class="l" style="left:40.8%;top:99.9%;font-size:19.3px;opacity:0.22;--r:348deg;animation-duration:23.1s;animation-delay:-0.1s">G</i>
+    <i class="l" style="left:75.1%;top:66.6%;font-size:19.5px;opacity:0.4;--r:112deg;animation-duration:15.3s;animation-delay:-7.1s">H</i>
+    <i class="l" style="left:39.6%;top:86.3%;font-size:12.7px;opacity:0.27;--r:287deg;animation-duration:18.8s;animation-delay:-6.7s">R</i>
+    <i class="c" style="left:42.4%;top:19.8%;font-size:13.6px;opacity:0.33;--r:5deg;animation-duration:32.0s;animation-delay:-3.6s">X</i>
+    <i class="c" style="left:2.8%;top:89.3%;font-size:15.8px;opacity:0.23;--r:187deg;animation-duration:31.0s;animation-delay:-11.0s">O</i>
+    <i class="c" style="left:46.8%;top:75.5%;font-size:27.6px;opacity:0.37;--r:295deg;animation-duration:11.4s;animation-delay:-13.9s">Z</i>
+    <i class="c" style="left:29.3%;top:45.2%;font-size:18.7px;opacity:0.26;--r:3deg;animation-duration:18.5s;animation-delay:-9.3s">M</i>
+    <i class="c" style="left:68.2%;top:28.0%;font-size:6.8px;opacity:0.15;--r:193deg;animation-duration:33.6s;animation-delay:-13.6s">V</i>
+    <i class="l" style="left:2.4%;top:3.8%;font-size:11.3px;opacity:0.39;--r:241deg;animation-duration:19.1s;animation-delay:-3.0s">Q</i>
+    <i class="l" style="left:35.1%;top:72.4%;font-size:17.8px;opacity:0.37;--r:333deg;animation-duration:18.1s;animation-delay:-9.6s">F</i>
+    <i class="c" style="left:94.0%;top:89.4%;font-size:13.7px;opacity:0.18;--r:139deg;animation-duration:26.5s;animation-delay:-1.6s">V</i>
+    <i class="l" style="left:67.7%;top:28.4%;font-size:12.4px;opacity:0.5;--r:346deg;animation-duration:17.2s;animation-delay:-8.9s">Z</i>
+    <i class="c" style="left:20.3%;top:25.0%;font-size:13.5px;opacity:0.18;--r:287deg;animation-duration:26.9s;animation-delay:-13.9s">I</i>
+    <i class="c" style="left:48.7%;top:20.1%;font-size:28.9px;opacity:0.53;--r:17deg;animation-duration:13.5s;animation-delay:-13.8s">Z</i>
+    <i class="l" style="left:40.2%;top:68.8%;font-size:37.0px;opacity:0.77;--r:248deg;animation-duration:13.9s;animation-delay:-6.6s">M</i>
+    <i class="l" style="left:90.4%;top:29.0%;font-size:27.7px;opacity:0.42;--r:236deg;animation-duration:19.6s;animation-delay:-0.1s">B</i>
+    <i class="l" style="left:38.7%;top:33.4%;font-size:12.9px;opacity:0.53;--r:328deg;animation-duration:15.0s;animation-delay:-9.5s">U</i>
+    <i class="l" style="left:34.7%;top:74.1%;font-size:23.6px;opacity:0.55;--r:208deg;animation-duration:12.3s;animation-delay:-11.9s">I</i>
+    <i class="l" style="left:33.0%;top:62.7%;font-size:28.0px;opacity:0.45;--r:165deg;animation-duration:15.9s;animation-delay:-10.7s">P</i>
+    <i class="l" style="left:98.9%;top:58.6%;font-size:15.3px;opacity:0.34;--r:121deg;animation-duration:23.4s;animation-delay:-9.8s">O</i>
+    <i class="l" style="left:38.6%;top:26.7%;font-size:14.5px;opacity:0.28;--r:84deg;animation-duration:24.7s;animation-delay:-6.9s">E</i>
+    <i class="l" style="left:59.4%;top:20.0%;font-size:17.2px;opacity:0.7;--r:0deg;animation-duration:17.0s;animation-delay:-6.0s">B</i>
+    <i class="l" style="left:21.7%;top:90.3%;font-size:28.6px;opacity:0.56;--r:278deg;animation-duration:9.7s;animation-delay:-14.5s">H</i>
+    <i class="l" style="left:68.2%;top:87.0%;font-size:11.6px;opacity:0.33;--r:127deg;animation-duration:18.0s;animation-delay:-3.8s">F</i>
+    <i class="c" style="left:68.9%;top:58.4%;font-size:35.5px;opacity:0.66;--r:47deg;animation-duration:16.8s;animation-delay:-8.5s">Z</i>
+    <i class="l" style="left:56.5%;top:79.0%;font-size:29.7px;opacity:0.33;--r:41deg;animation-duration:17.3s;animation-delay:-11.9s">W</i>
+    <i class="l" style="left:16.9%;top:92.1%;font-size:14.9px;opacity:0.4;--r:257deg;animation-duration:17.0s;animation-delay:-15.0s">N</i>
   </div>
   <noscript>
     <h1>Md. Asad Chowdhury Dipu: Forward Deployed Engineer</h1>
@@ -97,400 +175,21 @@
     <p><a href="https://github.com/macdipu">GitHub</a>, <a href="https://www.linkedin.com/in/md-asad-chowdhury-dipu/">LinkedIn</a>, <a href="mailto:c.dipu0@gmail.com">c.dipu0@gmail.com</a></p>
   </noscript>
   <script>
-    (function () {
-      try {
-        var t = JSON.parse(localStorage.getItem('flutter.themeMode') || 'null');
-        if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
-      } catch (e) {}
-
-      var loader = document.getElementById('app-loader');
-      var canvas = document.getElementById('intro');
-      var skipBtn = document.getElementById('intro-skip');
-      var ctx = canvas.getContext('2d');
-      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      var seen = false;
-      try { seen = sessionStorage.getItem('introSeen') === '1'; } catch (e) {}
-
-      var ROLE = 'Forward Deployed Engineer';
-      var ready = false, played = false, finished = false;
-      function finish() {
-        if (finished || !ready || !played) return;
-        finished = true;
-        try { sessionStorage.setItem('introSeen', '1'); } catch (e) {}
-        loader.classList.add('done');
-        window.dispatchEvent(new Event('intro-done'));
-        setTimeout(function () { loader.remove(); }, 600);
-      }
-      // Real signal: Flutter fires this once fonts are loaded and the hero images are decoded.
-      window.addEventListener('portfolio-ready', function () { ready = true; finish(); });
-      // Safety net so a failed image never traps the visitor behind the intro.
-      window.addEventListener('flutter-first-frame', function () {
-        setTimeout(function () { ready = true; finish(); }, 2500);
-      });
-
-      // ---- Timeline, in seconds. Every position below is a pure function of
-      // time, so skipping, resizing and seeking all stay consistent. ----
-      var T = {
-        convStart: 1.0, convDur: 1.7, convStagger: 0.4,   // letters swirl into MACDIPU
-        formA: 2.6, formB: 3.3,                            // the word sharpens, glow builds
-        dissA: 3.9, dissB: 4.4,                            // letters break into fine particles
-        scatA: 3.95, scatB: 4.65,                          // a short, tight burst
-        reconA: 4.65, reconDur: 0.9, reconStagger: 0.35,   // particles flow into the name
-        nameA: 5.55, nameB: 6.15,                          // the name resolves
-        subA: 6.0, subB: 6.5,                              // the role fades in
-        end: 6.8
-      };
-
-      var rs = getComputedStyle(document.documentElement);
-      function css(n) { return rs.getPropertyValue(n).trim(); }
-      function rgb(hex) {
-        hex = hex.replace('#', '');
-        return [parseInt(hex.substr(0, 2), 16), parseInt(hex.substr(2, 2), 16), parseInt(hex.substr(4, 2), 16)];
-      }
-      var BG = rgb(css('--bg')), FG = css('--fg'), SIG = css('--sig');
-      // Additive glow only works on dark; on light, particles are drawn solid.
-      var LIGHT = (BG[0] * 299 + BG[1] * 587 + BG[2] * 114) / 1000 > 140;
-      var GLOW_BLEND = LIGHT ? 'source-over' : 'lighter';
-
-      function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
-      function sm(t, a, b) { var x = clamp((t - a) / (b - a), 0, 1); return x * x * (3 - 2 * x); }
-      function eio(x) { return x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }   // quad: gentler peak speed
-      function eout(x) { return 1 - Math.pow(1 - x, 3); }
-      function lerp(a, b, x) { return a + (b - a) * x; }
-      function rnd(a, b) { return a + Math.random() * (b - a); }
-
-      var W = 0, H = 0, dpr = 1, N = 1000;
-      var sprites = [], dust = [];
-      var layout1, layout2, subY = 0, subSize = 14;
-      var atlasFg = [], atlasSig = [], glow;
-
-      function makeAtlas(color) {
-        var out = [];
-        for (var i = 0; i < 26; i++) {
-          var c = document.createElement('canvas'); c.width = c.height = 64;
-          var g = c.getContext('2d');
-          g.font = '700 46px Bricolage, system-ui, sans-serif';
-          g.textAlign = 'center'; g.textBaseline = 'middle';
-          g.fillStyle = color;
-          g.fillText(String.fromCharCode(65 + i), 32, 35);
-          out.push(c);
-        }
-        return out;
-      }
-      function makeGlow() {
-        var c = document.createElement('canvas'); c.width = c.height = 64;
-        var g = c.getContext('2d');
-        var grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
-        if (LIGHT) {
-          grad.addColorStop(0, SIG);
-          grad.addColorStop(.55, SIG);
-          grad.addColorStop(.8, SIG.length === 7 ? SIG + '55' : SIG);
-          grad.addColorStop(1, 'rgba(0,0,0,0)');
-        } else {
-          grad.addColorStop(0, 'rgba(255,255,255,1)');
-          grad.addColorStop(.2, SIG);
-          grad.addColorStop(.55, SIG.length === 7 ? SIG + '44' : SIG);
-          grad.addColorStop(1, 'rgba(0,0,0,0)');
-        }
-        g.fillStyle = grad; g.fillRect(0, 0, 64, 64);
-        return c;
-      }
-
-      function fit(lines, maxFs, frac) {
-        var m = document.createElement('canvas').getContext('2d');
-        m.font = '800 100px Bricolage, system-ui, sans-serif';
-        var widest = 0;
-        lines.forEach(function (l) { widest = Math.max(widest, m.measureText(l).width); });
-        return Math.min(maxFs, (W * frac) / (widest / 100));
-      }
-      function makeLayout(lines, maxFs, dy) {
-        var fs = fit(lines, maxFs, 0.84);
-        return { lines: lines, fs: fs, lh: fs * 1.08, dy: dy ? dy(fs) : 0 };
-      }
-      function drawLines(g, lay, color) {
-        g.font = '800 ' + lay.fs + 'px Bricolage, system-ui, sans-serif';
-        g.textAlign = 'center'; g.textBaseline = 'middle';
-        if ('letterSpacing' in g) g.letterSpacing = (-lay.fs * 0.012) + 'px';
-        g.fillStyle = color;
-        var top = H / 2 + lay.dy - (lay.lines.length - 1) * lay.lh / 2;
-        lay.lines.forEach(function (l, i) { g.fillText(l, W / 2, top + i * lay.lh); });
-      }
-      function samplePoints(lay) {
-        var c = document.createElement('canvas'); c.width = W; c.height = H;
-        var g = c.getContext('2d', { willReadFrequently: true });
-        drawLines(g, lay, '#fff');
-        var data = g.getImageData(0, 0, W, H).data;
-        var pts = [];
-        for (var y = 0; y < H; y += 2) {
-          for (var x = 0; x < W; x += 2) {
-            if (data[(y * W + x) * 4 + 3] > 128) pts.push([x, y]);
-          }
-        }
-        for (var i = pts.length - 1; i > 0; i--) {
-          var j = (Math.random() * (i + 1)) | 0, t = pts[i]; pts[i] = pts[j]; pts[j] = t;
-        }
-        var out = [];
-        for (var k = 0; k < N; k++) {
-          var p = pts[k % Math.max(pts.length, 1)] || [W / 2, H / 2];
-          var extra = k >= pts.length ? 2 : 0;
-          out.push([p[0] + rnd(-extra, extra), p[1] + rnd(-extra, extra)]);
-        }
-        return out;
-      }
-
-      function build() {
-        dpr = Math.min(window.devicePixelRatio || 1, 2);
-        W = window.innerWidth; H = window.innerHeight;
-        canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
-        N = W < 600 ? 700 : 1100;
-
-        layout1 = makeLayout(['MACDIPU'], Math.min(W * 0.17, 190));
-        // The name is always two lines: bigger, and balanced on every screen.
-        layout2 = makeLayout(['MD. ASAD', 'CHOWDHURY DIPU'], Math.min(W * 0.115, 124),
-          function (fs) { return -fs * 0.22; });
-        var blockBottom = H / 2 + layout2.dy + layout2.lh * 0.5 + layout2.lh * 0.5;
-        subSize = clamp(layout2.fs * 0.19, 14, 24);
-        subY = blockBottom + layout2.fs * 0.42;
-
-        var p1 = samplePoints(layout1), p2 = samplePoints(layout2);
-        var cx = W / 2, cy = H / 2;
-        // Big enough that the word reads as a mosaic of letters while it holds.
-        var tsz1 = clamp(layout1.fs * 0.1, 8, 19);
-        var tsz2 = clamp(layout2.fs * 0.075, 4, 9);
-
-        if (sprites.length !== N) {
-          sprites = [];
-          for (var i = 0; i < N; i++) {
-            var z = rnd(.45, 1);   // depth: far letters are smaller, dimmer, slower
-            sprites.push({
-              nx: Math.random(), ny: Math.random(), z: z,
-              fx: rnd(.35, .9) * z, fy: rnd(.35, .9) * z, ph: rnd(0, 6.28),
-              ax: rnd(20, 80) * z, ay: rnd(20, 80) * z, vx: rnd(-12, 12) * z, vy: rnd(-10, 10) * z,
-              r0: rnd(0, 6.28), vr: rnd(-1, 1) * z,
-              s0: rnd(14, 42) * z, a0: rnd(.4, 1) * z,
-              ch: (Math.random() * 26) | 0, sig: Math.random() < .12,
-              d1: Math.random() * T.convStagger, d2: Math.random() * T.reconStagger,
-              k1: rnd(.28, .5), k2: rnd(.2, .4),   // one rotational sense: a vortex, not a blast
-              R: rnd(30, 120)
-            });
-          }
-        }
-        for (var k = 0; k < N; k++) {
-          var s = sprites[k];
-          s.t1x = p1[k][0]; s.t1y = p1[k][1]; s.t2x = p2[k][0]; s.t2y = p2[k][1];
-          s.ts1 = tsz1 * rnd(.9, 1.15); s.ts2 = tsz2 * rnd(.9, 1.15);
-          s.bx = s.nx * W; s.by = s.ny * H;
-          var ang = Math.atan2(s.t1y - cy, s.t1x - cx) + rnd(-.8, .8);
-          s.sx = s.t1x + Math.cos(ang) * s.R; s.sy = s.t1y + Math.sin(ang) * s.R * 0.8;
-        }
-        if (dust.length === 0) {
-          for (var d = 0; d < 70; d++) {
-            dust.push({ nx: Math.random(), ny: Math.random(), z: rnd(.3, 1), ph: rnd(0, 6.28) });
-          }
-        }
-      }
-
-      function floatPos(s, t) {
-        return [s.bx + Math.sin(t * s.fx + s.ph) * s.ax + s.vx * t,
-                s.by + Math.cos(t * s.fy + s.ph * 1.3) * s.ay + s.vy * t];
-      }
-      function bez(ax, ay, cx, cy, bx, by, u) {
-        var m = 1 - u;
-        return [m * m * ax + 2 * m * u * cx + u * u * bx, m * m * ay + 2 * m * u * cy + u * u * by];
-      }
-      // Control point offset sideways by a fraction of the distance travelled.
-      function swirl(ax, ay, bx, by, k) {
-        var dx = bx - ax, dy = by - ay, len = Math.hypot(dx, dy) || 1;
-        return [(ax + bx) / 2 - dy / len * len * k, (ay + by) / 2 + dx / len * len * k];
-      }
-
-      var out = { x: 0, y: 0, r: 0, size: 0, a: 1, dot: 0 };
-      function state(s, t) {
-        var tStart = T.convStart + s.d1;
-        var x, y, r, size, a = s.a0, dot = 0;
-        var rStart = s.r0 + s.vr * tStart;
-        var rEnd = Math.PI * 2 * Math.round(rStart / (Math.PI * 2));
-
-        if (t < tStart) {
-          var f = floatPos(s, t); x = f[0]; y = f[1];
-          r = s.r0 + s.vr * t; size = s.s0;
-          a = s.a0 * sm(t, 0, 0.8);
-        } else {
-          var u = clamp((t - tStart) / T.convDur, 0, 1), e = eio(u);
-          var st = floatPos(s, tStart);
-          var c = swirl(st[0], st[1], s.t1x, s.t1y, s.k1);
-          var p = bez(st[0], st[1], c[0], c[1], s.t1x, s.t1y, e);
-          x = p[0]; y = p[1]; r = lerp(rStart, rEnd, e); size = lerp(s.s0, s.ts1, e);
-          a = lerp(s.a0, 1, e);
-        }
-        a *= 1 - 0.4 * sm(t, T.formA, T.formB);   // the mosaic stays visible under the crisp word
-
-        if (t >= T.scatA) {
-          var us = eout(clamp((t - T.scatA) / (T.scatB - T.scatA), 0, 1));
-          x = lerp(s.t1x, s.sx, us); y = lerp(s.t1y, s.sy, us); r += 0.02;
-        }
-        if (t >= T.dissA) {
-          dot = sm(t, T.dissA, T.dissB);
-          size = lerp(s.ts1, 7, dot);
-          a = lerp(a, 0.95, dot);
-        }
-        if (t >= T.reconA + s.d2) {
-          var ur = clamp((t - T.reconA - s.d2) / T.reconDur, 0, 1), er = eio(ur);
-          var c2 = swirl(s.sx, s.sy, s.t2x, s.t2y, -s.k2);
-          var w = bez(s.sx, s.sy, c2[0], c2[1], s.t2x, s.t2y, er);
-          x = w[0]; y = w[1];
-          size = lerp(7, s.ts2 + 3, er);
-        }
-        if (t >= T.nameA) a = lerp(a, LIGHT ? 0 : 0.16, sm(t, T.nameA, T.nameB));
-        out.x = x; out.y = y; out.r = r; out.size = size; out.a = a; out.dot = dot;
-        return out;
-      }
-
-      function trailAlpha(t) {
-        if (t < T.convStart) return 0.55;
-        if (t < T.formA + 0.2) return 0.4;      // a short comet tail while letters fly in
-        if (t < T.scatA) return 0.7;
-        if (t < T.nameA) return 0.34;
-        return 0.7;
-      }
-
-      function crisp(lay, alpha, pulse) {
-        if (alpha <= 0.002) return;
-        ctx.save();
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        ctx.globalAlpha = alpha;
-        if (LIGHT) {
-          ctx.shadowColor = 'rgba(8,18,48,0.20)';
-          ctx.shadowBlur = 24 * dpr;
-          ctx.shadowOffsetY = 9 * dpr;
-        } else {
-          ctx.shadowColor = SIG;
-          ctx.shadowBlur = (22 + 10 * pulse) * dpr;
-        }
-        drawLines(ctx, lay, FG);
-        ctx.shadowBlur = 0;
-        ctx.shadowOffsetY = 0;
-        ctx.shadowColor = 'transparent';
-        drawLines(ctx, lay, FG);
-        ctx.restore();
-      }
-      function subtitle(alpha) {
-        if (alpha <= 0.002) return;
-        ctx.save();
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        // Accent rule, growing from the centre.
-        var rw = Math.min(W * 0.18, 120) * alpha;
-        ctx.globalAlpha = Math.min(1, alpha * 1.2);
-        ctx.fillStyle = SIG;
-        ctx.fillRect(W / 2 - rw / 2, subY - subSize * 1.9, rw, 3);
-        // Role, tracked out. Accent colour on light, soft white on dark.
-        ctx.globalAlpha = alpha * (LIGHT ? 0.95 : 0.85);
-        ctx.font = '600 ' + (subSize * 1.05) + 'px Bricolage, system-ui, sans-serif';
-        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        if ('letterSpacing' in ctx) ctx.letterSpacing = '0.18em';
-        ctx.fillStyle = LIGHT ? SIG : FG;
-        ctx.fillText(ROLE.toUpperCase(), W / 2, subY + (1 - alpha) * 6);
-        ctx.restore();
-      }
-
-      function drawDust(t) {
-        ctx.globalCompositeOperation = GLOW_BLEND;
-        for (var i = 0; i < dust.length; i++) {
-          var d = dust[i];
-          var x = (d.nx * W + Math.sin(t * .15 * d.z + d.ph) * 40 * d.z) , y = (d.ny * H + t * 6 * d.z) % H;
-          ctx.setTransform(1, 0, 0, 1, 0, 0);
-          ctx.globalAlpha = (LIGHT ? 0.16 : 0.22) * d.z;
-          var sz = 5 * d.z * dpr;
-          ctx.drawImage(glow, x * dpr - sz / 2, y * dpr - sz / 2, sz, sz);
-        }
-        ctx.globalCompositeOperation = 'source-over';
-      }
-
-      function draw(t) {
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.globalAlpha = 1;
-        ctx.fillStyle = 'rgba(' + BG[0] + ',' + BG[1] + ',' + BG[2] + ',' + trailAlpha(t) + ')';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        drawDust(t);
-
-        for (var i = 0; i < sprites.length; i++) {
-          var s = sprites[i], o = state(s, t);
-          var gA = o.a * (1 - o.dot);
-          if (gA > 0.01) {
-            var cs = Math.cos(o.r), sn = Math.sin(o.r), k = o.size / 64 * dpr;
-            ctx.setTransform(cs * k, sn * k, -sn * k, cs * k, o.x * dpr, o.y * dpr);
-            ctx.globalAlpha = gA;
-            ctx.drawImage((s.sig ? atlasSig : atlasFg)[s.ch], -32, -32);
-          }
-        }
-        ctx.globalCompositeOperation = GLOW_BLEND;
-        for (var j = 0; j < sprites.length; j++) {
-          var p = sprites[j], q = state(p, t);
-          var dA = q.a * q.dot;
-          if (dA > 0.01) {
-            ctx.setTransform(1, 0, 0, 1, 0, 0);
-            ctx.globalAlpha = dA;
-            var d = q.size * dpr;
-            ctx.drawImage(glow, q.x * dpr - d / 2, q.y * dpr - d / 2, d, d);
-          }
-        }
-        ctx.globalCompositeOperation = 'source-over';
-
-        var holdPulse = 0.5 + 0.5 * Math.sin(t * 3);
-        crisp(layout1, sm(t, T.formA, T.formB) * 0.95 * (1 - sm(t, T.dissA, T.dissA + 0.35)), holdPulse);
-        crisp(layout2, sm(t, T.nameA, T.nameB), 0.3);
-        subtitle(sm(t, T.subA, T.subB));
-      }
-
-      function drawStatic() {
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.fillStyle = 'rgb(' + BG.join(',') + ')';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        crisp(layout2, 1, 0);
-        subtitle(1);
-      }
-
-      var offset = reduced ? T.end : (seen ? T.nameA - 0.3 : 0);
-      var t0 = performance.now();
-      function now() { return (performance.now() - t0) / 1000 + offset; }
-
-      function skip() { offset = Math.max(offset, T.nameA - 0.1 - (performance.now() - t0) / 1000); }
-      skipBtn.addEventListener('click', skip);
-      window.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !finished) skip(); });
-      setTimeout(function () { if (!reduced && !seen) skipBtn.classList.add('show'); }, 1000);
-      if (reduced || seen) skipBtn.style.display = 'none';
-
-      function frame() {
-        if (finished) return;
-        var t = now();
-        if (t >= T.end) { played = true; finish(); }
-        if (reduced) drawStatic(); else draw(Math.min(t, T.end));
-        requestAnimationFrame(frame);
-      }
-
-      var resizeTimer;
-      window.addEventListener('resize', function () {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(function () { if (!finished) build(); }, 150);
-      });
-
-      function start() {
-        atlasFg = makeAtlas(FG); atlasSig = makeAtlas(SIG); glow = makeGlow();
-        build();
-        t0 = performance.now();
-        requestAnimationFrame(frame);
-      }
-      // Wait (briefly) for the face so the words are measured and drawn in it.
-      var started = false;
-      function go() { if (!started) { started = true; start(); } }
-      if (document.fonts && document.fonts.load) {
-        document.fonts.load('800 100px Bricolage').then(go, go);
-        setTimeout(go, 1200);
-      } else { go(); }
-    })();
+    // Match the saved theme before Flutter boots.
+    try {
+      var t = JSON.parse(localStorage.getItem('flutter.themeMode') || 'null');
+      if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
   </script>
-  <script src="flutter_bootstrap.js?v=9a3775f2" async></script>
+  <script>
+    // Hand the still frame over to Flutter: fade it as Flutter's letters fade in.
+    window.addEventListener('flutter-first-frame', function () {
+      var f = document.getElementById('first-frame');
+      if (!f) return;
+      f.classList.add('gone');
+      setTimeout(function () { f.remove(); }, 600);
+    });
+  </script>
+  <script src="flutter_bootstrap.js?v=bd072770" async></script>
 </body>
 </html>
