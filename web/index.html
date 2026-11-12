@@ -30,8 +30,8 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Dipu">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png?v=3">
-  <link rel="icon" type="image/png" href="favicon.png?v=3">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png?v=4">
+  <link rel="icon" type="image/png" href="favicon.png?v=4">
   <link rel="manifest" href="manifest.json">
 
   <script type="application/ld+json">
@@ -131,13 +131,14 @@
       // ---- Timeline, in seconds. Every position below is a pure function of
       // time, so skipping, resizing and seeking all stay consistent. ----
       var T = {
-        logoA: 0.25, logoStagger: 0.09, logoDur: 0.6,     // the macdipu mark builds, glyph by glyph
-        swA: 1.0, swB: 1.6,                               // the swoosh draws in under "dipu"
-        squeezeA: 2.15, squeezeB: 2.45,                   // the mark gathers itself before it breaks
-        breakA: 2.45, fly: 1.05, hiddenStagger: 0.55,     // letters leave the mark for the name
-        settleA: 3.9, settleB: 4.4,                       // the name resolves
-        subA: 4.1, subB: 4.6,                             // the role fades in
-        end: 5.0
+        convA: 0.55, convDur: 1.45, convStagger: 0.45,    // scattered letters swirl into the mark's shape
+        logoA: 2.05, logoStagger: 0.07, logoDur: 0.55,    // the crisp mark sharpens over the mosaic
+        swA: 2.45, swB: 2.95,                             // the swoosh draws in under "dipu"
+        squeezeA: 3.25, squeezeB: 3.55,                   // the mark gathers itself before it breaks
+        breakA: 3.55, fly: 1.05, hiddenStagger: 0.55,     // letters leave the mark for the name
+        settleA: 5.0, settleB: 5.5,                       // the name resolves
+        subA: 5.2, subB: 5.7,                             // the role fades in
+        end: 6.1
       };
 
       var rs = getComputedStyle(document.documentElement);
@@ -156,7 +157,6 @@
       function sm(t, a, b) { var x = clamp((t - a) / (b - a), 0, 1); return x * x * (3 - 2 * x); }
       function eio(x) { return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
       function eout(x) { return 1 - Math.pow(1 - x, 3); }
-      function eback(x) { var c = 1.4; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); }
       function lerp(a, b, x) { return a + (b - a) * x; }
       function rnd(a, b) { return a + Math.random() * (b - a); }
 
@@ -215,6 +215,104 @@
       var fs = 100, lh = 108, subY = 0, subSize = 14, ruleY = 0;
       var dust = [];
 
+      // ---- Act one: a cloud of loose letters that packs itself into the mark. ----
+      var sprites = [], atlasMac = [], atlasCyan = [];
+      function makeAtlas(color) {
+        var out = [];
+        for (var i = 0; i < 26; i++) {
+          var c = document.createElement('canvas'); c.width = c.height = 64;
+          var g = c.getContext('2d');
+          g.font = '800 46px ' + FONT;
+          g.textAlign = 'center'; g.textBaseline = 'middle';
+          g.fillStyle = color;
+          g.fillText(String.fromCharCode(65 + i), 32, 35);
+          out.push(c);
+        }
+        return out;
+      }
+      // Points inside the mark's outlines, at the size it will sit on screen.
+      function sampleMark(paths) {
+        var c = document.createElement('canvas'); c.width = W; c.height = H;
+        var g = c.getContext('2d', { willReadFrequently: true });
+        g.translate(LX, LY); g.scale(L, L); g.translate(-BOX.cx, -BOX.cy);
+        g.fillStyle = '#fff';
+        paths.forEach(function (p) { g.fill(p); });
+        var x0 = Math.max(0, Math.floor(LX - (BOX.r - BOX.l) * L / 2) - 2), x1 = Math.min(W, Math.ceil(LX + (BOX.r - BOX.l) * L / 2) + 2);
+        var y0 = Math.max(0, Math.floor(LY - (BOX.b - BOX.t) * L / 2) - 2), y1 = Math.min(H, Math.ceil(LY + (BOX.b - BOX.t) * L / 2) + 2);
+        var data = g.getImageData(x0, y0, x1 - x0, y1 - y0).data, w = x1 - x0, pts = [];
+        for (var y = 0; y < y1 - y0; y += 2) {
+          for (var x = 0; x < w; x += 2) if (data[(y * w + x) * 4 + 3] > 128) pts.push([x + x0, y + y0]);
+        }
+        for (var i = pts.length - 1; i > 0; i--) {
+          var j = (Math.random() * (i + 1)) | 0, t = pts[i]; pts[i] = pts[j]; pts[j] = t;
+        }
+        return pts;
+      }
+      function buildSprites() {
+        var N = W < 600 ? 520 : 900;
+        if (sprites.length !== N) {
+          sprites = [];
+          for (var i = 0; i < N; i++) {
+            var z = rnd(.45, 1);   // depth: far letters are smaller, dimmer, slower
+            sprites.push({
+              nx: Math.random(), ny: Math.random(), z: z,
+              fx: rnd(.35, .9) * z, fy: rnd(.35, .9) * z, ph: rnd(0, 6.28),
+              ax: rnd(20, 70) * z, ay: rnd(20, 70) * z,
+              r0: rnd(0, 6.28), vr: rnd(-1, 1) * z,
+              s0: rnd(14, 40) * z, a0: rnd(.35, .9) * z,
+              ch: (Math.random() * 26) | 0,
+              d1: Math.random() * T.convStagger, k1: rnd(.28, .5), ts: rnd(.9, 1.15),
+              out: rnd(20, 60)
+            });
+          }
+        }
+        var macPts = sampleMark(GLYPHS.slice(0, 3).map(function (g) { return g.p; }));
+        var dipPts = sampleMark(GLYPHS.slice(3).map(function (g) { return g.p; }).concat([SWOOSH]));
+        var macN = Math.round(N * macPts.length / Math.max(1, macPts.length + dipPts.length));
+        var tsz = clamp(L * 13, 5, 13);
+        sprites.forEach(function (s, k) {
+          var cyan = k >= macN, pts = cyan ? dipPts : macPts, idx = cyan ? k - macN : k;
+          var p = pts[idx % Math.max(pts.length, 1)] || [LX, LY];
+          s.cyan = cyan; s.tx = p[0]; s.ty = p[1]; s.tsz = tsz * s.ts;
+          s.bx = s.nx * W; s.by = s.ny * H;
+        });
+      }
+      function floatPos(s, t) {
+        return [s.bx + Math.sin(t * s.fx + s.ph) * s.ax, s.by + Math.cos(t * s.fy + s.ph * 1.3) * s.ay];
+      }
+      function drawSprites(t) {
+        var under = 1 - 0.72 * sm(t, T.logoA, T.logoA + 0.7);       // the crisp mark takes over
+        var gone = sm(t, T.breakA - 0.05, T.breakA + 0.5);           // the mosaic lets go as the mark breaks
+        if (gone >= 1) return;
+        for (var i = 0; i < sprites.length; i++) {
+          var s = sprites[i], tStart = T.convA + s.d1;
+          var rStart = s.r0 + s.vr * tStart, x, y, r, size, a;
+          if (t < tStart) {
+            var f = floatPos(s, t); x = f[0]; y = f[1];
+            r = s.r0 + s.vr * t; size = s.s0; a = s.a0 * sm(t, 0, 0.5);
+          } else {
+            var u = clamp((t - tStart) / T.convDur, 0, 1), e = eio(u);
+            var st = floatPos(s, tStart), c = swirl(st[0], st[1], s.tx, s.ty, s.k1);
+            var p = bez(st[0], st[1], c[0], c[1], s.tx, s.ty, e);
+            x = p[0]; y = p[1];
+            r = lerp(rStart, Math.PI * 2 * Math.round(rStart / (Math.PI * 2)), e);
+            size = lerp(s.s0, s.tsz, e); a = lerp(s.a0, 1, e);
+          }
+          if (gone > 0) {
+            var dx = x - LX, dy = y - LY, d = Math.hypot(dx, dy) || 1;
+            x += dx / d * s.out * gone; y += dy / d * s.out * gone;
+          }
+          a *= under * (1 - gone);
+          if (a <= 0.01) continue;
+          var k = squeeze(t);
+          x = LX + (x - LX) * k; y = LY + (y - LY) * k;
+          var cs = Math.cos(r), sn = Math.sin(r), sc = size / 64 * dpr;
+          ctx.setTransform(cs * sc, sn * sc, -sn * sc, cs * sc, x * dpr, y * dpr);
+          ctx.globalAlpha = a;
+          ctx.drawImage((s.cyan ? atlasCyan : atlasMac)[s.ch], -32, -32);
+        }
+      }
+
       function build() {
         dpr = Math.min(window.devicePixelRatio || 1, 2);
         W = window.innerWidth; H = window.innerHeight;
@@ -245,6 +343,7 @@
         if (dust.length === 0) {
           for (var d = 0; d < 60; d++) dust.push({ nx: Math.random(), ny: Math.random(), z: rnd(.3, 1), ph: rnd(0, 6.28) });
         }
+        buildSprites();
       }
 
       // Where a point of the artboard sits on screen right now (the mark squeezes before it breaks).
@@ -289,8 +388,8 @@
         ctx.shadowBlur = 0; ctx.shadowOffsetY = 0; ctx.shadowColor = 'transparent';
       }
 
-      // The mark as it builds in: each glyph rises into place, a beat after the last.
-      function glyphIntro(g, t) { return eback(clamp((t - T.logoA - g * T.logoStagger) / T.logoDur, 0, 1)); }
+      // The crisp mark sharpens over the mosaic, one glyph a beat after the last.
+      function glyphIntro(g, t) { return eout(clamp((t - T.logoA - g * T.logoStagger) / T.logoDur, 0, 1)); }
 
       function drawCharAt(c, t) {
         var u = clamp((t - c.dep) / T.fly, 0, 1);
@@ -312,7 +411,7 @@
           if (u <= 0) {
             var ui = glyphIntro(c.g, t);
             var pos = toScreen(G.cx, G.cy, t);
-            drawGlyph(c.g, pos[0], pos[1] + (1 - ui) * 22, L * squeeze(t) * lerp(0.9, 1, ui), 0, clamp(ui, 0, 1));
+            drawGlyph(c.g, pos[0], pos[1], L * squeeze(t) * lerp(1.06, 1, ui), 0, ui);
             return;
           }
           drawGlyph(c.g, p[0], p[1], lerp(L, capH / G.h, e), rot, 1 - hand);
@@ -385,12 +484,13 @@
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.globalAlpha = 1;
         // A short comet tail only while letters are in flight.
-        var flying = t > T.breakA && t < T.settleA;
+        var flying = (t > T.convA && t < T.logoA) || (t > T.breakA && t < T.settleA);
         ctx.fillStyle = 'rgba(' + BG[0] + ',' + BG[1] + ',' + BG[2] + ',' + (flying ? 0.55 : 1) + ')';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         drawDust(t);
         drawHalo(t);
+        drawSprites(t);
         // Order matters: hidden letters first, so the mark covers them until they slide out.
         chars.forEach(function (c) { if (c.g < 0) drawCharAt(c, t); });
         drawSwoosh(t);
@@ -426,6 +526,7 @@
       });
 
       function start() {
+        atlasMac = makeAtlas(NAVY); atlasCyan = makeAtlas(CYAN);
         build();
         t0 = performance.now();
         requestAnimationFrame(frame);
