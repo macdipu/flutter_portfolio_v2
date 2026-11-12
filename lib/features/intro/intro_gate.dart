@@ -46,19 +46,23 @@ abstract class IntroSignals {
 /// The intro, in seconds. Every position is a pure function of time, so
 /// skipping, resizing and theme changes all stay consistent.
 abstract class _T {
-  static const convA = 0.55, convDur = 1.45, convStagger = 0.45; // loose letters pack into the mark
-  static const logoA = 2.05, logoStagger = 0.07, logoDur = 0.55; // the crisp mark sharpens over them
-  static const swA = 2.45, swB = 2.95; // the swoosh draws in under "dipu"
-  static const squeezeA = 3.25, squeezeB = 3.55; // the mark gathers itself
-  static const breakA = 3.55, fly = 1.05, hiddenStagger = 0.55; // letters leave for the name
-  static const settleA = 5.0, settleB = 5.5; // the name resolves
-  static const subA = 5.2, subB = 5.7; // the role fades in
-  static const end = 6.1;
+  static const convA = 0.25, convDur = 1.0, convStagger = 0.3; // loose letters pack into the mark
+  static const logoA = 1.2, logoStagger = 0.05, logoDur = 0.4; // the crisp mark sharpens over them
+  static const swA = 1.45, swB = 1.85; // the swoosh draws in under "dipu"
+  static const squeezeA = 2.0, squeezeB = 2.2; // the mark gathers itself
+  static const breakA = 2.2, fly = 0.8, hiddenStagger = 0.35; // letters leave for the name
+  static const settleA = 3.2, settleB = 3.55; // the name resolves
+  static const subA = 3.3, subB = 3.65; // the role fades in
+  static const end = 3.85;
   static const safety = 2.5; // never wait longer than this for the page after the end
 
   // The handoff, in seconds from its start: the name flies onto the hero.
-  static const handFly = 1.1, handStagger = 0.03;
+  static const handFly = 0.85, handStagger = 0.02;
   static const handEnd = handFly + 18 * handStagger + 0.08;
+
+  /// How long the loose letters take to appear. Matches the fade of the
+  /// still frame in web/index.html, so the two cross over.
+  static const appear = 0.45;
 }
 
 /// A letter of the hero's name, measured on screen.
@@ -741,7 +745,7 @@ class _Scene {
 
   /// A soft halo behind the mark while it holds.
   void _paintHalo(Canvas canvas, double t, _Palette pal) {
-    final a = _sm(t, 0.8, 1.8) * (1 - _sm(t, _T.breakA, _T.breakA + 0.6));
+    final a = _sm(t, 0.5, 1.2) * (1 - _sm(t, _T.breakA, _T.breakA + 0.6));
     if (a <= 0.002) return;
     final r = LogoMark.bounds.width * _scale * 0.6;
     final inner = (pal.light ? LogoMark.cyan : pal.sig)
@@ -776,7 +780,7 @@ class _Scene {
         p = s.float(t, size);
         r = s.r0 + s.vr * t;
         size0 = s.s0;
-        a = s.a0 * _sm(t, 0, 0.25);
+        a = s.a0 * _sm(t, 0, _T.appear);
       } else {
         final e = _eio(_clamp01((t - tStart) / _T.convDur));
         final st = s.float(tStart, size);

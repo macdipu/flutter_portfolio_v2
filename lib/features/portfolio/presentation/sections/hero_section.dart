@@ -11,15 +11,8 @@ import '../../../../core/motion/tilt.dart';
 import '../../../../core/navigation/scroll_controller.dart';
 import '../../../../core/utils/launch.dart';
 import '../../../intro/intro_gate.dart';
-import '../../../../core/widgets/devices.dart';
+import '../../../../core/widgets/logo_mark.dart';
 import '../../../../core/widgets/ui.dart';
-
-const _desktopShot = Shot('assets/images/projects/openreader-desktop.png',
-    ShotKind.desktop, 'OpenReader on Windows');
-const _browserShot = Shot('assets/images/projects/gitswitch-accounts.png',
-    ShotKind.browser, 'GitSwitch accounts screen');
-const _phoneShot = Shot('assets/images/projects/shell-consumer-home.webp',
-    ShotKind.phone, 'Shell Consumer home screen');
 
 class HeroSection extends StatefulWidget {
   const HeroSection({super.key});
@@ -53,8 +46,10 @@ class _HeroSectionState extends State<HeroSection> {
     _precached = true;
     // Decode what the first frame shows, then tell the intro we're ready.
     Future.wait([
-      for (final s in [_desktopShot, _browserShot, _phoneShot])
-        precacheImage(AssetImage(s.asset), context),
+      // What the first seconds show: the first screens of the montage and
+      // the portrait it ends on.
+      for (final a in [Profile.avatar, ..._montage.take(3)])
+        precacheImage(AssetImage(a), context),
       DeferredFonts.pending, // started in main()
     ]).whenComplete(IntroSignals.markReady);
     // The montage images load in the background; they are not needed for ready.
@@ -297,8 +292,8 @@ class _DotPainter extends CustomPainter {
 }
 
 /// The hero's right side. On first show it plays a quick montage: screens
-/// slam in one on top of another, flash, and break away as three real devices
-/// settle into depth. After that it leans toward the pointer, and the whole
+/// slam in one on top of another, flash, and break away as the portrait
+/// settles into place. After that it leans toward the pointer, and the whole
 /// stage tips back and recedes as the page scrolls.
 class _HeroStage extends StatefulWidget {
   const _HeroStage();
@@ -309,7 +304,7 @@ class _HeroStage extends StatefulWidget {
 
 class _HeroStageState extends State<_HeroStage>
     with SingleTickerProviderStateMixin {
-  static const _introSeconds = 2.7;
+  static const _introSeconds = 2.7; // must cover _Stage._settleB
 
   late final AnimationController _intro = AnimationController(
     vsync: this,
@@ -413,46 +408,22 @@ class _Stage extends StatelessWidget {
 
   static const _landEvery = 0.13; // a new screen lands this often
   static const _landFor = 0.4; // and takes this long to land
-  static const _breakA = 1.55; // the pile breaks away from here
-  static const _breakB = 2.15;
-  static const _flashAt = 1.5;
+  static const _photoAt = 1.3; // the photo lands last, on top of the pile
+  static const _flashAt = 1.62; // as it hits
+  static const _breakA = 1.75; // the projects fly off behind it
+  static const _breakB = 2.35;
+  static const _settleB = 2.6; // the photo has grown into its resting pose
+
+  // The photo's resting pose, leaning left. The stage itself is turned by
+  // -0.24 about Y (see build), so +0.42 here nets a mirrored +0.18.
+  static const _poseX = -0.16, _poseY = 0.42, _poseZ = 0.05;
 
   double _sm(double a, double b) {
     final x = ((introT - a) / (b - a)).clamp(0.0, 1.0);
     return x * x * (3 - 2 * x);
   }
 
-  Widget _layer({
-    required double depth,
-    required double left,
-    required double top,
-    required double w,
-    required double h,
-    required Widget child,
-  }) {
-    // Nearer layers move more, which sells the depth.
-    final shift = Offset(tilt.dx * depth * 16, tilt.dy * depth * 12);
-    // During the intro each device flies out from the middle of the pile.
-    final e = Curves.easeOutCubic.transform(
-      ((introT - 1.45) / 0.95).clamp(0.0, 1.0),
-    );
-    final fromCentre = Offset(
-      (0.5 - (left + w / 2)) * size * (1 - e),
-      (0.46 - (top + h / 2)) * size * (1 - e),
-    );
-    final scale = 0.55 + 0.45 * e;
-    return Positioned(
-      left: left * size,
-      top: top * size,
-      child: Opacity(
-        opacity: _sm(1.45, 2.0),
-        child: Transform.translate(
-          offset: shift + fromCentre,
-          child: Transform.scale(scale: scale, child: child),
-        ),
-      ),
-    );
-  }
+  static double _lerp(double a, double b, double t) => a + (b - a) * t;
 
   Widget _card(BuildContext context, int i) {
     final c = context.colors;
@@ -500,6 +471,40 @@ class _Stage extends StatelessWidget {
     );
   }
 
+  /// The last card to land is the photo. It stays while the projects fly
+  /// off, grows to full size and turns toward the upper left.
+  Widget _photo() {
+    final p = ((introT - _photoAt) / _landFor).clamp(0.0, 1.0);
+    if (p <= 0) return const SizedBox.shrink();
+    final e = Curves.easeOutCubic.transform(p);
+    final q = Curves.easeInOutCubic
+        .transform(((introT - _breakA) / (_settleB - _breakA)).clamp(0.0, 1.0));
+    final w = size * _lerp(0.46, 0.6, q);
+    final h = size * _lerp(0.58, 0.8, q);
+    final cy = size * _lerp(0.46, 0.45, q);
+    return Positioned(
+      left: size * 0.5 - w / 2,
+      top: cy - h / 2,
+      child: Opacity(
+        opacity: (p * 4).clamp(0.0, 1.0),
+        child: Transform(
+          alignment: Alignment.center,
+          transform: perspective(
+            rotateY: (1 - e) * -0.75 + q * _poseY,
+            rotateX: (1 - e) * -0.25 + q * _poseX,
+            rotateZ: q * _poseZ,
+            scale: 1.7 - 0.7 * e,
+          ),
+          child: _Portrait(
+            width: w,
+            height: h,
+            interactive: introT >= _settleB,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
@@ -523,35 +528,12 @@ class _Stage extends StatelessWidget {
           children: [
             if (montage)
               for (var i = 0; i < _montage.length; i++) _card(context, i),
-            _layer(
-              depth: 0.3,
-              left: 0.02,
-              top: 0.04,
-              w: 0.80,
-              h: 0.55,
-              child: ShotDevice(shot: _desktopShot, width: size * 0.80),
-            ),
-            _layer(
-              depth: 0.7,
-              left: 0.0,
-              top: 0.50,
-              w: 0.52,
-              h: 0.32,
-              child: ShotDevice(shot: _browserShot, width: size * 0.52),
-            ),
-            _layer(
-              depth: 1.0,
-              left: 0.70,
-              top: 0.16,
-              w: 0.26,
-              h: 0.56,
-              child: ShotDevice(shot: _phoneShot, width: size * 0.26),
-            ),
+            _photo(),
             if (flash > 0)
               Positioned.fill(
                 child: IgnorePointer(
                   child: Opacity(
-                    opacity: flash * 0.85,
+                    opacity: flash * 0.6,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         gradient: RadialGradient(
@@ -572,6 +554,256 @@ class _Stage extends StatelessWidget {
               ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// The portrait card: soft cyan rim and glow, the macdipu tag on its corner.
+///
+/// Once the montage has settled, hovering lifts it toward the pointer: the
+/// card tips after the cursor, a glare follows it, the photo zooms with a
+/// little parallax, the rim and glow brighten and the tag pops out to read
+/// "Hi! I'm macdipu".
+class _Portrait extends StatefulWidget {
+  const _Portrait({
+    required this.width,
+    required this.height,
+    required this.interactive,
+  });
+
+  final double width;
+  final double height;
+  final bool interactive;
+
+  @override
+  State<_Portrait> createState() => _PortraitState();
+}
+
+class _PortraitState extends State<_Portrait> {
+  bool _hover = false;
+  Offset _pos = const Offset(0.5, 0.5); // pointer, 0..1 over the card
+
+  @override
+  Widget build(BuildContext context) {
+    final on = widget.interactive && _hover && !Motion.reduced(context);
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() {
+        _hover = false;
+        _pos = const Offset(0.5, 0.5);
+      }),
+      onHover: (e) => setState(() => _pos = Offset(
+            (e.localPosition.dx / widget.width).clamp(0.0, 1.0),
+            (e.localPosition.dy / widget.height).clamp(0.0, 1.0),
+          )),
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(end: on ? 1 : 0),
+        duration: const Duration(milliseconds: 420),
+        curve: Motion.easeOut,
+        builder: (context, hv, _) => TweenAnimationBuilder<Offset>(
+          tween: Tween(end: on ? _pos : const Offset(0.5, 0.5)),
+          duration: const Duration(milliseconds: 220),
+          curve: Motion.easeOut,
+          builder: (context, pos, _) => _card(context, hv, pos),
+        ),
+      ),
+    );
+  }
+
+  Widget _card(BuildContext context, double hv, Offset pos) {
+    final c = context.colors;
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final w = widget.width, h = widget.height;
+    final radius = BorderRadius.circular(w * 0.08);
+    final lean = (pos - const Offset(0.5, 0.5)) * 2; // -1..1
+
+    return Transform(
+      alignment: Alignment.center,
+      transform: perspective(
+        rotateX: -lean.dy * 0.16 * hv,
+        rotateY: lean.dx * 0.16 * hv,
+        dy: -12 * hv,
+        scale: 1 + 0.05 * hv,
+      ),
+      child: SizedBox(
+        width: w,
+        height: h,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            // Glow behind the card; stronger on hover.
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: radius,
+                  boxShadow: [
+                    BoxShadow(
+                      color: LogoMark.cyan.withValues(
+                          alpha: (dark ? 0.28 : 0.22) + 0.3 * hv),
+                      blurRadius: 60 + 30 * hv,
+                      spreadRadius: -6 + 4 * hv,
+                    ),
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: dark ? 0.5 : 0.18),
+                      blurRadius: 30 + 20 * hv,
+                      offset: Offset(0, 18 + 14 * hv),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Positioned.fill(
+              child: ClipRRect(
+                borderRadius: radius,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    // Solid backing: never see-through, even mid-decode.
+                    ColoredBox(color: c.surface),
+                    // The photo zooms in and drifts against the pointer.
+                    Transform.translate(
+                      offset: -lean * (w * 0.02) * hv,
+                      child: Transform.scale(
+                        scale: 1 + 0.08 * hv,
+                        // Same image the hero precaches, so it is ready the
+                        // moment the card lands.
+                        child: Image.asset(
+                          Profile.avatar,
+                          fit: BoxFit.cover,
+                          alignment: const Alignment(0, -0.2),
+                          gaplessPlayback: true,
+                          semanticLabel: 'Photo of ${Profile.name}',
+                        ),
+                      ),
+                    ),
+                    // Settles the grey studio backdrop into the page.
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            c.paper.withValues(alpha: 0.35 * (1 - hv * 0.5)),
+                          ],
+                          stops: const [0.65, 1],
+                        ),
+                      ),
+                    ),
+                    // Glare that follows the pointer.
+                    if (hv > 0.01)
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: RadialGradient(
+                            center: Alignment(lean.dx, lean.dy),
+                            radius: 0.9,
+                            colors: [
+                              Colors.white.withValues(alpha: 0.22 * hv),
+                              Colors.white.withValues(alpha: 0),
+                            ],
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+            // Rim.
+            Positioned.fill(
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: radius,
+                    border: Border.all(
+                      color: LogoMark.cyan.withValues(alpha: 0.45 + 0.5 * hv),
+                      width: 1.5 + 0.8 * hv,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            // The tag, over the bottom-left corner; pops and says hello.
+            Positioned(
+              left: -w * (0.06 + 0.03 * hv),
+              bottom: h * 0.07 + 6 * hv,
+              child: Transform.scale(
+                scale: 1 + 0.08 * hv,
+                alignment: Alignment.centerLeft,
+                child: _Tag(width: w, hv: hv, dark: dark),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Tag extends StatelessWidget {
+  const _Tag({required this.width, required this.hv, required this.dark});
+
+  final double width;
+  final double hv;
+  final bool dark;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    final markH = width * 0.075;
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: width * 0.045,
+        vertical: width * 0.03,
+      ),
+      decoration: BoxDecoration(
+        color: dark ? c.surface : Colors.white,
+        borderRadius: BorderRadius.circular(Radii.pill),
+        border: Border.all(
+          color: Color.lerp(c.line, LogoMark.cyan, hv)!,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: dark ? 0.4 : 0.12),
+            blurRadius: 18 + 10 * hv,
+            offset: Offset(0, 8 + 4 * hv),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // On hover the tag reads "Hi! I'm macdipu": the greeting slides
+          // out in front of the mark.
+          ClipRect(
+            child: Align(
+              alignment: Alignment.centerRight,
+              widthFactor: hv,
+              child: Opacity(
+                opacity: hv,
+                child: Padding(
+                  padding: EdgeInsets.only(right: width * 0.03),
+                  child: Text(
+                    'Hi! I’m',
+                    style: AppType.ui14(context).copyWith(
+                      fontSize: (markH * 0.62).clamp(11.0, 16.0),
+                      fontWeight: FontWeight.w700,
+                      color: c.ink,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          CustomPaint(
+            size: Size(markH * LogoMark.aspect, markH),
+            painter: LogoMarkPainter(
+              macColor: dark ? c.ink : LogoMark.navy,
+              dipuColor: LogoMark.cyan,
+              lift: hv,
+            ),
+          ),
+        ],
       ),
     );
   }

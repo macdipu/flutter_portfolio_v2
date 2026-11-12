@@ -36,3 +36,9 @@ flutter:
     - family: Bricolage
       fonts:
         - asset: assets/fonts/Bricolage.ttf
+    # Flutter web downloads Roboto from fonts.gstatic.com before the first
+    # frame unless the app ships a "Roboto". Pointing it at Bricolage (already
+    # fetched via the preload in web/index.html) removes that round trip.
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Bricolage.ttf
