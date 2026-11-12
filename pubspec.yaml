@@ -28,12 +28,11 @@ flutter:
   assets:
     - assets/images/
     - assets/images/projects/
+    # Reading face: loaded after the first frame (lib/core/design/deferred_fonts.dart)
+    # so it is not on the critical path of the intro.
+    - assets/fonts/Newsreader.ttf
+    - assets/fonts/Newsreader-Italic.ttf
   fonts:
     - family: Bricolage
       fonts:
         - asset: assets/fonts/Bricolage.ttf
-    - family: Newsreader
-      fonts:
-        - asset: assets/fonts/Newsreader.ttf
-        - asset: assets/fonts/Newsreader-Italic.ttf
-          style: italic

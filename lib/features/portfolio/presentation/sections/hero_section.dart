@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../content/portfolio_content.dart';
+import '../../../../core/design/deferred_fonts.dart';
 import '../../../../core/design/tokens.dart';
 import '../../../../core/motion/reveal.dart';
 import '../../../../core/motion/scroll_scope.dart';
@@ -29,15 +31,18 @@ class HeroSection extends StatefulWidget {
 class _HeroSectionState extends State<HeroSection> {
   bool _precached = false;
 
-  /// The hero holds back until the intro has faded, so its entrance is
-  /// seen and not played out behind the loader.
-  bool _go = false;
+  /// While the intro plays the hero is laid out but invisible, so the
+  /// intro's letters can land on its name; its entrance plays afterwards.
+  _HeroPhase _phase = kIsWeb ? _HeroPhase.waiting : _HeroPhase.plain;
 
   @override
   void initState() {
     super.initState();
-    IntroSignals.finished.then((_) {
-      if (mounted) setState(() => _go = true);
+    IntroSignals.finished.then((landed) {
+      if (mounted) {
+        setState(
+            () => _phase = landed ? _HeroPhase.landed : _HeroPhase.plain);
+      }
     });
   }
 
@@ -50,6 +55,7 @@ class _HeroSectionState extends State<HeroSection> {
     Future.wait([
       for (final s in [_desktopShot, _browserShot, _phoneShot])
         precacheImage(AssetImage(s.asset), context),
+      DeferredFonts.pending, // started in main()
     ]).whenComplete(IntroSignals.markReady);
     // The montage images load in the background; they are not needed for ready.
     for (final a in _montage) {
@@ -62,9 +68,12 @@ class _HeroSectionState extends State<HeroSection> {
     final size = MediaQuery.sizeOf(context);
     final wide = size.width >= 900;
     final minHeight = (size.height - 64).clamp(620.0, 1100.0);
-    if (!_go) return SizedBox(height: minHeight);
+    final waiting = _phase == _HeroPhase.waiting;
+    final text = _HeroText(phase: _phase);
+    const stage = _HeroStage();
 
-    return ConstrainedBox(
+    // A new subtree per phase, so every entrance starts once the intro is gone.
+    final hero = ConstrainedBox(
       constraints: BoxConstraints(minHeight: minHeight),
       child: Padding(
         padding: EdgeInsets.only(
@@ -73,30 +82,50 @@ class _HeroSectionState extends State<HeroSection> {
         ),
         child: Frame(
           child: wide
-              ? const Row(
+              ? Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Expanded(flex: 6, child: _HeroText()),
-                    SizedBox(width: Space.xl),
-                    Expanded(flex: 6, child: _HeroStage()),
+                    Expanded(flex: 6, child: text),
+                    const SizedBox(width: Space.xl),
+                    Expanded(
+                      flex: 6,
+                      child: waiting ? const SizedBox.shrink() : stage,
+                    ),
                   ],
                 )
-              : const Column(
+              : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _HeroText(),
-                    SizedBox(height: Space.xl),
-                    _HeroStage(),
+                    text,
+                    const SizedBox(height: Space.xl),
+                    if (!waiting) stage,
                   ],
                 ),
         ),
       ),
     );
+    return KeyedSubtree(
+      key: ValueKey(_phase),
+      child: waiting ? Opacity(opacity: 0, child: hero) : hero,
+    );
   }
 }
 
+enum _HeroPhase {
+  /// The intro is playing: laid out, invisible, nothing animating.
+  waiting,
+
+  /// The intro's letters landed on the name: show it at once, animate the rest.
+  landed,
+
+  /// No intro handed over (not web, or it fell back to a fade): animate all.
+  plain,
+}
+
 class _HeroText extends StatelessWidget {
-  const _HeroText();
+  const _HeroText({required this.phase});
+
+  final _HeroPhase phase;
 
   static const _lines = ['Md. Asad', 'Chowdhury', 'Dipu'];
 
@@ -109,6 +138,14 @@ class _HeroText extends StatelessWidget {
       letterSpacing: -fluid(context, 1.6, 3.6),
     );
 
+    final waiting = phase == _HeroPhase.waiting;
+    // While waiting nothing is wrapped in a Reveal, so positions are final
+    // and nothing plays its entrance behind the intro.
+    Widget reveal(Widget child, int step, [RevealKind kind = RevealKind.rise]) =>
+        waiting
+            ? child
+            : Reveal(kind: kind, delay: Motion.stagger * step, child: child);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -116,31 +153,36 @@ class _HeroText extends StatelessWidget {
         const _Availability(),
         const SizedBox(height: Space.l),
         for (var i = 0; i < _lines.length; i++)
-          Reveal(
-            kind: RevealKind.mask,
-            delay: Motion.stagger * (i + 1),
-            child: Semantics(
-              header: i == 0,
-              child: Text(_lines[i], style: nameStyle),
-            ),
-          ),
+          switch (phase) {
+            // The intro's letters measure these lines, then land on them.
+            _HeroPhase.waiting => Text(_lines[i],
+                key: IntroSignals.heroNameKeys[i], style: nameStyle),
+            _HeroPhase.landed => Semantics(
+                header: i == 0,
+                child: Text(_lines[i], style: nameStyle),
+              ),
+            _HeroPhase.plain => Reveal(
+                kind: RevealKind.mask,
+                delay: Motion.stagger * (i + 1),
+                child: Semantics(
+                  header: i == 0,
+                  child: Text(_lines[i], style: nameStyle),
+                ),
+              ),
+          },
         SizedBox(height: fluid(context, 20, 32)),
-        Reveal(
-          delay: Motion.stagger * 4,
-          child: Text('${Profile.role}.', style: AppType.h2(context)),
-        ),
+        reveal(Text('${Profile.role}.', style: AppType.h2(context)), 4),
         const SizedBox(height: Space.m),
-        Reveal(
-          delay: Motion.stagger * 5,
-          child: ConstrainedBox(
+        reveal(
+          ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 520),
             child: Text(Profile.intro, style: AppType.lead(context)),
           ),
+          5,
         ),
         const SizedBox(height: Space.l),
-        Reveal(
-          delay: Motion.stagger * 6,
-          child: const Wrap(
+        reveal(
+          const Wrap(
             spacing: Space.s,
             runSpacing: Space.s,
             children: [
@@ -150,11 +192,11 @@ class _HeroText extends StatelessWidget {
               PlatformBadge(Platform.fullStack),
             ],
           ),
+          6,
         ),
         SizedBox(height: fluid(context, 24, 36)),
-        Reveal(
-          delay: Motion.stagger * 7,
-          child: Wrap(
+        reveal(
+          Wrap(
             spacing: Space.m,
             runSpacing: Space.m,
             children: [
@@ -172,6 +214,7 @@ class _HeroText extends StatelessWidget {
               ),
             ],
           ),
+          7,
         ),
       ],
     );
