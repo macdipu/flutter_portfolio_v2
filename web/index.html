@@ -131,14 +131,13 @@
       // ---- Timeline, in seconds. Every position below is a pure function of
       // time, so skipping, resizing and seeking all stay consistent. ----
       var T = {
-        convStart: 1.0, convDur: 1.7, convStagger: 0.4,   // letters swirl into MACDIPU
-        formA: 2.6, formB: 3.3,                            // the word sharpens, glow builds
-        dissA: 3.9, dissB: 4.4,                            // letters break into fine particles
-        scatA: 3.95, scatB: 4.65,                          // a short, tight burst
-        reconA: 4.65, reconDur: 0.9, reconStagger: 0.35,   // particles flow into the name
-        nameA: 5.55, nameB: 6.15,                          // the name resolves
-        subA: 6.0, subB: 6.5,                              // the role fades in
-        end: 6.8
+        logoA: 0.25, logoStagger: 0.09, logoDur: 0.6,     // the macdipu mark builds, glyph by glyph
+        swA: 1.0, swB: 1.6,                               // the swoosh draws in under "dipu"
+        squeezeA: 2.15, squeezeB: 2.45,                   // the mark gathers itself before it breaks
+        breakA: 2.45, fly: 1.05, hiddenStagger: 0.55,     // letters leave the mark for the name
+        settleA: 3.9, settleB: 4.4,                       // the name resolves
+        subA: 4.1, subB: 4.6,                             // the role fades in
+        end: 5.0
       };
 
       var rs = getComputedStyle(document.documentElement);
@@ -148,315 +147,265 @@
         return [parseInt(hex.substr(0, 2), 16), parseInt(hex.substr(2, 2), 16), parseInt(hex.substr(4, 2), 16)];
       }
       var BG = rgb(css('--bg')), FG = css('--fg'), SIG = css('--sig');
-      // Additive glow only works on dark; on light, particles are drawn solid.
       var LIGHT = (BG[0] * 299 + BG[1] * 587 + BG[2] * 114) / 1000 > 140;
-      var GLOW_BLEND = LIGHT ? 'source-over' : 'lighter';
+      // Logo colours. Navy disappears on the dark page, so "mac" takes the ink there.
+      var NAVY = LIGHT ? '#072A54' : FG, CYAN = '#12B5D8';
+      var FONT = 'Bricolage, system-ui, sans-serif';
 
       function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
       function sm(t, a, b) { var x = clamp((t - a) / (b - a), 0, 1); return x * x * (3 - 2 * x); }
-      function eio(x) { return x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }   // quad: gentler peak speed
+      function eio(x) { return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
       function eout(x) { return 1 - Math.pow(1 - x, 3); }
+      function eback(x) { var c = 1.4; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); }
       function lerp(a, b, x) { return a + (b - a) * x; }
       function rnd(a, b) { return a + Math.random() * (b - a); }
 
-      var W = 0, H = 0, dpr = 1, N = 1000;
-      var sprites = [], dust = [];
-      var layout1, layout2, subY = 0, subSize = 14;
-      var atlasFg = [], atlasSig = [], glow;
+      // ---- The mark, as outlines in its 820x260 artboard. ----
+      var BOX = { l: 42, t: 28, r: 799, b: 226 };
+      BOX.cx = (BOX.l + BOX.r) / 2; BOX.cy = (BOX.t + BOX.b) / 2;
+      function P(d) { return new Path2D(d); }
+      var iPath = P('M 556 88 L 580 88 L 562 144 C 560 150 563 153 569 150 C 575 147 581 139 586 130 L 595 135 C 587 154 574 166 558 166 C 544 166 537 157 542 141 Z');
+      iPath.moveTo(586, 64); iPath.arc(574, 64, 12, 0, Math.PI * 2);
+      // cx/cy: centre of the glyph; h: its height, used to hand it over to a capital.
+      var GLYPHS = [
+        { p: P('M 45 165 L 45 78 L 70 78 L 70 90 C 76 80 86 75 99 75 C 112 75 122 80 127 91 C 134 80 146 75 160 75 C 180 75 193 88 193 111 L 193 165 L 166 165 L 166 116 C 166 104 160 98 150 98 C 140 98 133 105 133 117 L 133 165 L 106 165 L 106 116 C 106 104 100 98 90 98 C 80 98 73 105 73 117 L 73 165 Z'),
+          cx: 119, cy: 120, h: 90, c: 'navy' },
+        { p: P('M 250 167 C 231 167 218 156 218 139 C 218 121 233 112 259 112 L 281 112 L 281 109 C 281 99 274 94 261 94 C 250 94 242 98 238 105 L 217 93 C 225 81 241 75 264 75 C 292 75 308 88 308 113 L 308 165 L 283 165 L 283 154 C 276 163 265 167 250 167 Z M 257 148 C 270 148 281 140 281 129 L 281 127 L 262 127 C 249 127 244 131 244 138 C 244 144 249 148 257 148 Z'),
+          cx: 262, cy: 121, h: 92, c: 'navy' },
+        { p: P('M 374 167 C 344 167 324 148 324 121 C 324 94 344 75 374 75 C 396 75 413 86 419 104 L 394 112 C 390 102 383 97 373 97 C 359 97 351 106 351 121 C 351 136 359 145 373 145 C 383 145 391 140 394 130 L 419 138 C 413 156 396 167 374 167 Z'),
+          cx: 371, cy: 121, h: 92, c: 'navy' },
+        { p: P('M 465 166 C 443 166 430 151 433 128 C 436 104 454 86 476 86 C 489 86 498 92 502 102 L 524 38 C 526 32 532 30 538 32 L 547 35 L 509 145 C 507 151 510 154 516 151 C 522 148 528 140 533 131 L 542 136 C 534 154 521 166 505 166 C 494 166 488 159 488 149 C 481 160 474 166 465 166 Z M 469 147 C 479 147 490 135 493 119 C 495 108 489 102 480 102 C 468 102 458 114 455 130 C 453 141 459 147 469 147 Z'),
+          cx: 488, cy: 98, h: 136, c: 'cyan' },
+        { p: iPath, cx: 566, cy: 109, h: 114, c: 'cyan' },
+        { p: P('M 608 88 L 631 88 L 627 101 C 636 91 647 86 660 86 C 679 86 690 101 686 124 C 682 149 663 166 641 166 C 630 166 621 161 617 153 L 599 216 C 597 222 592 224 585 222 L 575 219 Z M 638 148 C 650 148 660 136 663 120 C 665 109 659 103 650 103 C 638 103 627 115 624 131 C 622 142 628 148 638 148 Z'),
+          cx: 632, cy: 155, h: 138, c: 'cyan' },
+        { p: P('M 704 88 L 727 88 L 713 136 C 710 145 714 149 722 149 C 732 149 742 138 747 122 L 758 88 L 781 88 L 763 144 C 761 150 764 153 770 150 C 776 147 782 139 787 128 L 796 133 C 788 153 775 166 759 166 C 748 166 742 159 743 148 C 734 160 723 166 710 166 C 693 166 685 155 691 135 Z'),
+          cx: 740, cy: 127, h: 78, c: 'cyan' }
+      ];
+      var SWOOSH = P('M 432 206 C 472 191 520 182 569 178 L 564 193 C 518 197 473 205 435 216 C 429 218 427 209 432 206 Z M 616 176 C 675 174 735 182 788 198 C 792 199 790 205 785 204 C 732 191 675 186 612 190 Z');
 
-      function makeAtlas(color) {
-        var out = [];
-        for (var i = 0; i < 26; i++) {
-          var c = document.createElement('canvas'); c.width = c.height = 64;
-          var g = c.getContext('2d');
-          g.font = '700 46px Bricolage, system-ui, sans-serif';
-          g.textAlign = 'center'; g.textBaseline = 'middle';
-          g.fillStyle = color;
-          g.fillText(String.fromCharCode(65 + i), 32, 35);
-          out.push(c);
+      // ---- The name. "mac" is Md. Asad Chowdhury: its m, a and c become those
+      // initials, "dipu" becomes DIPU, and every other letter was sitting behind
+      // the mark and slides out from under it. ----
+      var LINES = ['MD. ASAD', 'CHOWDHURY DIPU'];
+      var MAP = { '0:0': 0, '0:4': 1, '1:0': 2, '1:10': 3, '1:11': 4, '1:12': 5, '1:13': 6 };
+      var chars = [];
+      LINES.forEach(function (line, li) {
+        for (var ci = 0; ci < line.length; ci++) {
+          if (line[ci] === ' ') continue;
+          var g = MAP[li + ':' + ci];
+          chars.push({
+            ch: line[ci], li: li, ci: ci, g: g === undefined ? -1 : g,
+            dipu: li === 1 && ci >= 10,
+            rr: rnd(-0.6, 0.6), k: rnd(0.12, 0.3) * (Math.random() < .5 ? -1 : 1),
+            ox: rnd(-0.32, 0.32), oy: rnd(-0.22, 0.22)
+          });
         }
-        return out;
+      });
+      // Hidden letters leave in a shuffled order; the mark's own glyphs leave in reading order.
+      var hidden = chars.filter(function (c) { return c.g < 0; });
+      for (var hi = hidden.length - 1; hi > 0; hi--) {
+        var hj = (Math.random() * (hi + 1)) | 0, tmp = hidden[hi]; hidden[hi] = hidden[hj]; hidden[hj] = tmp;
       }
-      function makeGlow() {
-        var c = document.createElement('canvas'); c.width = c.height = 64;
-        var g = c.getContext('2d');
-        var grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
-        if (LIGHT) {
-          grad.addColorStop(0, SIG);
-          grad.addColorStop(.55, SIG);
-          grad.addColorStop(.8, SIG.length === 7 ? SIG + '55' : SIG);
-          grad.addColorStop(1, 'rgba(0,0,0,0)');
-        } else {
-          grad.addColorStop(0, 'rgba(255,255,255,1)');
-          grad.addColorStop(.2, SIG);
-          grad.addColorStop(.55, SIG.length === 7 ? SIG + '44' : SIG);
-          grad.addColorStop(1, 'rgba(0,0,0,0)');
-        }
-        g.fillStyle = grad; g.fillRect(0, 0, 64, 64);
-        return c;
-      }
+      hidden.forEach(function (c, i) { c.dep = T.breakA + 0.08 + i / (hidden.length - 1) * T.hiddenStagger; });
+      chars.forEach(function (c) { if (c.g >= 0) c.dep = T.breakA + c.g * 0.06; });
 
-      function fit(lines, maxFs, frac) {
-        var m = document.createElement('canvas').getContext('2d');
-        m.font = '800 100px Bricolage, system-ui, sans-serif';
-        var widest = 0;
-        lines.forEach(function (l) { widest = Math.max(widest, m.measureText(l).width); });
-        return Math.min(maxFs, (W * frac) / (widest / 100));
-      }
-      function makeLayout(lines, maxFs, dy) {
-        var fs = fit(lines, maxFs, 0.84);
-        return { lines: lines, fs: fs, lh: fs * 1.08, dy: dy ? dy(fs) : 0 };
-      }
-      function drawLines(g, lay, color) {
-        g.font = '800 ' + lay.fs + 'px Bricolage, system-ui, sans-serif';
-        g.textAlign = 'center'; g.textBaseline = 'middle';
-        if ('letterSpacing' in g) g.letterSpacing = (-lay.fs * 0.012) + 'px';
-        g.fillStyle = color;
-        var top = H / 2 + lay.dy - (lay.lines.length - 1) * lay.lh / 2;
-        lay.lines.forEach(function (l, i) { g.fillText(l, W / 2, top + i * lay.lh); });
-      }
-      function samplePoints(lay) {
-        var c = document.createElement('canvas'); c.width = W; c.height = H;
-        var g = c.getContext('2d', { willReadFrequently: true });
-        drawLines(g, lay, '#fff');
-        var data = g.getImageData(0, 0, W, H).data;
-        var pts = [];
-        for (var y = 0; y < H; y += 2) {
-          for (var x = 0; x < W; x += 2) {
-            if (data[(y * W + x) * 4 + 3] > 128) pts.push([x, y]);
-          }
-        }
-        for (var i = pts.length - 1; i > 0; i--) {
-          var j = (Math.random() * (i + 1)) | 0, t = pts[i]; pts[i] = pts[j]; pts[j] = t;
-        }
-        var out = [];
-        for (var k = 0; k < N; k++) {
-          var p = pts[k % Math.max(pts.length, 1)] || [W / 2, H / 2];
-          var extra = k >= pts.length ? 2 : 0;
-          out.push([p[0] + rnd(-extra, extra), p[1] + rnd(-extra, extra)]);
-        }
-        return out;
-      }
+      var W = 0, H = 0, dpr = 1;
+      var L = 1, LX = 0, LY = 0;           // mark scale and screen centre
+      var fs = 100, lh = 108, subY = 0, subSize = 14, ruleY = 0;
+      var dust = [];
 
       function build() {
         dpr = Math.min(window.devicePixelRatio || 1, 2);
         W = window.innerWidth; H = window.innerHeight;
         canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
-        N = W < 600 ? 700 : 1100;
 
-        layout1 = makeLayout(['MACDIPU'], Math.min(W * 0.17, 190));
-        // The name is always two lines: bigger, and balanced on every screen.
-        layout2 = makeLayout(['MD. ASAD', 'CHOWDHURY DIPU'], Math.min(W * 0.115, 124),
-          function (fs) { return -fs * 0.22; });
-        var blockBottom = H / 2 + layout2.dy + layout2.lh * 0.5 + layout2.lh * 0.5;
-        subSize = clamp(layout2.fs * 0.19, 14, 24);
-        subY = blockBottom + layout2.fs * 0.42;
+        L = Math.min(W * 0.78, 620) / (BOX.r - BOX.l);
+        LX = W / 2; LY = H / 2;
 
-        var p1 = samplePoints(layout1), p2 = samplePoints(layout2);
-        var cx = W / 2, cy = H / 2;
-        // Big enough that the word reads as a mosaic of letters while it holds.
-        var tsz1 = clamp(layout1.fs * 0.1, 8, 19);
-        var tsz2 = clamp(layout2.fs * 0.075, 4, 9);
+        var m = document.createElement('canvas').getContext('2d');
+        m.font = '800 100px ' + FONT;
+        var widest = 0;
+        LINES.forEach(function (l) { widest = Math.max(widest, m.measureText(l).width); });
+        fs = Math.min(Math.min(W * 0.115, 124), (W * 0.86) / (widest / 100));
+        lh = fs * 1.08;
+        m.font = '800 ' + fs + 'px ' + FONT;
+        var top = H / 2 - fs * 0.22 - lh / 2;
+        chars.forEach(function (c) {
+          var line = LINES[c.li];
+          var x0 = W / 2 - m.measureText(line).width / 2;
+          c.tx = x0 + m.measureText(line.slice(0, c.ci)).width + m.measureText(c.ch).width / 2;
+          c.ty = top + c.li * lh;
+        });
+        var blockBottom = top + lh + lh * 0.5;
+        subSize = clamp(fs * 0.19, 14, 24);
+        subY = blockBottom + fs * 0.42;
+        ruleY = subY - subSize * 1.9;
 
-        if (sprites.length !== N) {
-          sprites = [];
-          for (var i = 0; i < N; i++) {
-            var z = rnd(.45, 1);   // depth: far letters are smaller, dimmer, slower
-            sprites.push({
-              nx: Math.random(), ny: Math.random(), z: z,
-              fx: rnd(.35, .9) * z, fy: rnd(.35, .9) * z, ph: rnd(0, 6.28),
-              ax: rnd(20, 80) * z, ay: rnd(20, 80) * z, vx: rnd(-12, 12) * z, vy: rnd(-10, 10) * z,
-              r0: rnd(0, 6.28), vr: rnd(-1, 1) * z,
-              s0: rnd(14, 42) * z, a0: rnd(.4, 1) * z,
-              ch: (Math.random() * 26) | 0, sig: Math.random() < .12,
-              d1: Math.random() * T.convStagger, d2: Math.random() * T.reconStagger,
-              k1: rnd(.28, .5), k2: rnd(.2, .4),   // one rotational sense: a vortex, not a blast
-              R: rnd(30, 120)
-            });
-          }
-        }
-        for (var k = 0; k < N; k++) {
-          var s = sprites[k];
-          s.t1x = p1[k][0]; s.t1y = p1[k][1]; s.t2x = p2[k][0]; s.t2y = p2[k][1];
-          s.ts1 = tsz1 * rnd(.9, 1.15); s.ts2 = tsz2 * rnd(.9, 1.15);
-          s.bx = s.nx * W; s.by = s.ny * H;
-          var ang = Math.atan2(s.t1y - cy, s.t1x - cx) + rnd(-.8, .8);
-          s.sx = s.t1x + Math.cos(ang) * s.R; s.sy = s.t1y + Math.sin(ang) * s.R * 0.8;
-        }
         if (dust.length === 0) {
-          for (var d = 0; d < 70; d++) {
-            dust.push({ nx: Math.random(), ny: Math.random(), z: rnd(.3, 1), ph: rnd(0, 6.28) });
-          }
+          for (var d = 0; d < 60; d++) dust.push({ nx: Math.random(), ny: Math.random(), z: rnd(.3, 1), ph: rnd(0, 6.28) });
         }
       }
 
-      function floatPos(s, t) {
-        return [s.bx + Math.sin(t * s.fx + s.ph) * s.ax + s.vx * t,
-                s.by + Math.cos(t * s.fy + s.ph * 1.3) * s.ay + s.vy * t];
+      // Where a point of the artboard sits on screen right now (the mark squeezes before it breaks).
+      function squeeze(t) { return 1 - 0.035 * sm(t, T.squeezeA, T.squeezeB) + 0.035 * sm(t, T.breakA, T.breakA + 0.25); }
+      function toScreen(x, y, t) {
+        var k = L * squeeze(t);
+        return [LX + (x - BOX.cx) * k, LY + (y - BOX.cy) * k];
       }
       function bez(ax, ay, cx, cy, bx, by, u) {
         var m = 1 - u;
         return [m * m * ax + 2 * m * u * cx + u * u * bx, m * m * ay + 2 * m * u * cy + u * u * by];
       }
-      // Control point offset sideways by a fraction of the distance travelled.
       function swirl(ax, ay, bx, by, k) {
-        var dx = bx - ax, dy = by - ay, len = Math.hypot(dx, dy) || 1;
-        return [(ax + bx) / 2 - dy / len * len * k, (ay + by) / 2 + dx / len * len * k];
+        var dx = bx - ax, dy = by - ay;
+        return [(ax + bx) / 2 - dy * k, (ay + by) / 2 + dx * k];
       }
+      function colorOf(g) { return GLYPHS[g].c === 'cyan' ? CYAN : NAVY; }
 
-      var out = { x: 0, y: 0, r: 0, size: 0, a: 1, dot: 0 };
-      function state(s, t) {
-        var tStart = T.convStart + s.d1;
-        var x, y, r, size, a = s.a0, dot = 0;
-        var rStart = s.r0 + s.vr * tStart;
-        var rEnd = Math.PI * 2 * Math.round(rStart / (Math.PI * 2));
-
-        if (t < tStart) {
-          var f = floatPos(s, t); x = f[0]; y = f[1];
-          r = s.r0 + s.vr * t; size = s.s0;
-          a = s.a0 * sm(t, 0, 0.8);
-        } else {
-          var u = clamp((t - tStart) / T.convDur, 0, 1), e = eio(u);
-          var st = floatPos(s, tStart);
-          var c = swirl(st[0], st[1], s.t1x, s.t1y, s.k1);
-          var p = bez(st[0], st[1], c[0], c[1], s.t1x, s.t1y, e);
-          x = p[0]; y = p[1]; r = lerp(rStart, rEnd, e); size = lerp(s.s0, s.ts1, e);
-          a = lerp(s.a0, 1, e);
-        }
-        a *= 1 - 0.4 * sm(t, T.formA, T.formB);   // the mosaic stays visible under the crisp word
-
-        if (t >= T.scatA) {
-          var us = eout(clamp((t - T.scatA) / (T.scatB - T.scatA), 0, 1));
-          x = lerp(s.t1x, s.sx, us); y = lerp(s.t1y, s.sy, us); r += 0.02;
-        }
-        if (t >= T.dissA) {
-          dot = sm(t, T.dissA, T.dissB);
-          size = lerp(s.ts1, 7, dot);
-          a = lerp(a, 0.95, dot);
-        }
-        if (t >= T.reconA + s.d2) {
-          var ur = clamp((t - T.reconA - s.d2) / T.reconDur, 0, 1), er = eio(ur);
-          var c2 = swirl(s.sx, s.sy, s.t2x, s.t2y, -s.k2);
-          var w = bez(s.sx, s.sy, c2[0], c2[1], s.t2x, s.t2y, er);
-          x = w[0]; y = w[1];
-          size = lerp(7, s.ts2 + 3, er);
-        }
-        if (t >= T.nameA) a = lerp(a, LIGHT ? 0 : 0.16, sm(t, T.nameA, T.nameB));
-        out.x = x; out.y = y; out.r = r; out.size = size; out.a = a; out.dot = dot;
-        return out;
-      }
-
-      function trailAlpha(t) {
-        if (t < T.convStart) return 0.55;
-        if (t < T.formA + 0.2) return 0.4;      // a short comet tail while letters fly in
-        if (t < T.scatA) return 0.7;
-        if (t < T.nameA) return 0.34;
-        return 0.7;
-      }
-
-      function crisp(lay, alpha, pulse) {
+      function drawGlyph(g, x, y, scale, rot, alpha) {
         if (alpha <= 0.002) return;
-        ctx.save();
+        var G = GLYPHS[g];
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.translate(x, y); ctx.rotate(rot); ctx.scale(scale, scale);
+        ctx.translate(-G.cx, -G.cy);
         ctx.globalAlpha = alpha;
-        if (LIGHT) {
-          ctx.shadowColor = 'rgba(8,18,48,0.20)';
-          ctx.shadowBlur = 24 * dpr;
-          ctx.shadowOffsetY = 9 * dpr;
-        } else {
-          ctx.shadowColor = SIG;
-          ctx.shadowBlur = (22 + 10 * pulse) * dpr;
+        ctx.fillStyle = colorOf(g);
+        ctx.fill(G.p);
+      }
+      function drawChar(c, x, y, scale, rot, alpha, color, settle) {
+        if (alpha <= 0.002) return;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.translate(x, y); ctx.rotate(rot); ctx.scale(scale, scale);
+        ctx.globalAlpha = alpha;
+        ctx.font = '800 ' + fs + 'px ' + FONT;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = color;
+        if (settle > 0) {
+          if (LIGHT) { ctx.shadowColor = 'rgba(8,18,48,' + (0.2 * settle) + ')'; ctx.shadowBlur = 22 * dpr; ctx.shadowOffsetY = 8 * dpr; }
+          else { ctx.shadowColor = c.dipu ? CYAN : SIG; ctx.shadowBlur = 16 * settle * dpr; }
         }
-        drawLines(ctx, lay, FG);
-        ctx.shadowBlur = 0;
-        ctx.shadowOffsetY = 0;
-        ctx.shadowColor = 'transparent';
-        drawLines(ctx, lay, FG);
+        ctx.fillText(c.ch, 0, 0);
+        ctx.shadowBlur = 0; ctx.shadowOffsetY = 0; ctx.shadowColor = 'transparent';
+      }
+
+      // The mark as it builds in: each glyph rises into place, a beat after the last.
+      function glyphIntro(g, t) { return eback(clamp((t - T.logoA - g * T.logoStagger) / T.logoDur, 0, 1)); }
+
+      function drawCharAt(c, t) {
+        var u = clamp((t - c.dep) / T.fly, 0, 1);
+        if (u <= 0 && c.g < 0) return;
+        var e = eio(u);
+        var settle = sm(t, T.settleA, T.settleB);
+        var finalColor = c.dipu ? CYAN : FG;
+        var rot = Math.sin(Math.PI * e) * c.rr;
+        var sx, sy, s0;
+        if (c.g >= 0) {
+          var G = GLYPHS[c.g];
+          var st = toScreen(G.cx, G.cy, c.dep);
+          sx = st[0]; sy = st[1];
+          var capH = fs * 0.72;
+          s0 = (G.h * L) / capH;                       // letter starts the glyph's size
+          var ctl = swirl(sx, sy, c.tx, c.ty, c.k);
+          var p = bez(sx, sy, ctl[0], ctl[1], c.tx, c.ty, e);
+          var hand = sm(u, 0.25, 0.65);                // glyph hands over to the capital mid-flight
+          if (u <= 0) {
+            var ui = glyphIntro(c.g, t);
+            var pos = toScreen(G.cx, G.cy, t);
+            drawGlyph(c.g, pos[0], pos[1] + (1 - ui) * 22, L * squeeze(t) * lerp(0.9, 1, ui), 0, clamp(ui, 0, 1));
+            return;
+          }
+          drawGlyph(c.g, p[0], p[1], lerp(L, capH / G.h, e), rot, 1 - hand);
+          drawChar(c, p[0], p[1], lerp(s0, 1, e), rot, hand, finalColor, settle);
+        } else {
+          var o = toScreen(BOX.cx + c.ox * (BOX.r - BOX.l), BOX.cy + c.oy * (BOX.b - BOX.t), c.dep);
+          sx = o[0]; sy = o[1];
+          var ctl2 = swirl(sx, sy, c.tx, c.ty, c.k * 1.6);
+          var q = bez(sx, sy, ctl2[0], ctl2[1], c.tx, c.ty, e);
+          drawChar(c, q[0], q[1], lerp(0.35, 1, e), rot * 1.4, sm(u, 0, 0.3), finalColor, settle);
+        }
+      }
+
+      function drawSwoosh(t) {
+        var intro = sm(t, T.swA, T.swB);
+        var out = sm(t, T.breakA, T.breakA + 0.45);
+        if (intro <= 0 || out >= 1) return;
+        var k = L * squeeze(t);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.translate(LX, LY + out * 14); ctx.scale(k, k); ctx.translate(-BOX.cx, -BOX.cy);
+        ctx.save();
+        ctx.beginPath(); ctx.rect(420, 160, (800 - 420) * intro, 70); ctx.clip();   // drawn on left to right
+        ctx.globalAlpha = 1 - out;
+        ctx.fillStyle = CYAN;
+        ctx.fill(SWOOSH);
         ctx.restore();
       }
+      // A soft halo behind the mark while it holds; it is what the hidden letters sit in.
+      function drawHalo(t) {
+        var a = sm(t, 0.8, 1.8) * (1 - sm(t, T.breakA, T.breakA + 0.6));
+        if (a <= 0.002) return;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        var r = (BOX.r - BOX.l) * L * 0.6;
+        var g = ctx.createRadialGradient(LX, LY, 0, LX, LY, r);
+        g.addColorStop(0, LIGHT ? 'rgba(18,181,216,0.10)' : 'rgba(43,183,255,0.14)');
+        g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.globalAlpha = a * (0.85 + 0.15 * Math.sin(t * 3));
+        ctx.fillStyle = g;
+        ctx.fillRect(LX - r, LY - r, r * 2, r * 2);
+      }
+
       function subtitle(alpha) {
         if (alpha <= 0.002) return;
-        ctx.save();
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        // Accent rule, growing from the centre.
         var rw = Math.min(W * 0.18, 120) * alpha;
         ctx.globalAlpha = Math.min(1, alpha * 1.2);
-        ctx.fillStyle = SIG;
-        ctx.fillRect(W / 2 - rw / 2, subY - subSize * 1.9, rw, 3);
-        // Role, tracked out. Accent colour on light, soft white on dark.
+        ctx.fillStyle = CYAN;
+        ctx.fillRect(W / 2 - rw / 2, ruleY, rw, 3);
         ctx.globalAlpha = alpha * (LIGHT ? 0.95 : 0.85);
-        ctx.font = '600 ' + (subSize * 1.05) + 'px Bricolage, system-ui, sans-serif';
+        ctx.font = '600 ' + (subSize * 1.05) + 'px ' + FONT;
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         if ('letterSpacing' in ctx) ctx.letterSpacing = '0.18em';
         ctx.fillStyle = LIGHT ? SIG : FG;
         ctx.fillText(ROLE.toUpperCase(), W / 2, subY + (1 - alpha) * 6);
-        ctx.restore();
+        if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
       }
 
       function drawDust(t) {
-        ctx.globalCompositeOperation = GLOW_BLEND;
+        ctx.fillStyle = LIGHT ? SIG : FG;
         for (var i = 0; i < dust.length; i++) {
           var d = dust[i];
-          var x = (d.nx * W + Math.sin(t * .15 * d.z + d.ph) * 40 * d.z) , y = (d.ny * H + t * 6 * d.z) % H;
-          ctx.setTransform(1, 0, 0, 1, 0, 0);
-          ctx.globalAlpha = (LIGHT ? 0.16 : 0.22) * d.z;
-          var sz = 5 * d.z * dpr;
-          ctx.drawImage(glow, x * dpr - sz / 2, y * dpr - sz / 2, sz, sz);
+          var x = d.nx * W + Math.sin(t * .15 * d.z + d.ph) * 40 * d.z, y = (d.ny * H + t * 6 * d.z) % H;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.globalAlpha = (LIGHT ? 0.10 : 0.16) * d.z;
+          ctx.beginPath(); ctx.arc(x, y, 1.6 * d.z, 0, Math.PI * 2); ctx.fill();
         }
-        ctx.globalCompositeOperation = 'source-over';
       }
 
       function draw(t) {
         ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.globalCompositeOperation = 'source-over';
         ctx.globalAlpha = 1;
-        ctx.fillStyle = 'rgba(' + BG[0] + ',' + BG[1] + ',' + BG[2] + ',' + trailAlpha(t) + ')';
+        // A short comet tail only while letters are in flight.
+        var flying = t > T.breakA && t < T.settleA;
+        ctx.fillStyle = 'rgba(' + BG[0] + ',' + BG[1] + ',' + BG[2] + ',' + (flying ? 0.55 : 1) + ')';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         drawDust(t);
-
-        for (var i = 0; i < sprites.length; i++) {
-          var s = sprites[i], o = state(s, t);
-          var gA = o.a * (1 - o.dot);
-          if (gA > 0.01) {
-            var cs = Math.cos(o.r), sn = Math.sin(o.r), k = o.size / 64 * dpr;
-            ctx.setTransform(cs * k, sn * k, -sn * k, cs * k, o.x * dpr, o.y * dpr);
-            ctx.globalAlpha = gA;
-            ctx.drawImage((s.sig ? atlasSig : atlasFg)[s.ch], -32, -32);
-          }
-        }
-        ctx.globalCompositeOperation = GLOW_BLEND;
-        for (var j = 0; j < sprites.length; j++) {
-          var p = sprites[j], q = state(p, t);
-          var dA = q.a * q.dot;
-          if (dA > 0.01) {
-            ctx.setTransform(1, 0, 0, 1, 0, 0);
-            ctx.globalAlpha = dA;
-            var d = q.size * dpr;
-            ctx.drawImage(glow, q.x * dpr - d / 2, q.y * dpr - d / 2, d, d);
-          }
-        }
-        ctx.globalCompositeOperation = 'source-over';
-
-        var holdPulse = 0.5 + 0.5 * Math.sin(t * 3);
-        crisp(layout1, sm(t, T.formA, T.formB) * 0.95 * (1 - sm(t, T.dissA, T.dissA + 0.35)), holdPulse);
-        crisp(layout2, sm(t, T.nameA, T.nameB), 0.3);
+        drawHalo(t);
+        // Order matters: hidden letters first, so the mark covers them until they slide out.
+        chars.forEach(function (c) { if (c.g < 0) drawCharAt(c, t); });
+        drawSwoosh(t);
+        chars.forEach(function (c) { if (c.g >= 0) drawCharAt(c, t); });
         subtitle(sm(t, T.subA, T.subB));
+        ctx.globalAlpha = 1;
       }
 
-      function drawStatic() {
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.fillStyle = 'rgb(' + BG.join(',') + ')';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        crisp(layout2, 1, 0);
-        subtitle(1);
-      }
+      function drawStatic() { draw(T.end); }
 
-      var offset = reduced ? T.end : (seen ? T.nameA - 0.3 : 0);
+      var offset = reduced ? T.end : (seen ? T.settleA - 0.4 : 0);
       var t0 = performance.now();
       function now() { return (performance.now() - t0) / 1000 + offset; }
 
-      function skip() { offset = Math.max(offset, T.nameA - 0.1 - (performance.now() - t0) / 1000); }
+      function skip() { offset = Math.max(offset, T.settleA - 0.1 - (performance.now() - t0) / 1000); }
       skipBtn.addEventListener('click', skip);
       window.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !finished) skip(); });
       setTimeout(function () { if (!reduced && !seen) skipBtn.classList.add('show'); }, 1000);
@@ -477,7 +426,6 @@
       });
 
       function start() {
-        atlasFg = makeAtlas(FG); atlasSig = makeAtlas(SIG); glow = makeGlow();
         build();
         t0 = performance.now();
         requestAnimationFrame(frame);
