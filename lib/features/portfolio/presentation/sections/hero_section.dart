@@ -8,7 +8,7 @@ import '../../../../core/motion/scroll_scope.dart';
 import '../../../../core/motion/tilt.dart';
 import '../../../../core/navigation/scroll_controller.dart';
 import '../../../../core/utils/launch.dart';
-import '../../../../core/web/ready_signal.dart';
+import '../../../intro/intro_gate.dart';
 import '../../../../core/widgets/devices.dart';
 import '../../../../core/widgets/ui.dart';
 
@@ -29,14 +29,14 @@ class HeroSection extends StatefulWidget {
 class _HeroSectionState extends State<HeroSection> {
   bool _precached = false;
 
-  /// The hero holds back until the HTML intro has faded, so its entrance is
+  /// The hero holds back until the intro has faded, so its entrance is
   /// seen and not played out behind the loader.
   bool _go = false;
 
   @override
   void initState() {
     super.initState();
-    introFinished().then((_) {
+    IntroSignals.finished.then((_) {
       if (mounted) setState(() => _go = true);
     });
   }
@@ -46,11 +46,11 @@ class _HeroSectionState extends State<HeroSection> {
     super.didChangeDependencies();
     if (_precached) return;
     _precached = true;
-    // Decode what the first frame shows, then tell the HTML loader we're ready.
+    // Decode what the first frame shows, then tell the intro we're ready.
     Future.wait([
       for (final s in [_desktopShot, _browserShot, _phoneShot])
         precacheImage(AssetImage(s.asset), context),
-    ]).whenComplete(signalPortfolioReady);
+    ]).whenComplete(IntroSignals.markReady);
     // The montage images load in the background; they are not needed for ready.
     for (final a in _montage) {
       precacheImage(AssetImage(a), context);
