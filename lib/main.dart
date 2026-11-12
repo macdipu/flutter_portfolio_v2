@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'core/design/deferred_fonts.dart';
 import 'core/responsive/responsive_framework.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_cubit.dart';
@@ -9,6 +10,7 @@ import 'features/portfolio/presentation/pages/portfolio_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  DeferredFonts.load(); // in the background; the intro only needs Bricolage
   final mode = await ThemeCubit.load();
   runApp(MyApp(initialMode: mode));
 }

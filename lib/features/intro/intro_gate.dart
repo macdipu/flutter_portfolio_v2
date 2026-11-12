@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
@@ -14,7 +15,13 @@ import '../../core/widgets/logo_mark.dart';
 /// What the page and the intro tell each other.
 abstract class IntroSignals {
   static final Completer<void> _ready = Completer<void>();
-  static final Completer<void> _done = Completer<void>();
+  static final Completer<bool> _done = Completer<bool>();
+
+  /// The hero's three name lines ("Md. Asad", "Chowdhury", "Dipu"). While the
+  /// intro runs the hero lays them out invisibly under these keys, so the
+  /// intro's letters can fly onto them.
+  static final List<GlobalKey> heroNameKeys =
+      List.generate(3, (_) => GlobalKey(debugLabel: 'heroName'));
 
   /// The page calls this once what the first screen shows is decoded.
   static void markReady() {
@@ -23,14 +30,16 @@ abstract class IntroSignals {
 
   static bool get isReady => _ready.isCompleted;
 
-  /// Completes when the intro starts to fade, so the hero's entrance is seen
-  /// rather than played out behind it. Never holds the page back for long.
-  static Future<void> get finished => kIsWeb
-      ? _done.future.timeout(const Duration(seconds: 15), onTimeout: () {})
-      : Future<void>.value();
+  /// Completes when the intro hands over to the page. True when its letters
+  /// landed on the hero's name, so the hero shows the name at once instead
+  /// of animating it in. Never holds the page back for long.
+  static Future<bool> get finished => kIsWeb
+      ? _done.future
+          .timeout(const Duration(seconds: 20), onTimeout: () => false)
+      : Future<bool>.value(false);
 
-  static void _complete() {
-    if (!_done.isCompleted) _done.complete();
+  static void _complete(bool landed) {
+    if (!_done.isCompleted) _done.complete(landed);
   }
 }
 
@@ -46,6 +55,18 @@ abstract class _T {
   static const subA = 5.2, subB = 5.7; // the role fades in
   static const end = 6.1;
   static const safety = 2.5; // never wait longer than this for the page after the end
+
+  // The handoff, in seconds from its start: the name flies onto the hero.
+  static const handFly = 1.1, handStagger = 0.03;
+  static const handEnd = handFly + 18 * handStagger + 0.08;
+}
+
+/// A letter of the hero's name, measured on screen.
+class _HeroLetter {
+  const _HeroLetter(this.ch, this.center, this.style);
+  final String ch;
+  final Offset center;
+  final TextStyle style;
 }
 
 /// Plays the intro over [child] on the web, then gets out of the way:
@@ -90,11 +111,11 @@ class _IntroGateState extends State<IntroGate>
   void initState() {
     super.initState();
     if (_gone) {
-      IntroSignals._complete();
+      IntroSignals._complete(false);
       return;
     }
     _seen = readIntroSeen();
-    _Scene.buildAtlas().then(
+    _Scene.buildAtlas().then<void>(
       (img) => _scene.atlas = img,
       onError: (Object _) {},
     ).whenComplete(_start);
@@ -117,22 +138,72 @@ class _IntroGateState extends State<IntroGate>
   void _tick(Duration elapsed) {
     _elapsed = elapsed.inMicroseconds / 1e6;
     final t = _elapsed + _offset;
-    _time.value = math.min(t, _T.end);
+    _time.value = t;
+    final hs = _scene.handoffStart;
+    if (hs != null) {
+      if (t - hs >= _T.handEnd) _land();
+      return;
+    }
     if (!_fading &&
         t >= _T.end &&
         (IntroSignals.isReady || t >= _T.end + _T.safety)) {
-      _finish();
+      _handOff(t);
     }
   }
 
   void _skip() {
-    if (_fading) return;
+    if (_fading || _scene.handoffStart != null) return;
     _offset = math.max(_offset, _T.settleA - 0.1 - _elapsed);
+  }
+
+  /// Fly the name onto the hero's own name, if it can be found on screen.
+  void _handOff(double t) {
+    final letters = Motion.reduced(context) ? null : _measureHero();
+    if (letters == null || !_scene.attachHero(letters)) {
+      _finish();
+      return;
+    }
+    _scene.handoffStart = t;
+    setState(() => _showSkip = false);
+  }
+
+  /// Where each letter of the hero's name sits right now, or null when the
+  /// hero has not laid it out (narrow layouts, scrolled away, not built).
+  List<List<_HeroLetter>>? _measureHero() {
+    final view = MediaQuery.sizeOf(context);
+    final lines = <List<_HeroLetter>>[];
+    for (final key in IntroSignals.heroNameKeys) {
+      final ro = key.currentContext?.findRenderObject();
+      if (ro is! RenderParagraph || !ro.attached || !ro.hasSize) return null;
+      final span = ro.text;
+      final style = span.style;
+      if (style == null) return null;
+      final text = span.toPlainText();
+      final line = <_HeroLetter>[];
+      for (var i = 0; i < text.length; i++) {
+        final boxes = ro.getBoxesForSelection(
+            TextSelection(baseOffset: i, extentOffset: i + 1));
+        if (boxes.isEmpty) return null;
+        final c = ro.localToGlobal(boxes.first.toRect().center);
+        if (c.dy < 0 || c.dy > view.height) return null;
+        line.add(_HeroLetter(text[i], c, style));
+      }
+      lines.add(line);
+    }
+    return lines;
+  }
+
+  /// The letters are on the hero's name: show the real page.
+  void _land() {
+    writeIntroSeen();
+    IntroSignals._complete(true);
+    _ticker.stop();
+    setState(() => _gone = true);
   }
 
   void _finish() {
     writeIntroSeen();
-    IntroSignals._complete();
+    IntroSignals._complete(false);
     setState(() {
       _fading = true;
       _showSkip = false;
@@ -387,6 +458,11 @@ class _NameChar {
   final double rr, k, ox, oy;
   double dep = 0; // when it leaves the mark
   Offset target = Offset.zero; // where it ends, on screen
+
+  /// Its letter in the hero's name, during the handoff, and its place in
+  /// reading order there.
+  _HeroLetter? hero;
+  int order = 0;
 }
 
 class _Dust {
@@ -436,6 +512,30 @@ class _Scene {
   late final List<_Dust> _dust;
   final _chars = <_NameChar>[];
   ui.Image? atlas;
+
+  /// Intro time at which the name started flying onto the hero, if it has.
+  double? handoffStart;
+
+  /// Pairs every letter of the intro's name with the same letter of the
+  /// hero's three lines. "CHOWDHURY DIPU" splits over the hero's last two.
+  bool attachHero(List<List<_HeroLetter>> lines) {
+    if (lines.length != 3) return false;
+    var order = 0;
+    for (final c in _chars) {
+      final (line, index) = switch (c.line) {
+        0 => (0, c.index),
+        _ when c.index <= 8 => (1, c.index),
+        _ => (2, c.index - 10),
+      };
+      if (index >= lines[line].length) return false;
+      final h = lines[line][index];
+      if (h.ch.toUpperCase() != c.ch) return false;
+      c
+        ..hero = h
+        ..order = order++;
+    }
+    return true;
+  }
 
   /// The 26 capitals, white, in one strip. Tinted per sprite when drawn.
   static Future<ui.Image> buildAtlas() {
@@ -557,9 +657,15 @@ class _Scene {
       (p - LogoMark.bounds.center) * (_scale * (squeeze ? _squeeze(t) : 1));
 
   // ---- Paint ----
-  void paint(Canvas canvas, Size size, double t, _Palette pal) {
+  void paint(Canvas canvas, Size size, double now, _Palette pal) {
     if (size.isEmpty) return;
     _layout(size);
+    final t = math.min(now, _T.end);
+    final hs = handoffStart;
+    if (hs != null) {
+      _paintHandoff(canvas, size, t, now - hs, pal);
+      return;
+    }
     canvas.drawRect(Offset.zero & size, Paint()..color = pal.bg);
     _paintDust(canvas, size, t, pal);
     _paintHalo(canvas, t, pal);
@@ -576,13 +682,59 @@ class _Scene {
     _paintRole(canvas, size, _sm(t, _T.subA, _T.subB), pal);
   }
 
-  void _paintDust(Canvas canvas, Size size, double t, _Palette pal) {
+  /// The intro's name flies onto the hero's name while the page shows
+  /// through: each capital eases to its letter there, turning into the
+  /// hero's own glyph (and case) on the way, one beat after the last.
+  void _paintHandoff(
+      Canvas canvas, Size size, double t, double h, _Palette pal) {
+    final bg = 1 - _sm(h, 0.15, 0.8);
+    canvas.drawRect(
+        Offset.zero & size, Paint()..color = pal.bg.withValues(alpha: bg));
+    _paintDust(canvas, size, t, pal, fade: bg);
+    _paintRole(canvas, size, 1 - _sm(h, 0, 0.35), pal);
+    final glow = _sm(t, _T.settleA, _T.settleB) * (1 - _sm(h, 0, 0.4));
+
+    for (final c in _chars) {
+      final hero = c.hero!;
+      final u = _clamp01((h - c.order * _T.handStagger) / _T.handFly);
+      final e = _eio(u);
+      final p = _bez(c.target, _swirl(c.target, hero.center, c.k * 0.35),
+          hero.center, e);
+      final ratio = (hero.style.fontSize ?? _fs) / _fs;
+      final cross = _sm(u, 0.3, 0.75);
+      final rot = math.sin(math.pi * e) * c.rr * 0.25;
+      _paintLetter(canvas, c, p, _lerp(1, ratio, e), rot, 1 - cross, glow, pal);
+
+      if (cross <= 0.002) continue;
+      final from = c.dipu ? pal.cyan : pal.fg;
+      final to = hero.style.color ?? pal.fg;
+      final tp = TextPainter(
+        text: TextSpan(
+          text: hero.ch,
+          style: hero.style.copyWith(
+            color: Color.lerp(from, to, _sm(u, 0.4, 1))!
+                .withValues(alpha: cross),
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      canvas.save();
+      canvas.translate(p.dx, p.dy);
+      canvas.rotate(rot);
+      canvas.scale(_lerp(1 / ratio, 1, e));
+      tp.paint(canvas, Offset(-tp.width / 2, -tp.height / 2));
+      canvas.restore();
+    }
+  }
+
+  void _paintDust(Canvas canvas, Size size, double t, _Palette pal,
+      {double fade = 1}) {
     final paint = Paint();
     for (final d in _dust) {
       final x = d.nx * size.width + math.sin(t * .15 * d.z + d.ph) * 40 * d.z;
       final y = (d.ny * size.height + t * 6 * d.z) % size.height;
-      paint.color =
-          (pal.light ? pal.sig : pal.fg).withValues(alpha: (pal.light ? .10 : .16) * d.z);
+      paint.color = (pal.light ? pal.sig : pal.fg)
+          .withValues(alpha: (pal.light ? .10 : .16) * d.z * fade);
       canvas.drawCircle(Offset(x, y), 1.6 * d.z, paint);
     }
   }
@@ -624,7 +776,7 @@ class _Scene {
         p = s.float(t, size);
         r = s.r0 + s.vr * t;
         size0 = s.s0;
-        a = s.a0 * _sm(t, 0, 0.5);
+        a = s.a0 * _sm(t, 0, 0.25);
       } else {
         final e = _eio(_clamp01((t - tStart) / _T.convDur));
         final st = s.float(tStart, size);

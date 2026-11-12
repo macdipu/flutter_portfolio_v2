@@ -39,15 +39,21 @@ jobs:
         run: flutter pub get
 
       - name: Build for custom domain + redirect
-        run: flutter build web --release --base-href /
+        # --wasm: Chrome/Edge (and recent Firefox) get the faster WebAssembly build; other
+        # browsers fall back to the JS build automatically.
+        run: flutter build web --release --wasm --base-href /
 
       - name: Cache-bust entrypoints (GitHub Pages/Cloudflare cache 4h)
         run: |
           V=${GITHUB_SHA::8}
           sed -i "s|flutter_bootstrap.js\"|flutter_bootstrap.js?v=$V\"|" build/web/index.html
           sed -i "s|\"mainJsPath\":\"main.dart.js\"|\"mainJsPath\":\"main.dart.js?v=$V\"|" build/web/flutter_bootstrap.js
+          sed -i "s|\"mainWasmPath\":\"main.dart.wasm\"|\"mainWasmPath\":\"main.dart.wasm?v=$V\"|" build/web/flutter_bootstrap.js
+          sed -i "s|\"jsSupportRuntimePath\":\"main.dart.mjs\"|\"jsSupportRuntimePath\":\"main.dart.mjs?v=$V\"|" build/web/flutter_bootstrap.js
           grep -o 'flutter_bootstrap.js?v=[a-z0-9]*' build/web/index.html
           grep -o 'main.dart.js?v=[a-z0-9]*' build/web/flutter_bootstrap.js
+          grep -o 'main.dart.wasm?v=[a-z0-9]*' build/web/flutter_bootstrap.js
+          grep -o 'main.dart.mjs?v=[a-z0-9]*' build/web/flutter_bootstrap.js
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
