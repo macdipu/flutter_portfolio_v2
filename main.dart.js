@@ -70596,7 +70596,7 @@ m.cw()
 if(m.d)return
 m.d=!0
 s=A.c([],t.mo)
-for(r=A.c(["assets/images/avatar.png"],t.s),B.c.J(r,A.e8(B.iv,0,A.kx(3,"count",t.S),t.N)),q=r.length,p=0;p<r.length;r.length===q||(0,A.r)(r),++p){o=r[p]
+for(r=A.c(["assets/images/avatar.jpg"],t.s),B.c.J(r,A.e8(B.iv,0,A.kx(3,"count",t.S),t.N)),q=r.length,p=0;p<r.length;r.length===q||(0,A.r)(r),++p){o=r[p]
 n=m.c
 n.toString
 s.push(A.atD(new A.mF(o,l,l),n))}r=$.ake
@@ -70831,7 +70831,7 @@ m=new A.n(-l,m).P(0,q*0.02).P(0,d)
 h=1+0.08*d
 g=t.t_
 f=t.p
-c=A.c([i,A.a8P(A.a8O(B.U,A.ap6("assets/images/avatar.png",B.y9,e,e,!1,B.kj,e,!0,"Photo of Md. Asad Chowdhury Dipu"),h),m),A.n0(e,new A.bK(e,e,e,e,e,new A.ny(B.b8,B.k9,B.bX,A.c([B.X,c.b.bQ(0.35*(1-d*0.5))],g),B.FB,e),B.V),B.bN)],f)
+c=A.c([i,A.a8P(A.a8O(B.U,A.ap6("assets/images/avatar.jpg",B.y9,e,e,!1,B.kj,e,!0,"Photo of Md. Asad Chowdhury Dipu"),h),m),A.n0(e,new A.bK(e,e,e,e,e,new A.ny(B.b8,B.k9,B.bX,A.c([B.X,c.b.bQ(0.35*(1-d*0.5))],g),B.FB,e),B.V),B.bN)],f)
 if(d>0.01)c.push(A.n0(e,new A.bK(e,e,e,e,e,new A.lr(new A.cT(l,r),0.9,B.bX,e,0,A.c([B.k.bQ(0.22*d),B.k.bQ(0)],g),e,e),B.V),B.bN))
 return A.oN(B.U,new A.b1(q,p,A.dB(B.ao,A.c([j,A.o9(0,A.ak5(o,A.dB(B.ao,c,B.N,B.P3))),A.o9(0,new A.dK(!0,A.n0(e,new A.bK(e,e,A.id(B.aJ.bQ(0.45+0.5*d),1.5+0.8*d),o,e,e,B.V),B.bN),e)),A.f_(p*0.07+6*d,A.a8O(B.bE,new A.Qh(q,d,s,e),h),e,e,-q*(0.06+0.03*d),e,e,e)],f),B.u,B.aj),e),e,k,!0)},
 $S:172}
@@ -75859,7 +75859,7 @@ B.h8=new A.hs(4,"paused")
 B.yg=new A.E5(!1,127)
 B.yh=new A.E6(127)
 B.kj=new A.uD(2,"cover")
-B.yf=new A.ul("assets/images/avatar.png",B.U,760,"Portrait of Md. Asad Chowdhury Dipu",null)
+B.yf=new A.ul("assets/images/avatar.jpg",B.U,760,"Portrait of Md. Asad Chowdhury Dipu",null)
 B.yi=new A.uo(1,B.yf,null)
 B.h9=new A.up(0,"polite")
 B.ha=new A.up(1,"assertive")
