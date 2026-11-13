@@ -38,7 +38,7 @@ abstract class Profile {
       'tools, explore emerging AI technologies and turn ideas into '
       'working products.';
 
-  static const avatar = 'assets/images/avatar.png';
+  static const avatar = 'assets/images/avatar.jpg';
 }
 
 /// What a project runs on. Drives the badge shown in the showcase.
